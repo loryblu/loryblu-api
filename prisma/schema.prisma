@@ -1,0 +1,39 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model parentAccount {
+  id                  String    @id @default(uuid())
+  fullname            String
+  email               String
+  password            String
+  policiesAcceptedAt  DateTime  @map("policies_accepted_at")
+  acceptedAt          DateTime  @default(now()) @map("accepted_at")
+  createdAt           DateTime  @default(now()) @map("created_at")
+
+  childrens           childrenAccount[]
+
+  @@map("parent_account")
+}
+
+model childrenAccount {
+  id          Int       @id @default(autoincrement())
+  fullname    String
+  gender      Int
+  birthday    DateTime
+  acceptedAt  DateTime  @default(now()) @map("accepted_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  parentId    String    @map("parent_id")
+
+  parentAccount parentAccount @relation(fields: [parentId], references: [id], onDelete: Cascade)
+
+  @@map("children_account")
+}
