@@ -1,0 +1,66 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Credential {
+  id                 Int            @id @default(autoincrement())
+  email              String         @unique
+  password           String
+  policiesAcceptedAt DateTime       @map("policies_accepted_at")
+  status             Status         @default(DISABLED)
+  role               Roles          @default(USER)
+  parentProfileId    ParentProfile?
+  updatedAt          DateTime       @updatedAt @map("updated_at")
+  createdAt          DateTime       @default(now()) @map("created_at")
+
+  @@map("credentials")
+}
+
+model ParentProfile {
+  id           String            @id @default(uuid())
+  fullname     String
+  childrens    ChildrenProfile[]
+  credentialId Int               @unique @map("credential_id")
+  credential   Credential        @relation(fields: [credentialId], references: [id], onDelete: Cascade)
+  updatedAt    DateTime          @updatedAt @map("updated_at")
+  createdAt    DateTime          @default(now()) @map("created_at")
+
+  @@map("parent_profiles")
+}
+
+model ChildrenProfile {
+  id        Int           @id @default(autoincrement())
+  fullname  String
+  birthday  DateTime
+  gender    Genders
+  parentId  String        @map("parent_id")
+  parent    ParentProfile @relation(fields: [parentId], references: [id], onDelete: Cascade)
+  updatedAt DateTime      @updatedAt @map("updated_at")
+  createdAt DateTime      @default(now()) @map("created_at")
+
+  @@map("children_profiles")
+}
+
+enum Roles {
+  ADMIN
+  USER
+}
+
+enum Status {
+  ACTIVE
+  DISABLED
+  BLOCKED
+}
+
+enum Genders {
+  MALE
+  FEMALE
+}
