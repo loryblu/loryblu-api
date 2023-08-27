@@ -1,14 +1,14 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { ParentAccountService } from './parent.service';
+import { ParentService } from './parent.service';
 
-@ApiTags('Authentication')
 @Controller('/')
-export class ParentAccountController {
-  constructor(private parentAccountService: ParentAccountService) {}
+export class ParentController {
+  constructor(private parentService: ParentService) {}
 
-  @Get()
-  async home() {
-    return this.parentAccountService.findParentAccount();
+  @Get('parent')
+  @ApiTags('Parent profile')
+  async findParent() {
+    return this.parentService.findParent();
   }
 }

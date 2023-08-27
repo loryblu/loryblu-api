@@ -1,1 +1,1 @@
-export { ParentAccountModule } from './parent/parent.module';
+export { ParentModule } from './parent/parent.module';

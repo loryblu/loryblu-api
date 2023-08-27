@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { ParentAccountRepository } from './parent.repository';
+import { ParentRepository } from './parent.repository';
 
 @Injectable()
-export class ParentAccountService {
-  constructor(private parentAccountRepository: ParentAccountRepository) {}
+export class ParentService {
+  constructor(private parentRepository: ParentRepository) {}
 
-  async findParentAccount() {
-    return this.parentAccountRepository.findParentAccount();
+  async findParent() {
+    return this.parentRepository.findParent();
   }
 }

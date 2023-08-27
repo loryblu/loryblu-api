@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
-export class ParentAccountRepository {
+export class ParentRepository {
   constructor(private prisma: PrismaService) {}
 
-  async findParentAccount() {
-    return await this.prisma.parentAccount.findMany();
+  async findParent() {
+    return await this.prisma.parentProfile.findMany();
   }
 }
