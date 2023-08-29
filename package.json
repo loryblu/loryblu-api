@@ -23,7 +23,8 @@
     "prisma:push": "npx prisma db push",
     "prisma:generate": "npx prisma generate",
     "prisma:migrate": "npx prisma migrate dev",
-    "docker:dev": "docker-compose -f docker-compose.dev.yml up -d && npm run dev"
+    "docker:dev": "docker-compose -f docker-compose.dev.yml up -d && npm run dev",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
@@ -48,6 +49,7 @@
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.0",
     "git-commit-msg-linter": "^5.0.4",
+    "husky": "^8.0.3",
     "jest": "^29.5.0",
     "prettier": "^3.0.0",
     "prisma": "^5.2.0",
