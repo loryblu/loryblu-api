@@ -35,8 +35,11 @@ export class MailService {
   }
 
   private async htmlLoader(template: React.ReactElement) {
-    this.html = await renderAsync(template, { pretty: true });
-    return;
+    try {
+      this.html = await renderAsync(template, { pretty: true });
+    } catch (error) {
+      throw new InternalServerErrorException('Error when trying to load html');
+    }
   }
 
   private async sendMail() {
