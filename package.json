@@ -32,6 +32,8 @@
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/swagger": "^7.1.8",
     "@prisma/client": "^5.2.0",
+    "@react-email/render": "0.0.7",
+    "email-templates": "file:src/modules/mail/templates/",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1"
   },
