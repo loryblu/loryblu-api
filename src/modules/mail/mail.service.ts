@@ -2,7 +2,7 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { renderAsync } from '@react-email/render';
 import { Resend } from 'resend';
 
-import * as constants from 'src/globals/constants';
+import { appName } from 'src/globals/constants';
 import ConfirmPasswordReset from './templates/emails/ConfirmPasswordReset';
 import type { ConfirmPasswordResetProps } from './mail.types';
 
@@ -16,18 +16,18 @@ export class MailService {
 
   constructor() {
     this.resend = new Resend(process.env.MAIL_API_KEY);
-    this.from = `${constants.appName} <${process.env.MAIL_FROM}>`;
+    this.from = `${appName} <${process.env.MAIL_FROM}>`;
   }
 
   async confirmPasswordReset({ to, username, url }: ConfirmPasswordResetProps) {
     this.to = to;
-    this.subject = `${username} recupere seu acesso a ${constants.appName}`;
+    this.subject = `${username} recupere seu acesso a ${appName}`;
 
     await this.htmlLoader(
       ConfirmPasswordReset({
         username,
         url,
-        appName: constants.appName,
+        appName,
       }),
     );
 
