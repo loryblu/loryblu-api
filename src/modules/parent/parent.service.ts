@@ -6,7 +6,7 @@ import { CreateAccountDto } from './parent.dto';
 export class ParentService {
   constructor(private parentRepository: ParentRepository) {}
 
-  async newAccountPropsProcessing(input: CreateAccountDto): Promise<void> {
+  async newAccountPropsProcessing(input: CreateAccountDto): Promise<boolean> {
     if (!input.policiesAccepted) {
       throw new BadRequestException(
         'Por favor, para ter uma conta você deve aceitar nossos termos de uso e políticas de privacidade.',
@@ -33,6 +33,6 @@ export class ParentService {
       },
     });
 
-    return;
+    return true;
   }
 }

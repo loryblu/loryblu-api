@@ -37,13 +37,7 @@ export class ParentRepository {
             },
           },
         },
-        select: {
-          parentProfile: {
-            select: {
-              id: true,
-            },
-          },
-        },
+        select: {},
       })
       .then(() => true)
       .catch((error) => {
