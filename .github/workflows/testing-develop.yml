@@ -1,4 +1,4 @@
-name: Unit test
+name: Run the tests
 
 on:
   pull_request:
@@ -23,5 +23,5 @@ jobs:
       - name: Install packages
         run: yarn
         
-      - name: tests
+      - name: Unit tests
         run: yarn test
