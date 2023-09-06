@@ -1,6 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+
+import * as constants from './globals/constants';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -9,10 +11,10 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
 
   const config = new DocumentBuilder()
-    .setTitle(process.env.npm_package_name)
-    .setVersion(process.env.npm_package_version)
+    .setTitle(constants.appName)
+    .setVersion(constants.appVersion)
     .setLicense(
-      process.env.npm_package_license,
+      constants.appLicense,
       'https://github.com/loryblu/loryblu-api/blob/main/LICENSE',
     )
     .build();
