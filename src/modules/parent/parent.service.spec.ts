@@ -1,21 +1,24 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ParentService } from './parent.service';
 import { ParentRepository } from './parent.repository';
-import { PrismaService } from 'src/prisma/prisma.service';
+
+import * as stubs from './parent.service.stubs';
+import { BadRequestException } from '@nestjs/common';
 
 describe('ParentService unit test', () => {
   let service: ParentService;
 
+  const parentRepositoryMock = {
+    saveCredentialParentAndChildrenProps: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        PrismaService,
         ParentService,
         {
           provide: ParentRepository,
-          useValue: {
-            findParent: jest.fn().mockResolvedValue([]),
-          },
+          useValue: parentRepositoryMock,
         },
       ],
     }).compile();
@@ -23,12 +26,28 @@ describe('ParentService unit test', () => {
     service = module.get<ParentService>(ParentService);
   });
 
-  describe('Happy Path', () => {
-    it('Should return a list of ParentProfile', async () => {
-      const actual = await service.findParent();
-      const expected = [];
+  describe('Create account', () => {
+    it('Happy path - should return a instanceof Boolean : value true', async () => {
+      const actual = await service.newAccountPropsProcessing({
+        ...stubs.createAccountInput,
+        policiesAccepted: true,
+      });
 
-      expect(actual).toEqual(expected);
+      expect(actual).toStrictEqual(true);
+    });
+
+    it('Unhappy path - should return a BadRequestException', async () => {
+      try {
+        await service.newAccountPropsProcessing({
+          ...stubs.createAccountInput,
+          policiesAccepted: false,
+        });
+      } catch (actual) {
+        expect(actual?.message).toStrictEqual(
+          'Por favor, para ter uma conta você deve aceitar nossos termos de uso e políticas de privacidade.',
+        );
+        expect(actual).toBeInstanceOf(BadRequestException);
+      }
     });
   });
 });
