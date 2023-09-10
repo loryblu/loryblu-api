@@ -1,10 +1,9 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { renderAsync } from '@react-email/render';
 import { Resend } from 'resend';
 
+import type { SendLinkToResetPassword } from './mail.entity';
 import { appName } from 'src/globals/constants';
-import ConfirmPasswordReset from './templates/emails/ConfirmPasswordReset';
-import type { ConfirmPasswordResetProps } from './mail.types';
+import { passwordReset } from './templates';
 
 @Injectable()
 export class MailService {
@@ -19,26 +18,23 @@ export class MailService {
     this.from = `${appName} <${process.env.MAIL_FROM}>`;
   }
 
-  async confirmPasswordReset({ to, username, url }: ConfirmPasswordResetProps) {
-    this.to = to;
-    this.subject = `${username} recupere seu acesso a ${appName}`;
+  async sendLinkToResetPassword(props: SendLinkToResetPassword) {
+    const { to, recoverLink, userName } = props;
 
-    await this.htmlLoader(
-      ConfirmPasswordReset({
-        username,
-        url,
-        appName,
-      }),
-    );
-
-    await this.sendMail();
-  }
-
-  private async htmlLoader(template: React.ReactElement) {
     try {
-      this.html = await renderAsync(template, { pretty: true });
+      this.to = to;
+      this.subject = `${userName} recupere seu acesso a ${appName}`;
+      this.html = await passwordReset({
+        appName,
+        recoverLink,
+        userName,
+      });
+
+      this.sendMail();
     } catch (error) {
-      throw new InternalServerErrorException('Error when trying to load html');
+      throw new InternalServerErrorException(
+        'Error when trying to configure email: [send_link_to_reset_password]',
+      );
     }
   }
 
