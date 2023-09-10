@@ -3,7 +3,7 @@ import { Resend } from 'resend';
 
 import type { SendLinkToResetPassword } from './mail.entity';
 import { appName } from 'src/globals/constants';
-import { passwordReset } from './templates';
+import { PasswordResetTemplate } from './templates';
 
 @Injectable()
 export class MailService {
@@ -24,7 +24,7 @@ export class MailService {
     try {
       this.to = to;
       this.subject = `${userName} recupere seu acesso a ${appName}`;
-      this.html = await passwordReset({
+      this.html = await PasswordResetTemplate({
         appName,
         recoverLink,
         userName,

@@ -1,4 +1,4 @@
-import type { PasswordResetProps } from './templates/assets/types';
+import type { PasswordResetProps } from './templates/emails/types';
 
 export type SendLinkToResetPassword = Omit<PasswordResetProps, 'appName'> & {
   to: string;
