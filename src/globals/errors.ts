@@ -1,3 +1,5 @@
+import { BadRequestException } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import type { ErrorMessagesProps } from './types';
 
 export const errorMessages: ErrorMessagesProps = {
@@ -32,3 +34,14 @@ export const errorMessages: ErrorMessagesProps = {
     return `O sexo deve ser [${args.constraints[1]}].`;
   },
 };
+
+export function prismaKnownErrors(error: Prisma.PrismaClientKnownRequestError) {
+  const target = (error.meta?.target as Array<string>) || ['unknow_meta'];
+
+  switch (error.code) {
+    case 'P2002':
+      throw new BadRequestException(
+        `O campo ${target} informado já está em uso, tente outro.`,
+      );
+  }
+}

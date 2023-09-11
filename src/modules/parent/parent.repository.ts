@@ -1,11 +1,8 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  BadRequestException,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { NewAccountRepositoryInput } from './parent.entity';
+import { prismaKnownErrors } from 'src/globals/errors';
 
 @Injectable()
 export class ParentRepository {
@@ -42,13 +39,7 @@ export class ParentRepository {
       .then(() => true)
       .catch((error) => {
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
-          // ! Creates a module to validate prisma errors
-          switch (error.code) {
-            case 'P2002':
-              throw new BadRequestException(
-                'Unique constraint failed on the e-mail',
-              );
-          }
+          prismaKnownErrors(error);
         }
 
         throw new InternalServerErrorException(
