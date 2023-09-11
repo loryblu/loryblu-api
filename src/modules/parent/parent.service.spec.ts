@@ -1,9 +1,9 @@
+import { BadRequestException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+
 import { ParentService } from './parent.service';
 import { ParentRepository } from './parent.repository';
-
 import * as stubs from './parent.service.stubs';
-import { BadRequestException } from '@nestjs/common';
 
 describe('ParentService unit test', () => {
   let service: ParentService;
@@ -33,7 +33,7 @@ describe('ParentService unit test', () => {
         policiesAccepted: true,
       });
 
-      expect(actual).toStrictEqual(true);
+      expect(actual).toEqual(undefined);
     });
 
     it('Unhappy path - should return a BadRequestException', async () => {
