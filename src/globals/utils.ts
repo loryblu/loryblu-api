@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
-import bcrypt from 'bcrypt';
 import type { HashDataAsyncProps, EncryptDataAsyncProps } from './types';
+import * as bcrypt from 'bcrypt';
 
 const algorithm = 'sha256';
 const digest = 'hex';
