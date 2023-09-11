@@ -22,7 +22,7 @@ async function bootstrap() {
   SwaggerModule.setup('', app, document);
 
   await app.listen(process.env.PORT, () => {
-    console.log(`[ONN] Port: ${process.env.PORT}`);
+    console.info(`[ONN] Port: ${process.env.PORT}`);
   });
 }
 
