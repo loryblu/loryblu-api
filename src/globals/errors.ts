@@ -8,22 +8,22 @@ import { dataExampleISO8601, isDevelopmentEnv } from './constants';
 
 export const validationErrorMessages: ValidationErrorMessagesProps = {
   emptyField: (args) => {
-    return `O campo [${args.property}] não pode estar vazio.`;
+    return `O ${args.property} não pode estar vazio.`;
   },
   booleanField: (args) => {
-    return `O campo [${args.property}] deve ser booleano.`;
+    return `O ${args.property} deve ser booleano.`;
   },
   stringField: (args) => {
-    return `O campo [${args.property}] deve ser do tipo texto.`;
+    return `O ${args.property} deve ser do tipo texto.`;
   },
   minLength: (args) => {
-    return `O campo [${args.property}] deve conter no mínimo ${args.constraints[0]} caracteres.`;
+    return `O ${args.property} deve conter no mínimo ${args.constraints[0]} caracteres.`;
   },
   maxLength: (args) => {
-    return `O campo [${args.property}] deve conter no máximo ${args.constraints[1]} caracteres.`;
+    return `O ${args.property} deve conter no máximo ${args.constraints[1]} caracteres.`;
   },
   fullnameField: (args) => {
-    return `O campo [${args.property}] deve conter apenas letras e espaço em branco.`;
+    return `O ${args.property} deve conter apenas letras e espaço em branco.`;
   },
   emailPattern: () => {
     return 'O e-mail informado deve ter um formato válido. ex: suenome@exemplo.com';
