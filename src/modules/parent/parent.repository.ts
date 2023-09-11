@@ -1,8 +1,12 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { NewAccountRepositoryInput } from './parent.entity';
-import { prismaKnownErrors } from 'src/globals/errors';
+import {
+  unknownError,
+  prismaKnownRequestErrors,
+  prismaKnownValidationErrors,
+} from 'src/globals/errors';
 
 @Injectable()
 export class ParentRepository {
@@ -10,10 +14,10 @@ export class ParentRepository {
 
   async saveCredentialParentAndChildrenProps(
     data: NewAccountRepositoryInput,
-  ): Promise<boolean> {
+  ): Promise<void> {
     const { credential, parentProfile, childrenProfile } = data;
 
-    return await this.prisma.credential
+    await this.prisma.credential
       .create({
         data: {
           email: credential.email,
@@ -34,17 +38,19 @@ export class ParentRepository {
             },
           },
         },
-        select: {},
       })
-      .then(() => true)
       .catch((error) => {
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
-          prismaKnownErrors(error);
+          prismaKnownRequestErrors(error);
         }
 
-        throw new InternalServerErrorException(
-          'Error on trying saves new parents account',
-        );
+        if (error instanceof Prisma.PrismaClientValidationError) {
+          prismaKnownValidationErrors(error);
+        }
+
+        unknownError(error);
       });
+
+    return;
   }
 }

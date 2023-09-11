@@ -1,7 +1,10 @@
-import { BadRequestException } from '@nestjs/common';
+import {
+  BadRequestException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import type { ValidationErrorMessagesProps } from './types';
-import { dataExampleISO8601 } from './constants';
+import { dataExampleISO8601, isDevelopmentEnv } from './constants';
 
 export const validationErrorMessages: ValidationErrorMessagesProps = {
   emptyField: (args) => {
@@ -36,13 +39,35 @@ export const validationErrorMessages: ValidationErrorMessagesProps = {
   },
 };
 
-export function prismaKnownErrors(error: Prisma.PrismaClientKnownRequestError) {
+export function prismaKnownRequestErrors(
+  error: Prisma.PrismaClientKnownRequestError,
+) {
   const target = (error.meta?.target as Array<string>) || ['unknow_meta'];
 
   switch (error.code) {
     case 'P2002':
       throw new BadRequestException(
-        `O campo ${target} informado já está em uso, tente outro.`,
+        `O ${target} informado já está em uso, tente outro.`,
       );
   }
+}
+
+export function prismaKnownValidationErrors(
+  error: Prisma.PrismaClientValidationError,
+) {
+  const message = error.message || 'unknow_meta';
+
+  if (isDevelopmentEnv()) {
+    console.info('prismaKnownValidationErrors', message);
+  }
+
+  throw new InternalServerErrorException('Erro ao tentar realizar a ação.');
+}
+
+export function unknownError(error: Error) {
+  if (isDevelopmentEnv()) {
+    console.info('unknownError', error);
+  }
+
+  throw new InternalServerErrorException('Erro ao tentar realizar a ação.');
 }
