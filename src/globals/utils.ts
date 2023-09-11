@@ -1,11 +1,14 @@
 import { createHash } from 'node:crypto';
-import { HashDataAsyncProps } from './types';
+import type { HashDataAsyncProps, EncryptDataAsyncProps } from './types';
+import bcrypt from 'bcrypt';
 
 const algorithm = 'sha256';
 const digest = 'hex';
 
-export function hashDataAsync(props: HashDataAsyncProps): Promise<string> {
-  const { unhashedData, salt } = props;
+export async function hashDataAsync(
+  props: HashDataAsyncProps,
+): Promise<string> {
+  const { salt, unhashedData } = props;
 
   return new Promise((resolve, reject) => {
     try {
@@ -18,4 +21,11 @@ export function hashDataAsync(props: HashDataAsyncProps): Promise<string> {
       reject();
     }
   });
+}
+
+export async function encryptDataAsync(
+  props: EncryptDataAsyncProps,
+): Promise<string> {
+  const { salt, unencryptedPassword } = props;
+  return await bcrypt.hash(unencryptedPassword, salt);
 }
