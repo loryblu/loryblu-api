@@ -49,6 +49,8 @@ export function prismaKnownRequestErrors(
       throw new BadRequestException(
         `O ${target} informado já está em uso, tente outro.`,
       );
+    default:
+      throw new InternalServerErrorException('Erro ao tentar realizar a ação.');
   }
 }
 
