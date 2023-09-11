@@ -7,8 +7,8 @@ import { ParentService } from './parent.service';
 export class ParentController {
   constructor(private parentService: ParentService) {}
 
-  @Post('/register')
   @ApiTags('Authentication')
+  @Post('/register')
   async register(@Body() reateAccountInput: CreateAccountDto) {
     await this.parentService.newAccountPropsProcessing(reateAccountInput);
 
