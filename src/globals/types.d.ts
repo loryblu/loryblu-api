@@ -2,7 +2,7 @@ import type { ValidationOptions } from 'class-validator';
 
 type Message = ValidationOptions['message'];
 
-export type ErrorMessagesProps = {
+export type ValidationErrorMessagesProps = {
   emptyField: Message;
   booleanField: Message;
   stringField: Message;

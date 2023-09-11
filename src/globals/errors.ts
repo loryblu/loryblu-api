@@ -1,8 +1,9 @@
 import { BadRequestException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import type { ErrorMessagesProps } from './types';
+import type { ValidationErrorMessagesProps } from './types';
+import { dataExampleISO8601 } from './constants';
 
-export const errorMessages: ErrorMessagesProps = {
+export const validationErrorMessages: ValidationErrorMessagesProps = {
   emptyField: (args) => {
     return `O campo [${args.property}] não pode estar vazio.`;
   },
@@ -28,7 +29,7 @@ export const errorMessages: ErrorMessagesProps = {
     return 'A senha deve conter no mínimo uma letra maiúscula, uma letra minúscula, um número, um símbolo e no mínimo 8 caracteres.';
   },
   birthDatePattern: () => {
-    return 'A data de nescimento informada deve ter um formato ISO8601 e ser do tipo texto.';
+    return `A data de nascimento informada deve ter um formato ISO8601 e ser do tipo texto. ex: ${dataExampleISO8601}`;
   },
   genderPattern: (args) => {
     return `O sexo deve ser [${args.constraints[1]}].`;
