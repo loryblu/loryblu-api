@@ -2,11 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { NewAccountRepositoryInput } from './parent.entity';
-import {
-  unknownError,
-  prismaKnownRequestErrors,
-  prismaKnownValidationErrors,
-} from 'src/globals/errors';
+import { unknownError, prismaKnownRequestErrors } from 'src/globals/errors';
 
 @Injectable()
 export class ParentRepository {
@@ -42,10 +38,6 @@ export class ParentRepository {
       .catch((error) => {
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
           prismaKnownRequestErrors(error);
-        }
-
-        if (error instanceof Prisma.PrismaClientValidationError) {
-          prismaKnownValidationErrors(error);
         }
 
         unknownError(error);

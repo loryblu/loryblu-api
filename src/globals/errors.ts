@@ -49,21 +49,7 @@ export function prismaKnownRequestErrors(
       throw new BadRequestException(
         `O ${target} informado já está em uso, tente outro.`,
       );
-    default:
-      throw new InternalServerErrorException('Erro ao tentar realizar a ação.');
   }
-}
-
-export function prismaKnownValidationErrors(
-  error: Prisma.PrismaClientValidationError,
-) {
-  const message = error.message || 'unknow_meta';
-
-  if (isDevelopmentEnv()) {
-    console.info('prismaKnownValidationErrors', message);
-  }
-
-  throw new InternalServerErrorException('Erro ao tentar realizar a ação.');
 }
 
 export function unknownError(error: Error) {
