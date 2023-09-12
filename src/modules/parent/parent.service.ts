@@ -153,6 +153,9 @@ export class ParentService {
       date: expiresIn,
     });
 
-    return { url };
+    return {
+      url,
+      fullname: account.fullname,
+    };
   }
 }

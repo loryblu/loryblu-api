@@ -28,7 +28,11 @@ export class ParentController {
     );
 
     if (created) {
-      console.log('Send mail to: ', created, recoveryInput.email);
+      await this.mailService.sendLinkToResetPassword({
+        to: recoveryInput.email,
+        recoverLink: created.url,
+        userName: created.fullname,
+      });
     }
 
     return {

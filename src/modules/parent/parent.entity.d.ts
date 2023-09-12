@@ -11,11 +11,18 @@ export type NewAccountRepositoryInput = {
   childrenProfile: Pick<ChildrenProfile, 'fullname' | 'birthdate' | 'gender'>;
 };
 
-export type GetCredentialIdByEmailOutput = Pick<Credential, 'id'> | void;
+export type GetCredentialIdByEmailOutput = {
+  id: Credential['id'];
+  fullname: ParentProfile['fullname'];
+} | void;
+
 export type PasswordResetInput = Omit<ResetPasswordInfo, 'id'>;
+
 export type PasswordResetOutput = {
   url: string;
+  fullname: ParentProfile['fullname'];
 } | void;
+
 export type FormatLinkProps = {
   token: string;
   date: Date;

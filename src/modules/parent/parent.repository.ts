@@ -60,10 +60,22 @@ export class ParentRepository {
         },
         select: {
           id: true,
+          parentProfile: {
+            select: {
+              fullname: true,
+            },
+          },
         },
       })
       .then((response) => {
-        return response;
+        if (response) {
+          return {
+            id: response.id,
+            fullname: response.parentProfile.fullname,
+          };
+        }
+
+        return null;
       })
       .catch((error) => {
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
