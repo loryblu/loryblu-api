@@ -9,7 +9,7 @@ import {
   Matches,
   MinLength,
 } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, PickType } from '@nestjs/swagger';
 import { Genders } from '@prisma/client';
 import { fullnameRegExp, dataExampleISO8601 } from 'src/globals/constants';
 import { validationErrorMessages } from 'src/globals/errors';
@@ -54,3 +54,5 @@ export class CreateAccountDto {
   @IsEnum(Genders, { message: validationErrorMessages.genderPattern })
   readonly childrenGender: Genders;
 }
+
+export class ResetPasswordDto extends PickType(CreateAccountDto, ['email']) {}
