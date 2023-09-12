@@ -27,13 +27,13 @@ describe('ParentService unit test', () => {
   });
 
   describe('Create account', () => {
-    it('Happy path - should return a instanceof Boolean : value true', async () => {
+    it('Happy path - should return undefined', async () => {
       const actual = await service.newAccountPropsProcessing({
         ...stubs.createAccountInput,
         policiesAccepted: true,
       });
 
-      expect(actual).toEqual(undefined);
+      expect(actual).toStrictEqual(undefined);
     });
 
     it('Unhappy path - should return a BadRequestException', async () => {
