@@ -142,7 +142,7 @@ export class ParentService {
 
     const expiresIn = this.recoveryTokenExpirationDate();
 
-    this.parentRepository.savePasswordResetInformation({
+    await this.parentRepository.savePasswordResetInformation({
       credentialId: account.id,
       expiresIn: expiresIn,
       recoveryToken: generatedToken.hashed,
