@@ -38,6 +38,12 @@ PORT=[Porta que o servidor expõe]
 NODE_ENV=[Ambiente atual]
 # ex: development
 
+SALT_DATA_HASH=[Chave secreta para mesclar com o hash de dados sensíveis]
+# ex: secret.salt.data
+
+SALT_DATA_PASS=[Chave secreta para randomizar a senha]
+# ex: 8
+
 MAIL_API_KEY=[Chave do serviço Resend]
 # ex: re_123456789
 

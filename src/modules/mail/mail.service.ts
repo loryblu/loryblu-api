@@ -30,7 +30,7 @@ export class MailService {
         userName,
       });
 
-      this.sendMail();
+      await this.sendMail();
     } catch (error) {
       throw new InternalServerErrorException(
         'Error when trying to configure email: [send_link_to_reset_password]',

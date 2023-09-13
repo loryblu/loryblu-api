@@ -4,51 +4,55 @@ import {
   IsStrongPassword,
   IsBoolean,
   IsString,
-  IsAlpha,
-  Length,
   IsEnum,
   IsDateString,
+  Matches,
+  MinLength,
 } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, PickType } from '@nestjs/swagger';
 import { Genders } from '@prisma/client';
+import { fullnameRegExp, dataExampleISO8601 } from 'src/globals/constants';
+import { validationErrorMessages } from 'src/globals/errors';
 
 export class CreateAccountDto {
   @ApiProperty()
-  @IsNotEmpty()
-  @IsEmail()
+  @IsNotEmpty({ message: validationErrorMessages.emptyField })
+  @IsEmail({}, { message: validationErrorMessages.emailPattern })
   readonly email: string;
 
   @ApiProperty()
-  @IsNotEmpty()
-  @IsStrongPassword()
+  @IsNotEmpty({ message: validationErrorMessages.emptyField })
+  @IsStrongPassword({}, { message: validationErrorMessages.passwordPattern })
   readonly password: string;
 
   @ApiProperty()
-  @IsNotEmpty()
-  @IsBoolean()
+  @IsNotEmpty({ message: validationErrorMessages.emptyField })
+  @IsBoolean({ message: validationErrorMessages.booleanField })
   readonly policiesAccepted: boolean;
 
   @ApiProperty()
-  @IsNotEmpty()
-  @IsString()
-  @Length(5)
-  @IsAlpha('pt-BR')
+  @IsNotEmpty({ message: validationErrorMessages.emptyField })
+  @IsString({ message: validationErrorMessages.stringField })
+  @MinLength(5, { message: validationErrorMessages.minLength })
+  @Matches(fullnameRegExp, { message: validationErrorMessages.fullnameField })
   readonly parentName: string;
 
   @ApiProperty()
-  @IsNotEmpty()
-  @IsString()
-  @Length(5)
-  @IsAlpha('pt-BR')
+  @IsNotEmpty({ message: validationErrorMessages.emptyField })
+  @IsString({ message: validationErrorMessages.stringField })
+  @MinLength(5, { message: validationErrorMessages.minLength })
+  @Matches(fullnameRegExp, { message: validationErrorMessages.fullnameField })
   readonly childrenName: string;
 
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsDateString()
+  @ApiProperty({ example: dataExampleISO8601 })
+  @IsNotEmpty({ message: validationErrorMessages.emptyField })
+  @IsDateString({}, { message: validationErrorMessages.birthDatePattern })
   readonly childrenBirthDate: Date;
 
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsEnum(Genders)
+  @ApiProperty({ enum: Genders })
+  @IsNotEmpty({ message: validationErrorMessages.emptyField })
+  @IsEnum(Genders, { message: validationErrorMessages.genderPattern })
   readonly childrenGender: Genders;
 }
+
+export class ResetPasswordDto extends PickType(CreateAccountDto, ['email']) {}

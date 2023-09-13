@@ -1,11 +1,12 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  BadRequestException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { NewAccountRepositoryInput } from './parent.entity';
+import {
+  NewAccountRepositoryInput,
+  GetCredentialIdByEmailOutput,
+  PasswordResetInput,
+} from './parent.entity';
+import { unknownError, prismaKnownRequestErrors } from 'src/globals/errors';
 
 @Injectable()
 export class ParentRepository {
@@ -13,10 +14,10 @@ export class ParentRepository {
 
   async saveCredentialParentAndChildrenProps(
     data: NewAccountRepositoryInput,
-  ): Promise<boolean> {
+  ): Promise<void> {
     const { credential, parentProfile, childrenProfile } = data;
 
-    return await this.prisma.credential
+    await this.prisma.credential
       .create({
         data: {
           email: credential.email,
@@ -37,23 +38,84 @@ export class ParentRepository {
             },
           },
         },
-        select: {},
       })
-      .then(() => true)
       .catch((error) => {
         if (error instanceof Prisma.PrismaClientKnownRequestError) {
-          // ! Creates a module to validate prisma errors
-          switch (error.code) {
-            case 'P2002':
-              throw new BadRequestException(
-                'Unique constraint failed on the e-mail',
-              );
-          }
+          prismaKnownRequestErrors(error);
         }
 
-        throw new InternalServerErrorException(
-          'Error on trying saves new parents account',
-        );
+        unknownError(error);
+      });
+
+    return;
+  }
+
+  async getCredentialIdByEmail(
+    hashedEmail: string,
+  ): Promise<GetCredentialIdByEmailOutput> {
+    const response = await this.prisma.credential
+      .findUnique({
+        where: {
+          email: hashedEmail,
+        },
+        select: {
+          id: true,
+          parentProfile: {
+            select: {
+              fullname: true,
+            },
+          },
+        },
+      })
+      .then((response) => {
+        if (response) {
+          return {
+            id: response.id,
+            fullname: response.parentProfile.fullname,
+          };
+        }
+
+        return null;
+      })
+      .catch((error) => {
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+          prismaKnownRequestErrors(error);
+        }
+
+        unknownError(error);
+      });
+
+    return response;
+  }
+
+  async savePasswordResetInformation(input: PasswordResetInput): Promise<void> {
+    const { recoveryToken, expiresIn, credentialId } = input;
+
+    await this.prisma.resetPasswordInfo
+      .upsert({
+        where: {
+          credentialId,
+        },
+        update: {
+          recoveryToken,
+          expiresIn,
+        },
+        create: {
+          recoveryToken,
+          expiresIn,
+          credential: {
+            connect: {
+              id: credentialId,
+            },
+          },
+        },
+      })
+      .catch((error) => {
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+          prismaKnownRequestErrors(error);
+        }
+
+        unknownError(error);
       });
   }
 }

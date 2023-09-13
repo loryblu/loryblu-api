@@ -1,24 +1,108 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { randomBytes } from 'node:crypto';
+import {
+  Injectable,
+  BadRequestException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { ParentRepository } from './parent.repository';
-import { CreateAccountDto } from './parent.dto';
+import { CreateAccountDto, ResetPasswordDto } from './parent.dto';
+import { encryptDataAsync, hashDataAsync } from 'src/globals/utils';
+import {
+  PasswordResetOutput,
+  RandomTokenProps,
+  RandomTokenOutput,
+  FormatLinkProps,
+} from './parent.entity';
 
 @Injectable()
 export class ParentService {
   constructor(private parentRepository: ParentRepository) {}
 
-  async newAccountPropsProcessing(input: CreateAccountDto): Promise<boolean> {
-    if (!input.policiesAccepted) {
+  private async hashEmail(email: string): Promise<string> {
+    const hashedEmail = await hashDataAsync({
+      unhashedData: email,
+      salt: process.env.SALT_DATA_HASH,
+    });
+
+    if (!hashedEmail) {
+      throw new InternalServerErrorException('Error when trying hash email');
+    }
+
+    return hashedEmail;
+  }
+
+  private async encryptPassword(password: string): Promise<string> {
+    const encryptedPassword = await encryptDataAsync({
+      unencryptedPassword: password,
+      salt: Number(process.env.SALT_DATA_PASS),
+    });
+
+    if (!encryptedPassword) {
+      throw new InternalServerErrorException(
+        'Error when trying encrypt some data.',
+      );
+    }
+
+    return encryptedPassword;
+  }
+
+  private async randomToken(
+    props: RandomTokenProps,
+  ): Promise<RandomTokenOutput> {
+    const { hashToken = false, bytes = 20, encoding = 'base64url' } = props;
+    const token = randomBytes(bytes).toString(encoding);
+    let hashedToken: string;
+
+    if (hashToken) {
+      hashedToken = await hashDataAsync({
+        unhashedData: token,
+        salt: process.env.SALT_DATA_HASH,
+      });
+
+      if (!hashedToken) {
+        throw new InternalServerErrorException(
+          'Erro ao tentar criar o hash do token.',
+        );
+      }
+    }
+
+    return {
+      original: token,
+      hashed: hashedToken,
+    };
+  }
+
+  private recoveryTokenExpirationDate(): Date {
+    const tokenExpiresIn = 6e4 * 5;
+    const now = new Date().getTime();
+    const expiresIn = new Date(now + tokenExpiresIn);
+
+    return expiresIn;
+  }
+
+  private formatDeepLink(props: FormatLinkProps): string {
+    const { token, date } = props;
+    const params = `r_token=${token}&expires_in=${date.toISOString()}`;
+    const encodedParams = encodeURIComponent(params);
+
+    return `loryblu://password_recovery/?${encodedParams}`;
+  }
+
+  async newAccountPropsProcessing(input: CreateAccountDto): Promise<void> {
+    if (input.policiesAccepted !== true) {
       throw new BadRequestException(
         'Por favor, para ter uma conta você deve aceitar nossos termos de uso e políticas de privacidade.',
       );
     }
 
+    const hashedEmail = await this.hashEmail(input.email);
+    const encryptedPassword = await this.encryptPassword(input.password);
     const now = new Date();
 
     await this.parentRepository.saveCredentialParentAndChildrenProps({
       credential: {
-        email: input.email,
-        password: input.email,
+        email: hashedEmail,
+        password: encryptedPassword,
         policiesAcceptedAt: now,
         role: 'USER',
         status: 'ACTIVE',
@@ -33,6 +117,45 @@ export class ParentService {
       },
     });
 
-    return true;
+    return;
+  }
+
+  async createTokenToResetPassword(
+    input: ResetPasswordDto,
+  ): Promise<PasswordResetOutput> {
+    const { email } = input;
+
+    // ! verificar responsabilidade única
+    const hashedEmail = await this.hashEmail(email);
+    const account = await this.parentRepository.getCredentialIdByEmail(
+      hashedEmail,
+    );
+
+    if (!account) {
+      return;
+    }
+
+    const generatedToken = await this.randomToken({
+      bytes: 40,
+      hashToken: true,
+    });
+
+    const expiresIn = this.recoveryTokenExpirationDate();
+
+    await this.parentRepository.savePasswordResetInformation({
+      credentialId: account.id,
+      expiresIn: expiresIn,
+      recoveryToken: generatedToken.hashed,
+    });
+
+    const url = this.formatDeepLink({
+      token: generatedToken.original,
+      date: expiresIn,
+    });
+
+    return {
+      url,
+      fullname: account.fullname,
+    };
   }
 }
