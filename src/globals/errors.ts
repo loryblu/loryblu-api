@@ -3,7 +3,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import type { ValidationErrorMessagesProps } from './types';
+import type { ValidationErrorMessagesProps } from './entity';
 import { dataExampleISO8601, isDevelopmentEnv } from './constants';
 
 export const validationErrorMessages: ValidationErrorMessagesProps = {
