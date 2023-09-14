@@ -4,19 +4,19 @@ import {
   BadRequestException,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { ParentRepository } from './parent.repository';
-import { CreateAccountDto, ResetPasswordDto } from './parent.dto';
+import { AccountRepository } from './account.repository';
+import { CreateAccountDto, ResetPasswordDto } from './account.dto';
 import { encryptDataAsync, hashDataAsync } from 'src/globals/utils';
 import {
   PasswordResetOutput,
   RandomTokenProps,
   RandomTokenOutput,
   FormatLinkProps,
-} from './parent.entity';
+} from './account.entity';
 
 @Injectable()
-export class ParentService {
-  constructor(private parentRepository: ParentRepository) {}
+export class AccountService {
+  constructor(private accountRepository: AccountRepository) {}
 
   private async hashEmail(email: string): Promise<string> {
     const hashedEmail = await hashDataAsync({
@@ -99,7 +99,7 @@ export class ParentService {
     const encryptedPassword = await this.encryptPassword(input.password);
     const now = new Date();
 
-    await this.parentRepository.saveCredentialParentAndChildrenProps({
+    await this.accountRepository.saveCredentialParentAndChildrenProps({
       credential: {
         email: hashedEmail,
         password: encryptedPassword,
@@ -127,7 +127,7 @@ export class ParentService {
 
     // ! verificar responsabilidade única
     const hashedEmail = await this.hashEmail(email);
-    const account = await this.parentRepository.getCredentialIdByEmail(
+    const account = await this.accountRepository.getCredentialIdByEmail(
       hashedEmail,
     );
 
@@ -142,7 +142,7 @@ export class ParentService {
 
     const expiresIn = this.recoveryTokenExpirationDate();
 
-    await this.parentRepository.savePasswordResetInformation({
+    await this.accountRepository.savePasswordResetInformation({
       credentialId: account.id,
       expiresIn: expiresIn,
       recoveryToken: generatedToken.hashed,

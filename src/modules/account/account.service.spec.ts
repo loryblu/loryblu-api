@@ -1,14 +1,14 @@
 import { BadRequestException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { ParentService } from './parent.service';
-import { ParentRepository } from './parent.repository';
-import * as stubs from './parent.service.stubs';
+import { AccountService } from './account.service';
+import { AccountRepository } from './account.repository';
+import * as stubs from './account.service.stubs';
 
-describe('ParentService unit test', () => {
-  let service: ParentService;
+describe('AccountService unit test', () => {
+  let service: AccountService;
 
-  const parentRepositoryMock = {
+  const accountRepositoryMock = {
     saveCredentialParentAndChildrenProps: jest.fn(),
     getCredentialIdByEmail: jest
       .fn()
@@ -19,15 +19,15 @@ describe('ParentService unit test', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        ParentService,
+        AccountService,
         {
-          provide: ParentRepository,
-          useValue: parentRepositoryMock,
+          provide: AccountRepository,
+          useValue: accountRepositoryMock,
         },
       ],
     }).compile();
 
-    service = module.get<ParentService>(ParentService);
+    service = module.get<AccountService>(AccountService);
   });
 
   describe('Create account', () => {
@@ -74,7 +74,7 @@ describe('ParentService unit test', () => {
 
     it('Unhappy path - should return void', async () => {
       jest
-        .spyOn(parentRepositoryMock, 'getCredentialIdByEmail')
+        .spyOn(accountRepositoryMock, 'getCredentialIdByEmail')
         .mockReturnValueOnce(null);
 
       const actual = await service.createTokenToResetPassword(

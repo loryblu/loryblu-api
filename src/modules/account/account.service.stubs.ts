@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
-import { CreateAccountDto, ResetPasswordDto } from './parent.dto';
-import { GetCredentialIdByEmailOutput } from './parent.entity';
+import { CreateAccountDto, ResetPasswordDto } from './account.dto';
+import { GetCredentialIdByEmailOutput } from './account.entity';
 import { Genders } from '@prisma/client';
 
 export const createAccountInput: CreateAccountDto = {

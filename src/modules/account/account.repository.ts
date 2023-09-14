@@ -5,11 +5,11 @@ import {
   NewAccountRepositoryInput,
   GetCredentialIdByEmailOutput,
   PasswordResetInput,
-} from './parent.entity';
+} from './account.entity';
 import { unknownError, prismaKnownRequestErrors } from 'src/globals/errors';
 
 @Injectable()
-export class ParentRepository {
+export class AccountRepository {
   constructor(private prisma: PrismaService) {}
 
   async saveCredentialParentAndChildrenProps(
