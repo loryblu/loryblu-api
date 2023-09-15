@@ -1,8 +1,8 @@
 import { BadRequestException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { AccountService } from './account.service';
-import { AccountRepository } from './account.repository';
+import { AccountService } from 'src/modules/account/account.service';
+import { AccountRepository } from 'src/modules/account/account.repository';
 import * as stubs from './account.service.stubs';
 
 describe('AccountService unit test', () => {
