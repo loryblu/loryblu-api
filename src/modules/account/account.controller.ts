@@ -48,8 +48,9 @@ export class AccountController {
   @ApiTags('Reset Password')
   @Post('/set-password')
   @HttpCode(200)
-  async setPassword(@Body() setPassword: SetPasswordDto) {
-    console.log(setPassword);
-    return;
+  async setPassword(@Body() setPasswordInput: SetPasswordDto) {
+    await this.accountService.saveNewPassword(setPasswordInput);
+
+    return { message: 'Senha redefinida com sucesso!' };
   }
 }

@@ -16,6 +16,20 @@ export type GetCredentialIdByEmailOutput = {
   fullname: ParentProfile['fullname'];
 } | void;
 
+export type getCredentialIdByRecoveryTokenInput = {
+  hashedToken: string;
+  now: Date;
+};
+
+export type getCredentialIdByRecoveryTokenOutout = {
+  id: Credential['id'];
+} | void;
+
+export type SavePasswordInput = {
+  credentialId: Credential['id'];
+  encryptedPassword: Credential['password'];
+};
+
 export type PasswordResetInput = Omit<ResetPasswordInfo, 'id'>;
 
 export type PasswordResetOutput = {

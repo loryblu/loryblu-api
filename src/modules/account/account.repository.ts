@@ -5,6 +5,9 @@ import {
   NewAccountRepositoryInput,
   GetCredentialIdByEmailOutput,
   PasswordResetInput,
+  getCredentialIdByRecoveryTokenInput,
+  getCredentialIdByRecoveryTokenOutout,
+  SavePasswordInput,
 } from './account.entity';
 import { unknownError, prismaKnownRequestErrors } from 'src/globals/errors';
 
@@ -86,6 +89,65 @@ export class AccountRepository {
       });
 
     return response;
+  }
+
+  async getCredentialIdByRecoveryToken(
+    input: getCredentialIdByRecoveryTokenInput,
+  ): Promise<getCredentialIdByRecoveryTokenOutout> {
+    const { hashedToken, now } = input;
+
+    const response = await this.prisma.resetPasswordInfo
+      .findUnique({
+        where: {
+          recoveryToken: hashedToken,
+          expiresIn: {
+            gte: now,
+          },
+        },
+        select: {
+          credentialId: true,
+        },
+      })
+      .then((response) => {
+        if (response) {
+          return { id: response.credentialId };
+        }
+
+        return;
+      })
+      .catch((error) => {
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+          prismaKnownRequestErrors(error);
+        }
+
+        unknownError(error);
+      });
+
+    return response;
+  }
+
+  async savePassword(input: SavePasswordInput): Promise<void> {
+    const { credentialId, encryptedPassword } = input;
+
+    await this.prisma.credential
+      .update({
+        where: {
+          id: credentialId,
+        },
+        data: {
+          password: encryptedPassword,
+          resetPasswordInfo: {
+            delete: true,
+          },
+        },
+      })
+      .catch((error) => {
+        if (error instanceof Prisma.PrismaClientKnownRequestError) {
+          prismaKnownRequestErrors(error);
+        }
+
+        unknownError(error);
+      });
   }
 
   async savePasswordResetInformation(input: PasswordResetInput): Promise<void> {
