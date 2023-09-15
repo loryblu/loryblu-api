@@ -68,7 +68,7 @@ export class AccountService {
   }
 
   private recoveryTokenExpirationDate(): Date {
-    const tokenExpiresIn = 6e4 * 1;
+    const tokenExpiresIn = 6e4 * 5;
     const now = new Date().getTime();
     const expiresIn = new Date(now + tokenExpiresIn);
 
