@@ -1,7 +1,11 @@
 import { Controller, Post, Body, HttpCode } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { MailService } from '../mail/mail.service';
-import { CreateAccountDto, ResetPasswordDto } from './account.dto';
+import {
+  CreateAccountDto,
+  ResetPasswordDto,
+  SetPasswordDto,
+} from './account.dto';
 import { AccountService } from './account.service';
 
 @Controller('/auth')
@@ -39,5 +43,13 @@ export class AccountController {
       message:
         'Se o e-mail existir em nossa base de dados você receberá o link para definir uma nova senha. Verifique sua caixa de entrada e spam.',
     };
+  }
+
+  @ApiTags('Reset Password')
+  @Post('/set-password')
+  @HttpCode(200)
+  async setPassword(@Body() setPassword: SetPasswordDto) {
+    console.log(setPassword);
+    return;
   }
 }

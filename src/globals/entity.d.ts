@@ -13,6 +13,7 @@ export type ValidationErrorMessagesProps = {
   passwordPattern: Message;
   birthDatePattern: Message;
   genderPattern: Message;
+  pattern: Message;
 };
 
 export type HashDataAsyncProps = {

@@ -11,7 +11,11 @@ import {
 } from 'class-validator';
 import { ApiProperty, PickType } from '@nestjs/swagger';
 import { Genders } from '@prisma/client';
-import { fullnameRegExp, dataExampleISO8601 } from 'src/globals/constants';
+import {
+  fullnameRegExp,
+  recoveryTokenRegExp,
+  dataExampleISO8601,
+} from 'src/globals/constants';
 import { validationErrorMessages } from 'src/globals/errors';
 
 export class CreateAccountDto {
@@ -56,3 +60,11 @@ export class CreateAccountDto {
 }
 
 export class ResetPasswordDto extends PickType(CreateAccountDto, ['email']) {}
+
+export class SetPasswordDto extends PickType(CreateAccountDto, ['password']) {
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString({ message: validationErrorMessages.stringField })
+  @Matches(recoveryTokenRegExp, { message: validationErrorMessages.pattern })
+  readonly recoveryToken: string;
+}

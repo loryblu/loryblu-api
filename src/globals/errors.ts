@@ -37,6 +37,9 @@ export const validationErrorMessages: ValidationErrorMessagesProps = {
   genderPattern: (args) => {
     return `O sexo deve ser [${args.constraints[1]}].`;
   },
+  pattern: (args) => {
+    return `O ${args.property} está em um formato inválido.`;
+  },
 };
 
 export function prismaKnownRequestErrors(
