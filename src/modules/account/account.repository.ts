@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import {
   NewAccountRepositoryInput,
@@ -9,7 +8,7 @@ import {
   getCredentialIdByRecoveryTokenOutout,
   SavePasswordInput,
 } from './account.entity';
-import { unknownError, prismaKnownRequestErrors } from 'src/globals/errors';
+import { hendleErrors } from 'src/globals/errors';
 
 @Injectable()
 export class AccountRepository {
@@ -42,13 +41,7 @@ export class AccountRepository {
           },
         },
       })
-      .catch((error) => {
-        if (error instanceof Prisma.PrismaClientKnownRequestError) {
-          prismaKnownRequestErrors(error);
-        }
-
-        unknownError(error);
-      });
+      .catch((error) => hendleErrors(error));
 
     return;
   }
@@ -80,13 +73,7 @@ export class AccountRepository {
 
         return null;
       })
-      .catch((error) => {
-        if (error instanceof Prisma.PrismaClientKnownRequestError) {
-          prismaKnownRequestErrors(error);
-        }
-
-        unknownError(error);
-      });
+      .catch((error) => hendleErrors(error));
 
     return response;
   }
@@ -115,13 +102,7 @@ export class AccountRepository {
 
         return;
       })
-      .catch((error) => {
-        if (error instanceof Prisma.PrismaClientKnownRequestError) {
-          prismaKnownRequestErrors(error);
-        }
-
-        unknownError(error);
-      });
+      .catch((error) => hendleErrors(error));
 
     return response;
   }
@@ -141,13 +122,7 @@ export class AccountRepository {
           },
         },
       })
-      .catch((error) => {
-        if (error instanceof Prisma.PrismaClientKnownRequestError) {
-          prismaKnownRequestErrors(error);
-        }
-
-        unknownError(error);
-      });
+      .catch((error) => hendleErrors(error));
   }
 
   async savePasswordResetInformation(input: PasswordResetInput): Promise<void> {
@@ -172,12 +147,6 @@ export class AccountRepository {
           },
         },
       })
-      .catch((error) => {
-        if (error instanceof Prisma.PrismaClientKnownRequestError) {
-          prismaKnownRequestErrors(error);
-        }
-
-        unknownError(error);
-      });
+      .catch((error) => hendleErrors(error));
   }
 }

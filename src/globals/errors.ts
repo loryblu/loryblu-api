@@ -55,10 +55,18 @@ export function prismaKnownRequestErrors(
   }
 }
 
-export function unknownError(error: Error) {
+export function unknownError(error: unknown) {
   if (isDevelopmentEnv()) {
     console.info('unknownError', error);
   }
 
   throw new InternalServerErrorException('Erro ao tentar realizar a ação.');
+}
+
+export function hendleErrors(error: unknown) {
+  if (error instanceof Prisma.PrismaClientKnownRequestError) {
+    prismaKnownRequestErrors(error);
+  }
+
+  unknownError(error);
 }
