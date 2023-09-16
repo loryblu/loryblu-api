@@ -3,7 +3,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import type { ValidationErrorMessagesProps } from './types';
+import type { ValidationErrorMessagesProps } from './entity';
 import { dataExampleISO8601, isDevelopmentEnv } from './constants';
 
 export const validationErrorMessages: ValidationErrorMessagesProps = {
@@ -37,6 +37,9 @@ export const validationErrorMessages: ValidationErrorMessagesProps = {
   genderPattern: (args) => {
     return `O sexo deve ser [${args.constraints[1]}].`;
   },
+  pattern: (args) => {
+    return `O ${args.property} está em um formato inválido.`;
+  },
 };
 
 export function prismaKnownRequestErrors(
@@ -52,10 +55,18 @@ export function prismaKnownRequestErrors(
   }
 }
 
-export function unknownError(error: Error) {
+export function unknownError(error: unknown) {
   if (isDevelopmentEnv()) {
     console.info('unknownError', error);
   }
 
   throw new InternalServerErrorException('Erro ao tentar realizar a ação.');
+}
+
+export function hendleErrors(error: unknown) {
+  if (error instanceof Prisma.PrismaClientKnownRequestError) {
+    prismaKnownRequestErrors(error);
+  }
+
+  unknownError(error);
 }

@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { PrismaService } from './prisma.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 describe('PrismaService', () => {
   let service: PrismaService;
@@ -9,7 +9,7 @@ describe('PrismaService', () => {
       providers: [PrismaService],
     }).compile();
 
-    service = module.get(PrismaService);
+    service = module.get<PrismaService>(PrismaService);
   });
 
   it('should be defined', () => {

@@ -3,6 +3,7 @@ export const appVersion = process.env.npm_package_version;
 export const appLicense = process.env.npm_package_license;
 
 export const fullnameRegExp = /^[a-zÀ-ÿ ]+$/i;
+export const recoveryTokenRegExp = /^[a-zA-Z0-9_-]+$/;
 export const dataExampleISO8601 = 'YYYY-MM-DDTHH:mm:ss.sssZ';
 
 export const isDevelopmentEnv = () => process.env.NODE_ENV === 'development';

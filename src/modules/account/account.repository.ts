@@ -1,15 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import {
   NewAccountRepositoryInput,
   GetCredentialIdByEmailOutput,
   PasswordResetInput,
-} from './parent.entity';
-import { unknownError, prismaKnownRequestErrors } from 'src/globals/errors';
+  getCredentialIdByRecoveryTokenInput,
+  getCredentialIdByRecoveryTokenOutout,
+  SavePasswordInput,
+} from './account.entity';
+import { hendleErrors } from 'src/globals/errors';
 
 @Injectable()
-export class ParentRepository {
+export class AccountRepository {
   constructor(private prisma: PrismaService) {}
 
   async saveCredentialParentAndChildrenProps(
@@ -39,13 +41,7 @@ export class ParentRepository {
           },
         },
       })
-      .catch((error) => {
-        if (error instanceof Prisma.PrismaClientKnownRequestError) {
-          prismaKnownRequestErrors(error);
-        }
-
-        unknownError(error);
-      });
+      .catch((error) => hendleErrors(error));
 
     return;
   }
@@ -77,15 +73,56 @@ export class ParentRepository {
 
         return null;
       })
-      .catch((error) => {
-        if (error instanceof Prisma.PrismaClientKnownRequestError) {
-          prismaKnownRequestErrors(error);
-        }
-
-        unknownError(error);
-      });
+      .catch((error) => hendleErrors(error));
 
     return response;
+  }
+
+  async getCredentialIdByRecoveryToken(
+    input: getCredentialIdByRecoveryTokenInput,
+  ): Promise<getCredentialIdByRecoveryTokenOutout> {
+    const { hashedToken, now } = input;
+
+    const response = await this.prisma.resetPasswordInfo
+      .findUnique({
+        where: {
+          recoveryToken: hashedToken,
+          expiresIn: {
+            gte: now,
+          },
+        },
+        select: {
+          credentialId: true,
+        },
+      })
+      .then((response) => {
+        if (response) {
+          return { id: response.credentialId };
+        }
+
+        return;
+      })
+      .catch((error) => hendleErrors(error));
+
+    return response;
+  }
+
+  async savePassword(input: SavePasswordInput): Promise<void> {
+    const { credentialId, encryptedPassword } = input;
+
+    await this.prisma.credential
+      .update({
+        where: {
+          id: credentialId,
+        },
+        data: {
+          password: encryptedPassword,
+          resetPasswordInfo: {
+            delete: true,
+          },
+        },
+      })
+      .catch((error) => hendleErrors(error));
   }
 
   async savePasswordResetInformation(input: PasswordResetInput): Promise<void> {
@@ -110,12 +147,6 @@ export class ParentRepository {
           },
         },
       })
-      .catch((error) => {
-        if (error instanceof Prisma.PrismaClientKnownRequestError) {
-          prismaKnownRequestErrors(error);
-        }
-
-        unknownError(error);
-      });
+      .catch((error) => hendleErrors(error));
   }
 }

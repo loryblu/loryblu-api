@@ -4,31 +4,35 @@ import {
   BadRequestException,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { ParentRepository } from './parent.repository';
-import { CreateAccountDto, ResetPasswordDto } from './parent.dto';
+import { AccountRepository } from './account.repository';
+import {
+  CreateAccountDto,
+  ResetPasswordDto,
+  SetPasswordDto,
+} from './account.dto';
 import { encryptDataAsync, hashDataAsync } from 'src/globals/utils';
 import {
   PasswordResetOutput,
   RandomTokenProps,
   RandomTokenOutput,
   FormatLinkProps,
-} from './parent.entity';
+} from './account.entity';
 
 @Injectable()
-export class ParentService {
-  constructor(private parentRepository: ParentRepository) {}
+export class AccountService {
+  constructor(private accountRepository: AccountRepository) {}
 
-  private async hashEmail(email: string): Promise<string> {
-    const hashedEmail = await hashDataAsync({
-      unhashedData: email,
+  private async hashData(data: string): Promise<string> {
+    const hashed = await hashDataAsync({
+      unhashedData: data,
       salt: process.env.SALT_DATA_HASH,
     });
 
-    if (!hashedEmail) {
-      throw new InternalServerErrorException('Error when trying hash email');
+    if (!hashed) {
+      throw new InternalServerErrorException('Error when trying hash data');
     }
 
-    return hashedEmail;
+    return hashed;
   }
 
   private async encryptPassword(password: string): Promise<string> {
@@ -54,16 +58,7 @@ export class ParentService {
     let hashedToken: string;
 
     if (hashToken) {
-      hashedToken = await hashDataAsync({
-        unhashedData: token,
-        salt: process.env.SALT_DATA_HASH,
-      });
-
-      if (!hashedToken) {
-        throw new InternalServerErrorException(
-          'Erro ao tentar criar o hash do token.',
-        );
-      }
+      hashedToken = await this.hashData(token);
     }
 
     return {
@@ -95,11 +90,11 @@ export class ParentService {
       );
     }
 
-    const hashedEmail = await this.hashEmail(input.email);
+    const hashedEmail = await this.hashData(input.email);
     const encryptedPassword = await this.encryptPassword(input.password);
     const now = new Date();
 
-    await this.parentRepository.saveCredentialParentAndChildrenProps({
+    await this.accountRepository.saveCredentialParentAndChildrenProps({
       credential: {
         email: hashedEmail,
         password: encryptedPassword,
@@ -126,8 +121,8 @@ export class ParentService {
     const { email } = input;
 
     // ! verificar responsabilidade única
-    const hashedEmail = await this.hashEmail(email);
-    const account = await this.parentRepository.getCredentialIdByEmail(
+    const hashedEmail = await this.hashData(email);
+    const account = await this.accountRepository.getCredentialIdByEmail(
       hashedEmail,
     );
 
@@ -142,7 +137,7 @@ export class ParentService {
 
     const expiresIn = this.recoveryTokenExpirationDate();
 
-    await this.parentRepository.savePasswordResetInformation({
+    await this.accountRepository.savePasswordResetInformation({
       credentialId: account.id,
       expiresIn: expiresIn,
       recoveryToken: generatedToken.hashed,
@@ -157,5 +152,31 @@ export class ParentService {
       url,
       fullname: account.fullname,
     };
+  }
+
+  async saveNewPassword(input: SetPasswordDto): Promise<void> {
+    const { recoveryToken } = input;
+
+    const hashedToken = await this.hashData(recoveryToken);
+    const credential =
+      await this.accountRepository.getCredentialIdByRecoveryToken({
+        hashedToken,
+        now: new Date(),
+      });
+
+    if (!credential) {
+      throw new BadRequestException(
+        'Token expirado, ou inválido. Tente novamente.',
+      );
+    }
+
+    const encryptedPassword = await this.encryptPassword(input.password);
+
+    await this.accountRepository.savePassword({
+      credentialId: credential.id,
+      encryptedPassword,
+    });
+
+    return;
   }
 }
