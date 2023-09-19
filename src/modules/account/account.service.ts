@@ -93,6 +93,7 @@ export class AccountService {
     const hashedEmail = await this.hashData(input.email);
     const encryptedPassword = await this.encryptPassword(input.password);
     const now = new Date();
+    const childrenBirthDate = new Date(input.childrenBirthDate);
 
     await this.accountRepository.saveCredentialParentAndChildrenProps({
       credential: {
@@ -108,7 +109,7 @@ export class AccountService {
       childrenProfile: {
         fullname: input.childrenName,
         gender: input.childrenGender,
-        birthdate: input.childrenBirthDate,
+        birthdate: childrenBirthDate,
       },
     });
 

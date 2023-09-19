@@ -14,7 +14,7 @@ import { Genders } from '@prisma/client';
 import {
   fullnameRegExp,
   recoveryTokenRegExp,
-  dataExampleISO8601,
+  childrenBirthDateExample,
 } from 'src/globals/constants';
 import { validationErrorMessages } from 'src/globals/errors';
 
@@ -48,9 +48,12 @@ export class CreateAccountDto {
   @Matches(fullnameRegExp, { message: validationErrorMessages.fullnameField })
   readonly childrenName: string;
 
-  @ApiProperty({ example: dataExampleISO8601 })
+  @ApiProperty({ example: childrenBirthDateExample })
   @IsNotEmpty({ message: validationErrorMessages.emptyField })
-  @IsDateString({}, { message: validationErrorMessages.birthDatePattern })
+  @IsDateString(
+    { strict: true },
+    { message: validationErrorMessages.birthDatePattern },
+  )
   readonly childrenBirthDate: Date;
 
   @ApiProperty({ enum: Genders })
