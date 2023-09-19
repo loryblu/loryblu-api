@@ -4,7 +4,7 @@ import {
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import type { ValidationErrorMessagesProps } from './entity';
-import { dataExampleISO8601, isDevelopmentEnv } from './constants';
+import { isDevelopmentEnv } from './constants';
 
 export const validationErrorMessages: ValidationErrorMessagesProps = {
   emptyField: (args) => {
@@ -32,7 +32,7 @@ export const validationErrorMessages: ValidationErrorMessagesProps = {
     return 'A senha deve conter no mínimo uma letra maiúscula, uma letra minúscula, um número, um símbolo e no mínimo 8 caracteres.';
   },
   birthDatePattern: () => {
-    return `A data de nascimento informada deve ter um formato ISO8601 e ser do tipo texto. ex: ${dataExampleISO8601}`;
+    return `A data de nascimento informada deve ser do tipo texto e ser neste formato: YYYY-MM-DD`;
   },
   genderPattern: (args) => {
     return `O sexo deve ser [${args.constraints[1]}].`;
