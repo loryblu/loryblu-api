@@ -60,6 +60,7 @@ MAIL_TEST_COMPLAINED=[Email para teste : marcado como spam]
 # ex: mail.complained@example.com
 
 POSTGRES_USER=[Nome de usuário do banco de dados]
+
 # ex: admin
 
 POSTGRES_PASSWORD=[Senha do banco de dados]
@@ -88,6 +89,7 @@ $ git submodule update --init --recursive
 ### Dependências
 
 Depois de clonar e sempre que atualizar o repositório, execute o comando abaixo para manter as dependências atualizadas.
+
 ```bash
 $ yarn
 ```
@@ -139,8 +141,8 @@ LoryBlu tem [licença MIT](LICENSE).
 
 </details>
 
-<details>
-  <summary>Description in <b>en</b></summary>
+
+Description in <b>en</b>
 
 ### Requirements
 1. [Node.js 18.x LTS](https://nodejs.org/en) Installed.
@@ -151,7 +153,9 @@ LoryBlu tem [licença MIT](LICENSE).
 
 ## Clone the repository
 
+Testes unitários
 ```bash
+
 # git clone <repo-url> <dist>
 git clone https://github.com/loryblu/loryblu-api.git loryblu-api
 ```
@@ -262,7 +266,7 @@ $ yarn run start:prod
 
 ## Tests
 
-Unit testes
+Unit tests
 ```bash
 $ yarn test
 ```
@@ -270,6 +274,3 @@ $ yarn test
 ## License
 
 LoryBlu has [licença MIT](LICENSE).
-
-</details>
-
