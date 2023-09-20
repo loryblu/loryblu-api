@@ -1,22 +1,25 @@
 import { NestFactory } from '@nestjs/core';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { ValidationPipe } from '@nestjs/common';
+import { SwaggerModule } from '@nestjs/swagger';
+import helmet from 'helmet';
+
+import { swaggerDocumentConfig } from './globals/swagger';
+import { corsOptionsConfig } from './globals/cors';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const config = new DocumentBuilder()
-    .setTitle(process.env.npm_package_name)
-    .setVersion(process.env.npm_package_version)
-    .setLicense(
-      process.env.npm_package_license,
-      'https://github.com/loryblu/loryblu-api/blob/main/LICENSE',
-    )
-    .build();
-  const document = SwaggerModule.createDocument(app, config);
+  app.use(helmet());
+  app.enableCors(corsOptionsConfig);
+  app.useGlobalPipes(new ValidationPipe());
+
+  const document = SwaggerModule.createDocument(app, swaggerDocumentConfig);
   SwaggerModule.setup('', app, document);
 
-  await app.listen(process.env.PORT || 3000);
+  await app.listen(process.env.PORT, () => {
+    console.info(`[ONN] Port: ${process.env.PORT}`);
+  });
 }
 
 bootstrap();

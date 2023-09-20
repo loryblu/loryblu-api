@@ -11,17 +11,28 @@ datasource db {
 }
 
 model Credential {
-  id                 Int            @id @default(autoincrement())
-  email              String         @unique
+  id                 Int                @id @default(autoincrement())
+  email              String             @unique
   password           String
-  policiesAcceptedAt DateTime       @map("policies_accepted_at")
-  status             Status         @default(DISABLED)
-  role               Roles          @default(USER)
-  parentProfileId    ParentProfile?
-  updatedAt          DateTime       @updatedAt @map("updated_at")
-  createdAt          DateTime       @default(now()) @map("created_at")
+  policiesAcceptedAt DateTime           @map("policies_accepted_at")
+  status             Status             @default(DISABLED)
+  role               Roles              @default(USER)
+  parentProfile      ParentProfile?
+  resetPasswordInfo  ResetPasswordInfo?
+  updatedAt          DateTime           @updatedAt @map("updated_at")
+  createdAt          DateTime           @default(now()) @map("created_at")
 
   @@map("credentials")
+}
+
+model ResetPasswordInfo {
+  id            Int        @id @default(autoincrement())
+  recoveryToken String     @unique @map("recovery_token")
+  expiresIn     DateTime   @updatedAt @map("expires_in")
+  credentialId  Int        @unique @map("credential_id")
+  credential    Credential @relation(fields: [credentialId], references: [id], onDelete: Cascade)
+
+  @@map("reset_password_info")
 }
 
 model ParentProfile {
@@ -39,7 +50,7 @@ model ParentProfile {
 model ChildrenProfile {
   id        Int           @id @default(autoincrement())
   fullname  String
-  birthday  DateTime
+  birthdate DateTime
   gender    Genders
   parentId  String        @map("parent_id")
   parent    ParentProfile @relation(fields: [parentId], references: [id], onDelete: Cascade)

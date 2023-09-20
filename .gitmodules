@@ -1,0 +1,3 @@
+[submodule "src/modules/mail/templates"]
+	path = src/modules/mail/templates
+	url = https://github.com/loryblu/email-templates.git
