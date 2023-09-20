@@ -188,7 +188,7 @@ MAIL_API_KEY=[Resend service key]
 MAIL_FROM=[Application contact email]
 # e.g.: contato.app@example.com
 
-MAIL_TEST_DELIVERED=[Teste email : success]
+MAIL_TEST_DELIVERED=[Test email : success]
 # e.g.: mail.delivered@example.com
 
 MAIL_TEST_BOUNCED=[Test email : error]
