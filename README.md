@@ -173,7 +173,7 @@ Update the new `.env` with the following instructions:
 PORT=[Port that the server exposes]
 # e.g.: 8080
 
-NODE_ENV=[Surrent enviroment]
+NODE_ENV=[Current environment]
 # e.g.: development
 
 SALT_DATA_HASH=[Secret key to merge with the sensitive data hash]
