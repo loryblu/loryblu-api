@@ -59,7 +59,7 @@ MAIL_TEST_BOUNCED=[Email para teste : erro]
 MAIL_TEST_COMPLAINED=[Email para teste : marcado como spam]
 # ex: mail.complained@example.com
 
-POSTGRES_USER=[Nome de usuário do baco de dados]
+POSTGRES_USER=[Nome de usuário do banco de dados]
 # ex: admin
 
 POSTGRES_PASSWORD=[Senha do banco de dados]
@@ -138,3 +138,138 @@ $ yarn test
 LoryBlu tem [licença MIT](LICENSE).
 
 </details>
+
+<details>
+  <summary>Description in <b>en</b></summary>
+
+### Requirements
+1. [Node.js 18.x LTS](https://nodejs.org/en) Installed.
+1. [PostgreSQL](https://www.postgresql.org/) or [docker + docker-compose](https://docs.docker.com/compose/) installed.
+1. [Resend](https://resend.com/home) Email service used in the application.
+
+> ⚠ If you have `docker` and `docker-compose` intalled, you do not need to install `PostgreSQL` (database), there is a configured file to use PostgreSQL in docker,  `docker-compose.dev.yml`
+
+## Clone the repository
+
+```bash
+# git clone <repo-url> <dist>
+git clone https://github.com/loryblu/loryblu-api.git loryblu-api
+```
+
+This comamnd will clone the repository to the specified destination. You can omit the destination.
+
+## Set up the enviroment
+1. Duplicate the `.env.example` file from the main project;
+1. Rename it to `.env`;
+
+Update the new `.env` with the following instructions:
+```md
+# Replace the examples inside square brackets "[Database username]" with the final value "root"
+
+PORT=[Port that the server exposes]
+# e.g.: 8080
+
+NODE_ENV=[Surrent enviroment]
+# e.g.: development
+
+SALT_DATA_HASH=[Secret key to merge with the sensitive data hash]
+# e.g.: secret.salt.data
+
+SALT_DATA_PASS=[Secret key to randomize the password]
+# e.g.: 8
+
+MAIL_API_KEY=[Resend service key]
+# e.g.: re_123456789
+
+MAIL_FROM=[Application contact email]
+# e.g.: contato.app@example.com
+
+MAIL_TEST_DELIVERED=[Teste email : success]
+# e.g.: mail.delivered@example.com
+
+MAIL_TEST_BOUNCED=[Test email : error]
+# e.g.: mail.bounced@example.com
+
+MAIL_TEST_COMPLAINED=[Test email: marked as spam]
+# e.g.: mail.complained@example.com
+
+POSTGRES_USER=[Database username]
+# e.g.: admin
+
+POSTGRES_PASSWORD=[Database password]
+# e.g.: strongPass
+
+POSTGRES_DB=[Database name]
+# e.g.: loryblu-clone-api
+
+POSTGRES_HOST=[Database host]
+# e.g.: localhost
+
+POSTGRES_PORT=[Database port]
+# e.g.: 5432
+
+DATABASE_URL="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}?schema=public"
+# !  This value does not need to be changed, use it as is.
+```
+
+## Instalação
+### Submódulos
+Depois de clonar este repositório, e se for adicionado ou atualizado um dos submódulos, execute o comando abaixo para atualizar e iniciar todos os submódulos.
+```bash
+$ git submodule update --init --recursive
+```
+
+### Dependências
+
+Depois de clonar e semple que atualizar o repositório, execute o comando abaixo para manter as dependências atualizadas.
+```bash
+$ yarn
+```
+
+## Executando a aplicação
+
+<details>
+<summary><b>Está usando docker?</b></summary>
+
+Use o comando abaixo para baixar a imagem do PostgreSQL:14-alpine e configurar as credenciais.
+```bash
+docker-compose -f docker-compose.dev.yml up -d
+```
+
+Se preferir, há um script configurado para realizar este comando e todos os outros de desenvolvimento. Ele também inicia a aplicação:
+```bash
+yarn docker:dev
+```
+
+</details>
+
+---
+
+Esse comando executa tudo o que é necessário para configurar o banco de dados de desenvolvimento.
+```bash
+$ yarn dev
+```
+
+Esse comando apenas inicia a aplicação no modo de desenvolvimento.
+```bash
+$ yarn start:dev
+```
+
+Esse comando inicia a aplicação no modo de produção.
+```bash
+$ yarn run start:prod
+```
+
+## Testes
+
+Testes unitários
+```bash
+$ yarn test
+```
+
+## Licença
+
+LoryBlu tem [licença MIT](LICENSE).
+
+</details>
+
