@@ -87,7 +87,7 @@ $ git submodule update --init --recursive
 
 ### Dependências
 
-Depois de clonar e semple que atualizar o repositório, execute o comando abaixo para manter as dependências atualizadas.
+Depois de clonar e sempre que atualizar o repositório, execute o comando abaixo para manter as dependências atualizadas.
 ```bash
 $ yarn
 ```
@@ -212,31 +212,31 @@ DATABASE_URL="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST
 # !  This value does not need to be changed, use it as is.
 ```
 
-## Instalação
-### Submódulos
-Depois de clonar este repositório, e se for adicionado ou atualizado um dos submódulos, execute o comando abaixo para atualizar e iniciar todos os submódulos.
+## Installation
+### Submodules
+After cloning this repository, and if one of the submodules is added or updated, run the following command to update and initialize all submodules.
 ```bash
 $ git submodule update --init --recursive
 ```
 
-### Dependências
+### Dependencies
 
-Depois de clonar e semple que atualizar o repositório, execute o comando abaixo para manter as dependências atualizadas.
+After cloning and whenever you update the repository, run the following command to keep the dependencies up to date.
 ```bash
 $ yarn
 ```
 
-## Executando a aplicação
+## Running the application
 
 <details>
-<summary><b>Está usando docker?</b></summary>
+<summary><b>Are you using Docker?</b></summary>
 
-Use o comando abaixo para baixar a imagem do PostgreSQL:14-alpine e configurar as credenciais.
+Use the command below to download the PostgreSQL:14-alpine image and configure the credentials.
 ```bash
 docker-compose -f docker-compose.dev.yml up -d
 ```
 
-Se preferir, há um script configurado para realizar este comando e todos os outros de desenvolvimento. Ele também inicia a aplicação:
+If you prefer, there is a script configured to perform this command and all other development commands. It also starts the application:
 ```bash
 yarn docker:dev
 ```
@@ -245,31 +245,31 @@ yarn docker:dev
 
 ---
 
-Esse comando executa tudo o que é necessário para configurar o banco de dados de desenvolvimento.
+This command performs everything necessary to set up the development database.
 ```bash
 $ yarn dev
 ```
 
-Esse comando apenas inicia a aplicação no modo de desenvolvimento.
+This command only starts the application in development mode.
 ```bash
 $ yarn start:dev
 ```
 
-Esse comando inicia a aplicação no modo de produção.
+This command starts the application in production mode.
 ```bash
 $ yarn run start:prod
 ```
 
-## Testes
+## Tests
 
-Testes unitários
+Unit testes
 ```bash
 $ yarn test
 ```
 
-## Licença
+## License
 
-LoryBlu tem [licença MIT](LICENSE).
+LoryBlu has [licença MIT](LICENSE).
 
 </details>
 
