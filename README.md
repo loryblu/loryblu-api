@@ -153,9 +153,8 @@ Description in <b>en</b>
 
 ## Clone the repository
 
-Testes unitários
+Unit tests
 ```bash
-
 # git clone <repo-url> <dist>
 git clone https://github.com/loryblu/loryblu-api.git loryblu-api
 ```
