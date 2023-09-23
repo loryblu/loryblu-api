@@ -40,7 +40,6 @@ export class AccountController {
     }
 
     return {
-      recoveryInput,
       message:
         'Se o e-mail existir em nossa base de dados você receberá o link para definir uma nova senha. Verifique sua caixa de entrada e spam.',
     };
