@@ -3,6 +3,7 @@ import {
   Injectable,
   BadRequestException,
   InternalServerErrorException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { AccountRepository } from './account.repository';
 import {
@@ -166,7 +167,7 @@ export class AccountService {
       });
 
     if (!credential) {
-      throw new BadRequestException(
+      throw new UnauthorizedException(
         'Token expirado, ou inválido. Tente novamente.',
       );
     }
