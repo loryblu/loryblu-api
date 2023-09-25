@@ -58,6 +58,7 @@ export class CreateAccountDto {
 
   @ApiProperty({ enum: Genders })
   @IsNotEmpty({ message: validationErrorMessages.emptyField })
+  @IsString({ message: validationErrorMessages.stringField })
   @IsEnum(Genders, { message: validationErrorMessages.genderPattern })
   readonly childrenGender: Genders;
 }
