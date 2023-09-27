@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   InternalServerErrorException,
+  UnauthorizedException,
 } from '@nestjs/common';
 
 /*
@@ -11,6 +12,15 @@ export class PoliciesException extends BadRequestException {
     super(
       'Por favor, para ter uma conta você deve aceitar nossos termos de uso e políticas de privacidade.',
     );
+  }
+}
+
+/*
+ * 401 - UnauthorizedException
+ */
+export class ExpiredRecoveryTokenException extends UnauthorizedException {
+  constructor() {
+    super('Token expirado, ou inválido.');
   }
 }
 
