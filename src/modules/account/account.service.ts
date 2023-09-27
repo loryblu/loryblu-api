@@ -1,10 +1,5 @@
 import { randomBytes } from 'node:crypto';
-import {
-  Injectable,
-  BadRequestException,
-  InternalServerErrorException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { AccountRepository } from './account.repository';
 import {
   CreateAccountDto,
@@ -18,6 +13,12 @@ import {
   RandomTokenOutput,
   FormatLinkProps,
 } from './account.entity';
+import {
+  ExpiredRecoveryTokenException,
+  PoliciesException,
+  TryingEncryptException,
+  TryingHashException,
+} from 'src/globals/responses/exceptions';
 
 @Injectable()
 export class AccountService {
@@ -30,7 +31,7 @@ export class AccountService {
     });
 
     if (!hashed) {
-      throw new InternalServerErrorException('Error when trying hash data');
+      throw new TryingHashException();
     }
 
     return hashed;
@@ -43,9 +44,7 @@ export class AccountService {
     });
 
     if (!encryptedPassword) {
-      throw new InternalServerErrorException(
-        'Error when trying encrypt some data.',
-      );
+      throw new TryingEncryptException();
     }
 
     return encryptedPassword;
@@ -86,9 +85,7 @@ export class AccountService {
 
   async newAccountPropsProcessing(input: CreateAccountDto): Promise<void> {
     if (input.policiesAccepted !== true) {
-      throw new BadRequestException(
-        'Por favor, para ter uma conta você deve aceitar nossos termos de uso e políticas de privacidade.',
-      );
+      throw new PoliciesException();
     }
 
     const hashedEmail = await this.hashData(input.email);
@@ -167,9 +164,7 @@ export class AccountService {
       });
 
     if (!credential) {
-      throw new UnauthorizedException(
-        'Token expirado, ou inválido. Tente novamente.',
-      );
+      throw new ExpiredRecoveryTokenException();
     }
 
     const encryptedPassword = await this.encryptPassword(input.password);
