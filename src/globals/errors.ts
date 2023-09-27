@@ -3,7 +3,7 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import { isDevelopmentEnv } from './constants';
+import { isProductionEnv } from './constants';
 
 export function prismaKnownRequestErrors(
   error: Prisma.PrismaClientKnownRequestError,
@@ -19,7 +19,7 @@ export function prismaKnownRequestErrors(
 }
 
 export function unknownError(error: unknown) {
-  if (isDevelopmentEnv()) {
+  if (!isProductionEnv) {
     console.info('unknownError', error);
   }
 

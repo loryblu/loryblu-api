@@ -8,6 +8,7 @@ import {
 } from './account.dto';
 import { AccountService } from './account.service';
 import { apiResponses } from 'src/globals/responses/docs';
+import { isProductionEnv } from 'src/globals/constants';
 
 @Controller('/auth')
 export class AccountController {
@@ -50,7 +51,7 @@ export class AccountController {
       });
     }
 
-    if (created && process.env.NODE_ENV === 'homologation') {
+    if (created && !isProductionEnv) {
       return {
         recoverLink: created.url,
         message,
