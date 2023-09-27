@@ -7,7 +7,7 @@ import { PasswordResetTemplate } from './templates';
 import {
   EmailLoaderException,
   SendEmailException,
-} from 'src/globals/responses/general.exceptions';
+} from 'src/globals/responses/exceptions';
 
 @Injectable()
 export class MailService {
