@@ -1,9 +1,13 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Resend } from 'resend';
 
 import type { SendLinkToResetPassword } from './mail.entity';
 import { appName } from 'src/globals/constants';
 import { PasswordResetTemplate } from './templates';
+import {
+  EmailLoaderException,
+  SendEmailException,
+} from 'src/globals/responses/exceptions';
 
 @Injectable()
 export class MailService {
@@ -32,9 +36,7 @@ export class MailService {
 
       await this.sendMail();
     } catch (error) {
-      throw new InternalServerErrorException(
-        'Error when trying to configure email: [send_link_to_reset_password]',
-      );
+      throw new EmailLoaderException();
     }
   }
 
@@ -49,7 +51,7 @@ export class MailService {
 
       return response;
     } catch (error) {
-      throw new InternalServerErrorException('Error when trying to send email');
+      throw new SendEmailException();
     }
   }
 }

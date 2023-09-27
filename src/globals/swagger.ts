@@ -5,7 +5,7 @@ export const swaggerDocumentConfig = new DocumentBuilder()
   .setTitle(appName)
   .setVersion(appVersion)
   .setLicense(
-    appLicense,
+    `${appLicense} License`,
     'https://github.com/loryblu/loryblu-api/blob/main/LICENSE',
   )
   .build();
