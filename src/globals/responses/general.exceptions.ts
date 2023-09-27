@@ -23,6 +23,18 @@ export class UnknownErrorException extends InternalServerErrorException {
   }
 }
 
+export class EmailLoaderException extends InternalServerErrorException {
+  constructor() {
+    super('Erro durante a configuração do e-mail.');
+  }
+}
+
+export class SendEmailException extends InternalServerErrorException {
+  constructor() {
+    super('Erro ao tentar enviar um e-mail.');
+  }
+}
+
 export class TryingHashException extends InternalServerErrorException {
   constructor() {
     super('Erro ao tentar criar o hash de uma informação.');
