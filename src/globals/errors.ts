@@ -1,9 +1,6 @@
-import {
-  BadRequestException,
-  InternalServerErrorException,
-} from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { isProductionEnv } from './constants';
+import { UnknownErrorException, P2002Exception } from './responses/exceptions';
 
 export function prismaKnownRequestErrors(
   error: Prisma.PrismaClientKnownRequestError,
@@ -12,18 +9,17 @@ export function prismaKnownRequestErrors(
 
   switch (error.code) {
     case 'P2002':
-      throw new BadRequestException(
-        `O ${target} informado já está em uso, tente outro.`,
-      );
+      throw new P2002Exception(target[0]);
   }
 }
 
 export function unknownError(error: unknown) {
+  // ! remover quando adicionar um logger
   if (!isProductionEnv) {
     console.info('unknownError', error);
   }
 
-  throw new InternalServerErrorException('Erro ao tentar realizar a ação.');
+  throw new UnknownErrorException();
 }
 
 export function hendleErrors(error: unknown) {
