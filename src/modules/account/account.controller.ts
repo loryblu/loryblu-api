@@ -9,6 +9,7 @@ import {
 import { AccountService } from './account.service';
 import { responses } from 'src/globals/responses/docs';
 import { isProductionEnv } from 'src/globals/constants';
+import { RecoveryControllerOutput } from './account.entity';
 
 @Controller('/auth')
 export class AccountController {
@@ -37,30 +38,25 @@ export class AccountController {
   @ApiResponse(responses.badRequest)
   @ApiResponse(responses.internalError)
   async recovery(@Body() recoveryInput: ResetPasswordDto) {
-    const message =
-      'Se o e-mail existir em nossa base de dados você receberá o link para definir uma nova senha. Verifique sua caixa de entrada e spam.';
     const created = await this.accountService.createTokenToResetPassword(
       recoveryInput,
     );
 
-    if (created) {
-      await this.mailService.sendLinkToResetPassword({
-        to: recoveryInput.email,
-        recoverLink: created.url,
-        userName: created.fullname,
-      });
-    }
-
-    if (created && !isProductionEnv) {
-      return {
-        recoverLink: created.url,
-        message,
-      };
-    }
-
-    return {
-      message,
+    const response: RecoveryControllerOutput = {
+      message: 'Te enviamos um e-mail com o link para definir uma nova senha.',
     };
+
+    await this.mailService.sendLinkToResetPassword({
+      to: recoveryInput.email,
+      recoverLink: created.url,
+      userName: created.fullname,
+    });
+
+    if (!isProductionEnv) {
+      response.recoverLink = created.url;
+    }
+
+    return response;
   }
 
   @Put('/set-password')

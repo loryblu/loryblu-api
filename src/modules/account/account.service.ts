@@ -14,6 +14,7 @@ import {
   FormatLinkProps,
 } from './account.entity';
 import {
+  EmailNotFoundException,
   ExpiredRecoveryTokenException,
   PoliciesException,
   TryingEncryptException,
@@ -126,7 +127,7 @@ export class AccountService {
     );
 
     if (!account) {
-      return;
+      throw new EmailNotFoundException();
     }
 
     const generatedToken = await this.randomToken({
