@@ -7,7 +7,7 @@ import {
   SetPasswordDto,
 } from './account.dto';
 import { AccountService } from './account.service';
-import { apiResponses } from 'src/globals/responses/docs';
+import { responses } from 'src/globals/responses/docs';
 import { isProductionEnv } from 'src/globals/constants';
 
 @Controller('/auth')
@@ -19,11 +19,11 @@ export class AccountController {
 
   @Post('/register')
   @ApiTags('Authentication')
-  @ApiResponse(apiResponses.created)
-  @ApiResponse(apiResponses.badRequest)
-  @ApiResponse(apiResponses.unauthorized)
-  @ApiResponse(apiResponses.unprocessable)
-  @ApiResponse(apiResponses.internalError)
+  @ApiResponse(responses.created)
+  @ApiResponse(responses.badRequest)
+  @ApiResponse(responses.unauthorized)
+  @ApiResponse(responses.unprocessable)
+  @ApiResponse(responses.internalError)
   async register(@Body() registerInput: CreateAccountDto) {
     await this.accountService.newAccountPropsProcessing(registerInput);
 
@@ -33,9 +33,9 @@ export class AccountController {
   @Post('/recovery')
   @HttpCode(200)
   @ApiTags('Reset Password')
-  @ApiResponse(apiResponses.ok)
-  @ApiResponse(apiResponses.badRequest)
-  @ApiResponse(apiResponses.internalError)
+  @ApiResponse(responses.ok)
+  @ApiResponse(responses.badRequest)
+  @ApiResponse(responses.internalError)
   async recovery(@Body() recoveryInput: ResetPasswordDto) {
     const message =
       'Se o e-mail existir em nossa base de dados você receberá o link para definir uma nova senha. Verifique sua caixa de entrada e spam.';
@@ -66,10 +66,10 @@ export class AccountController {
   @Put('/set-password')
   @HttpCode(200)
   @ApiTags('Reset Password')
-  @ApiResponse(apiResponses.ok)
-  @ApiResponse(apiResponses.badRequest)
-  @ApiResponse(apiResponses.unauthorized)
-  @ApiResponse(apiResponses.internalError)
+  @ApiResponse(responses.ok)
+  @ApiResponse(responses.badRequest)
+  @ApiResponse(responses.unauthorized)
+  @ApiResponse(responses.internalError)
   async setPassword(@Body() setPasswordInput: SetPasswordDto) {
     await this.accountService.saveNewPassword(setPasswordInput);
 
