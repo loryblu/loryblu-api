@@ -1,4 +1,4 @@
-import type { Messages } from './entity';
+import type { Messages } from '../entity';
 
 export const messages: Messages = {
   notEmpty: ({ property }) => {

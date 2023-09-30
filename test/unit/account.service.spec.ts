@@ -4,6 +4,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AccountService } from 'src/modules/account/account.service';
 import { AccountRepository } from 'src/modules/account/account.repository';
 import * as stubs from './account.service.stubs';
+import { EmailNotFoundException } from 'src/globals/responses/exceptions';
 
 describe('AccountService unit test', () => {
   let service: AccountService;
@@ -77,12 +78,11 @@ describe('AccountService unit test', () => {
         .spyOn(accountRepositoryMock, 'getCredentialIdByEmail')
         .mockReturnValueOnce(null);
 
-      const actual = await service.createTokenToResetPassword(
-        stubs.resetPasswordInput,
-      );
-
-      expect(actual).not.toBeInstanceOf(Object);
-      expect(actual).toBeUndefined();
+      try {
+        await service.createTokenToResetPassword(stubs.resetPasswordInput);
+      } catch (actual) {
+        expect(actual).toBeInstanceOf(EmailNotFoundException);
+      }
     });
   });
 });

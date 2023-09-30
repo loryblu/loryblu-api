@@ -2,6 +2,7 @@ import {
   BadRequestException,
   InternalServerErrorException,
   UnauthorizedException,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 
 /*
@@ -25,7 +26,16 @@ export class ExpiredRecoveryTokenException extends UnauthorizedException {
 }
 
 /*
- * 500 -
+ * 422 - Unprocessable Entity
+ */
+export class EmailNotFoundException extends UnprocessableEntityException {
+  constructor() {
+    super('O e-mail informado não foi cadastrado.');
+  }
+}
+
+/*
+ * 500 - Internal Server Error
  */
 export class UnknownErrorException extends InternalServerErrorException {
   constructor() {

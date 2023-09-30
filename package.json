@@ -1,10 +1,7 @@
 {
-  "name": "loryblu-api",
-  "version": "0.0.1",
-  "description": "",
-  "author": "Loryblu",
-  "private": true,
+  "version": "0.3.2",
   "license": "MIT",
+  "private": true,
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -90,5 +87,8 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
-  }
+  },
+  "name": "loryblu-api",
+  "description": "API para o aplicativo LoryBlu. Um aplicativo pensado para ajudar pais e crianças diagnosticadas com TEA.",
+  "author": "LoryBlu"
 }
