@@ -1,11 +1,17 @@
 import { DocumentBuilder } from '@nestjs/swagger';
-import { appLicense, appName, appVersion } from './constants';
+import { appDescription, appLicense, appName, appVersion } from './constants';
+import { docSchemas } from './responses/docs';
 
 export const swaggerDocumentConfig = new DocumentBuilder()
-  .setTitle(appName)
   .setVersion(appVersion)
+  .setTitle(appName)
+  .setDescription(appDescription)
   .setLicense(
     `${appLicense} License`,
     'https://github.com/loryblu/loryblu-api/blob/main/LICENSE',
   )
   .build();
+
+swaggerDocumentConfig.components = {
+  schemas: docSchemas,
+};
