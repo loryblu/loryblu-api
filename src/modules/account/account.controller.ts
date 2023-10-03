@@ -1,5 +1,5 @@
-import { Controller, Post, Body, HttpCode } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { Controller, Post, Body, HttpCode, Put } from '@nestjs/common';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { MailService } from '../mail/mail.service';
 import {
   CreateAccountDto,
@@ -7,6 +7,9 @@ import {
   SetPasswordDto,
 } from './account.dto';
 import { AccountService } from './account.service';
+import { responses } from 'src/globals/responses/docs';
+import { isProductionEnv } from 'src/globals/constants';
+import { RecoveryControllerOutput } from './account.entity';
 
 @Controller('/auth')
 export class AccountController {
@@ -15,48 +18,54 @@ export class AccountController {
     private accountService: AccountService,
   ) {}
 
-  @ApiTags('Authentication')
   @Post('/register')
+  @ApiTags('Authentication')
+  @ApiResponse(responses.created)
+  @ApiResponse(responses.badRequest)
+  @ApiResponse(responses.unauthorized)
+  @ApiResponse(responses.unprocessable)
+  @ApiResponse(responses.internalError)
   async register(@Body() registerInput: CreateAccountDto) {
     await this.accountService.newAccountPropsProcessing(registerInput);
 
     return { message: 'Conta criada com sucesso!' };
   }
 
-  @ApiTags('Reset Password')
   @Post('/recovery')
   @HttpCode(200)
+  @ApiTags('Reset Password')
+  @ApiResponse(responses.ok)
+  @ApiResponse(responses.badRequest)
+  @ApiResponse(responses.internalError)
   async recovery(@Body() recoveryInput: ResetPasswordDto) {
-    const message =
-      'Se o e-mail existir em nossa base de dados você receberá o link para definir uma nova senha. Verifique sua caixa de entrada e spam.';
     const created = await this.accountService.createTokenToResetPassword(
       recoveryInput,
     );
 
-    if (created) {
-      await this.mailService.sendLinkToResetPassword({
-        to: recoveryInput.email,
-        recoverLink: created.url,
-        userName: created.fullname,
-      });
-    }
-
-    if (created && process.env.NODE_ENV === 'homologation') {
-      return {
-        recoverLink: created.url,
-        message,
-      };
-    }
-
-    return {
-      message:
-        'Se o e-mail existir em nossa base de dados você receberá o link para definir uma nova senha. Verifique sua caixa de entrada e spam.',
+    const response: RecoveryControllerOutput = {
+      message: 'Te enviamos um e-mail com o link para definir uma nova senha.',
     };
+
+    await this.mailService.sendLinkToResetPassword({
+      to: recoveryInput.email,
+      recoverLink: created.url,
+      userName: created.fullname,
+    });
+
+    if (!isProductionEnv) {
+      response.recoverLink = created.url;
+    }
+
+    return response;
   }
 
-  @ApiTags('Reset Password')
-  @Post('/set-password')
+  @Put('/set-password')
   @HttpCode(200)
+  @ApiTags('Reset Password')
+  @ApiResponse(responses.ok)
+  @ApiResponse(responses.badRequest)
+  @ApiResponse(responses.unauthorized)
+  @ApiResponse(responses.internalError)
   async setPassword(@Body() setPasswordInput: SetPasswordDto) {
     await this.accountService.saveNewPassword(setPasswordInput);
 

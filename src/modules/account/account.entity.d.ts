@@ -11,6 +11,11 @@ export type NewAccountRepositoryInput = {
   childrenProfile: Pick<ChildrenProfile, 'fullname' | 'birthdate' | 'gender'>;
 };
 
+export type RecoveryControllerOutput = {
+  recoverLink?: string;
+  message: string;
+};
+
 export type GetCredentialIdByEmailOutput = {
   id: Credential['id'];
   fullname: ParentProfile['fullname'];
@@ -35,7 +40,7 @@ export type PasswordResetInput = Omit<ResetPasswordInfo, 'id'>;
 export type PasswordResetOutput = {
   url: string;
   fullname: ParentProfile['fullname'];
-} | void;
+};
 
 export type FormatLinkProps = {
   token: string;
