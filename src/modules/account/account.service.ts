@@ -31,6 +31,7 @@ export class AccountService {
       salt: process.env.SALT_DATA_HASH,
     });
 
+
     if (!hashed) {
       throw new TryingHashException();
     }
