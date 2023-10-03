@@ -27,7 +27,7 @@ export class AccountService {
       unhashedData: data,
       salt: process.env.SALT_DATA_HASH,
     });
-    console.log(hashed)
+
 
     if (!hashed) {
       throw new InternalServerErrorException('Error when trying hash data');

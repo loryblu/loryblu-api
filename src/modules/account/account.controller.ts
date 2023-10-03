@@ -27,6 +27,8 @@ export class AccountController {
   @Post('/recovery')
   @HttpCode(200)
   async recovery(@Body() recoveryInput: ResetPasswordDto) {
+    const message =
+      'Se o e-mail existir em nossa base de dados você receberá o link para definir uma nova senha. Verifique sua caixa de entrada e spam.';
     const created = await this.accountService.createTokenToResetPassword(
       recoveryInput,
     );
@@ -37,6 +39,13 @@ export class AccountController {
         recoverLink: created.url,
         userName: created.fullname,
       });
+    }
+
+    if (created && process.env.NODE_ENV === 'homologation') {
+      return {
+        recoverLink: created.url,
+        message,
+      };
     }
 
     return {

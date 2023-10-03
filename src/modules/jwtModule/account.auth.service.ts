@@ -1,12 +1,14 @@
 import {
   BadRequestException,
   Injectable,
-  UnauthorizedException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Credential } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+import { hashDataAsync } from '../../globals/utils';
+import { throwError } from 'rxjs';
 
 @Injectable()
 export class AuthService {
@@ -30,40 +32,26 @@ export class AuthService {
     };
   }
 
-  async checkToken(token: string) {
-    try {
-      const data = this.jwtService.verify(token);
-
-      return data;
-    } catch (e) {
-      throw new BadRequestException(e);
-    }
-  }
-  isValidToken(token: string) {
-    try {
-      this.checkToken(token);
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-
   async login(email: string, password: string) {
-    const user = await this.prisma.credential.findFirst({
+    const hashedEmail = await hashDataAsync({
+      unhashedData: email,
+      salt: process.env.SALT_DATA_HASH,
+    });
+
+    const user = await this.prisma.credential.findUnique({
       where: {
-        email,
-        password,
+        email: hashedEmail,
       },
     });
 
-    console.log(user);
+    if (!user) {
+      throw new BadRequestException('Usuário não encontrado.');
+    }
+
     const comparePassword = await bcrypt.compare(password, user.password);
 
-    if (!user) {
-      throw new UnauthorizedException('Email e/ou senha incorretos.');
-    }
     if (!comparePassword) {
-      throw new UnauthorizedException('A senha está incorreta.');
+      throw new BadRequestException('A senha está incorreta.');
     }
 
     return this.createToken(user);

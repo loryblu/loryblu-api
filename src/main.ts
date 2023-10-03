@@ -13,6 +13,7 @@ async function bootstrap() {
   app.use(helmet());
   app.enableCors(corsOptionsConfig);
   app.useGlobalPipes(new ValidationPipe());
+  
 
   const document = SwaggerModule.createDocument(app, swaggerDocumentConfig);
   SwaggerModule.setup('', app, document);
