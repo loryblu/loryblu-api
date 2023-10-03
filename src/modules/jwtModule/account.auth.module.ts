@@ -11,7 +11,7 @@ import { AccountRepository } from '../account/account.repository';
 @Module({
   imports: [
     JwtModule.register({
-      secret: 'W547D6BnxchUzJb_w&Dy*?NvJgRkcvbt',
+      secret: process.env.SECRET,
     }),
     AccountModule,
     PrismaModule,
