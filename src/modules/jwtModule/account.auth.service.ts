@@ -13,18 +13,29 @@ export class AuthService {
   ) {}
 
   async createToken(user: Credential) {
-    return {
+    const token = {
       accessToken: this.jwtService.sign(
         {
           id: user.id,
-          email: user.email,
         },
         {
-          expiresIn: '7 days',
+          expiresIn: '1 h',
+          subject: String(user.id),
+        },
+      ),
+
+      refreshToken: this.jwtService.sign(
+        {
+          id: user.id,
+        },
+        {
+          expiresIn: '3 h',
           subject: String(user.id),
         },
       ),
     };
+
+    return token;
   }
 
   async login(email: string, password: string) {

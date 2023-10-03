@@ -13,7 +13,7 @@ export class AuthController {
   @Post('/login')
   @HttpCode(200)
   async login(@Body() { email, password }: LoginDto) {
-    await this.authService.login(email, password);
-    return { message: 'login efetuado com sucesso' };
+    const token = await this.authService.login(email, password);
+    return { token, message: 'Login efetuado com sucesso' };
   }
 }
