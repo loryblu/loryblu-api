@@ -19,6 +19,7 @@ export type RecoveryControllerOutput = {
 export type GetCredentialIdByEmailOutput = {
   id: Credential['id'];
   fullname: ParentProfile['fullname'];
+  password: string;
 } | void;
 
 export type getCredentialIdByRecoveryTokenInput = {

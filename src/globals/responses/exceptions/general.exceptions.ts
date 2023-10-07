@@ -25,6 +25,12 @@ export class ExpiredRecoveryTokenException extends UnauthorizedException {
   }
 }
 
+export class InvalidCredentialsException extends UnauthorizedException {
+  constructor() {
+    super('Credenciais inválidas.');
+  }
+}
+
 /*
  * 422 - Unprocessable Entity
  */

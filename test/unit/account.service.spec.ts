@@ -1,5 +1,6 @@
 import { BadRequestException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { JwtModule } from '@nestjs/jwt';
 
 import { AccountService } from 'src/modules/account/account.service';
 import { AccountRepository } from 'src/modules/account/account.repository';
@@ -19,6 +20,7 @@ describe('AccountService unit test', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [JwtModule],
       providers: [
         AccountService,
         {

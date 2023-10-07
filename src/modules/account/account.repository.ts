@@ -8,7 +8,7 @@ import {
   getCredentialIdByRecoveryTokenOutout,
   SavePasswordInput,
 } from './account.entity';
-import { hendleErrors } from 'src/globals/errors';
+import { handleErrors } from 'src/globals/errors';
 
 @Injectable()
 export class AccountRepository {
@@ -41,7 +41,7 @@ export class AccountRepository {
           },
         },
       })
-      .catch((error) => hendleErrors(error));
+      .catch((error) => handleErrors(error));
 
     return;
   }
@@ -56,6 +56,7 @@ export class AccountRepository {
         },
         select: {
           id: true,
+          password: true,
           parentProfile: {
             select: {
               fullname: true,
@@ -67,13 +68,14 @@ export class AccountRepository {
         if (response) {
           return {
             id: response.id,
+            password: response.password,
             fullname: response.parentProfile.fullname,
           };
         }
 
         return null;
       })
-      .catch((error) => hendleErrors(error));
+      .catch((error) => handleErrors(error));
 
     return response;
   }
@@ -102,7 +104,7 @@ export class AccountRepository {
 
         return;
       })
-      .catch((error) => hendleErrors(error));
+      .catch((error) => handleErrors(error));
 
     return response;
   }
@@ -122,7 +124,7 @@ export class AccountRepository {
           },
         },
       })
-      .catch((error) => hendleErrors(error));
+      .catch((error) => handleErrors(error));
   }
 
   async savePasswordResetInformation(input: PasswordResetInput): Promise<void> {
@@ -147,6 +149,6 @@ export class AccountRepository {
           },
         },
       })
-      .catch((error) => hendleErrors(error));
+      .catch((error) => handleErrors(error));
   }
 }
