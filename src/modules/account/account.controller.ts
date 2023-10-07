@@ -3,6 +3,7 @@ import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { MailService } from '../mail/mail.service';
 import {
   CreateAccountDto,
+  LoginDto,
   ResetPasswordDto,
   SetPasswordDto,
 } from './account.dto';
@@ -29,6 +30,18 @@ export class AccountController {
     await this.accountService.newAccountPropsProcessing(registerInput);
 
     return { message: 'Conta criada com sucesso!' };
+  }
+
+  @Post('/login')
+  @ApiTags('Authentication')
+  @HttpCode(200)
+  @ApiResponse(responses.ok)
+  @ApiResponse(responses.badRequest)
+  @ApiResponse(responses.unauthorized)
+  @ApiResponse(responses.internalError)
+  async login(@Body() { email, password }: LoginDto) {
+    const token = await this.accountService.login(email, password);
+    return { token, message: 'Login efetuado com sucesso' };
   }
 
   @Post('/recovery')

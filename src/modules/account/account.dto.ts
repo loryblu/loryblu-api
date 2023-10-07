@@ -65,3 +65,8 @@ export class SetPasswordDto extends PickType(CreateAccountDto, ['password']) {
   @Matches(recoveryTokenRegExp, { message: messages.recoveryTokenPattern })
   readonly recoveryToken: string;
 }
+
+export class LoginDto extends PickType(CreateAccountDto, [
+  'email',
+  'password',
+]) {}
