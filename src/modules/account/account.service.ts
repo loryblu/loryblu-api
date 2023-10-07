@@ -16,14 +16,20 @@ import {
 import {
   EmailNotFoundException,
   ExpiredRecoveryTokenException,
+  InvalidCredentialsException,
   PoliciesException,
   TryingEncryptException,
   TryingHashException,
 } from 'src/globals/responses/exceptions';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AccountService {
-  constructor(private accountRepository: AccountRepository) {}
+  constructor(
+    private accountRepository: AccountRepository,
+    private readonly jwtService: JwtService,
+  ) {}
 
   private async hashData(data: string): Promise<string> {
     const hashed = await hashDataAsync({
@@ -82,6 +88,22 @@ export class AccountService {
     const encodedParams = encodeURIComponent(params);
 
     return `loryblu://password_recovery/?${encodedParams}`;
+  }
+
+  // TODO: criar testes para login
+  private async createAuthToken(id: number) {
+    const token = {
+      accessToken: this.jwtService.sign(
+        {
+          id,
+        },
+        {
+          expiresIn: '1 h',
+        },
+      ),
+    };
+
+    return token;
   }
 
   async newAccountPropsProcessing(input: CreateAccountDto): Promise<void> {
@@ -148,6 +170,8 @@ export class AccountService {
       date: expiresIn,
     });
 
+    delete account.password;
+
     return {
       url,
       fullname: account.fullname,
@@ -176,5 +200,27 @@ export class AccountService {
     });
 
     return;
+  }
+
+  async login(email: string, password: string) {
+    const hashedEmail = await this.hashData(email);
+
+    const user = await this.accountRepository.getCredentialIdByEmail(
+      hashedEmail,
+    );
+
+    if (!user) {
+      throw new EmailNotFoundException();
+    }
+
+    const comparePassword = await bcrypt.compare(password, user.password);
+
+    if (!comparePassword) {
+      throw new InvalidCredentialsException();
+    }
+
+    delete user.password;
+
+    return this.createAuthToken(user.id);
   }
 }

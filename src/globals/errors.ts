@@ -22,7 +22,7 @@ export function unknownError(error: unknown) {
   throw new UnknownErrorException();
 }
 
-export function hendleErrors(error: unknown) {
+export function handleErrors(error: unknown) {
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
     prismaKnownRequestErrors(error);
   }
