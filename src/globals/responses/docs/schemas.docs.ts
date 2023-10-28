@@ -7,24 +7,32 @@ function successSchema() {
       message: {
         type: 'string',
       },
+      data: {
+        type: 'object',
+        nullable: true,
+      },
     },
   };
 }
 
-function errorSchema(statusCode: number, error: string) {
+function errorSchema() {
   return {
     type: 'object',
     properties: {
-      statusCode: {
-        type: 'number',
-        example: statusCode,
-      },
-      error: {
-        type: 'string',
-        example: error,
-      },
-      message: {
-        type: 'string',
+      details: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            property: {
+              type: 'string',
+              nullable: true,
+            },
+            message: {
+              type: 'string',
+            },
+          },
+        },
       },
     },
   };
@@ -34,9 +42,9 @@ export const docSchemas: DocSchemas = {
   $200: successSchema(),
   $201: successSchema(),
   $202: successSchema(),
-  $400: errorSchema(400, 'Bad Request'),
-  $401: errorSchema(401, 'Unauthorized'),
-  $403: errorSchema(403, 'Forbidden'),
-  $422: errorSchema(422, 'Unprocessable'),
-  $500: errorSchema(500, 'Internal Server Error'),
+  $400: errorSchema(),
+  $401: errorSchema(),
+  $403: errorSchema(),
+  $422: errorSchema(),
+  $500: errorSchema(),
 };
