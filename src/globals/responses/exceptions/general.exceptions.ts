@@ -14,6 +14,7 @@ export class PoliciesException extends BadRequestException {
     super(
       formatException(
         'Por favor, para ter uma conta você deve aceitar nossos termos de uso e políticas de privacidade.',
+        'policiesAccepted',
       ),
     );
   }
