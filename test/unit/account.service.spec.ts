@@ -1,4 +1,3 @@
-import { BadRequestException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { JwtModule } from '@nestjs/jwt';
 
@@ -50,10 +49,15 @@ describe('AccountService unit test', () => {
           policiesAccepted: false,
         });
       } catch (actual) {
-        expect(actual?.message).toStrictEqual(
+        expect(actual.response).toBeDefined();
+
+        const { response } = actual;
+
+        expect(Array.isArray(response.details)).toBeTruthy();
+        expect(response.details[0].property).toStrictEqual('policiesAccepted');
+        expect(response.details[0].message).toStrictEqual(
           'Por favor, para ter uma conta você deve aceitar nossos termos de uso e políticas de privacidade.',
         );
-        expect(actual).toBeInstanceOf(BadRequestException);
       }
     });
   });

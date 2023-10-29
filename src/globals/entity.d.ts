@@ -1,5 +1,4 @@
 import type { ApiResponseOptions } from '@nestjs/swagger';
-import type { SchemaObject } from '@nestjs/swagger/dist/interfaces/open-api-spec.interface';
 import type { ValidationOptions } from 'class-validator';
 
 export type HashDataAsyncProps = {
@@ -10,17 +9,6 @@ export type HashDataAsyncProps = {
 export type EncryptDataAsyncProps = {
   unencryptedPassword: string;
   salt: number;
-};
-
-export type DocSchemas = {
-  $200: SchemaObject;
-  $201: SchemaObject;
-  $202: SchemaObject;
-  $400: SchemaObject;
-  $401: SchemaObject;
-  $403: SchemaObject;
-  $422: SchemaObject;
-  $500: SchemaObject;
 };
 
 export type ApiResponses = {

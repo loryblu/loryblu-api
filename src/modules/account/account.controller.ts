@@ -29,7 +29,9 @@ export class AccountController {
   async register(@Body() registerInput: CreateAccountDto) {
     await this.accountService.newAccountPropsProcessing(registerInput);
 
-    return { message: 'Conta criada com sucesso!' };
+    return {
+      message: 'Conta criada com sucesso',
+    };
   }
 
   @Post('/login')
@@ -40,8 +42,13 @@ export class AccountController {
   @ApiResponse(responses.unauthorized)
   @ApiResponse(responses.internalError)
   async login(@Body() { email, password }: LoginDto) {
-    const token = await this.accountService.login(email, password);
-    return { token, message: 'Login efetuado com sucesso' };
+    const { accessToken } = await this.accountService.login(email, password);
+    return {
+      message: 'Acesso permitido',
+      data: {
+        accessToken,
+      },
+    };
   }
 
   @Post('/recovery')
@@ -56,7 +63,7 @@ export class AccountController {
     );
 
     const response: RecoveryControllerOutput = {
-      message: 'Te enviamos um e-mail com o link para definir uma nova senha.',
+      message: 'Enviamos um e-mail com o link para definir uma nova senha',
     };
 
     await this.mailService.sendLinkToResetPassword({
@@ -82,6 +89,8 @@ export class AccountController {
   async setPassword(@Body() setPasswordInput: SetPasswordDto) {
     await this.accountService.saveNewPassword(setPasswordInput);
 
-    return { message: 'Senha redefinida com sucesso!' };
+    return {
+      message: 'Senha redefinida com sucesso',
+    };
   }
 }
