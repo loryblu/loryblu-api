@@ -13,6 +13,7 @@ import { ApiProperty, PickType } from '@nestjs/swagger';
 import { Genders } from '@prisma/client';
 import { fullnameRegExp, recoveryTokenRegExp } from 'src/globals/constants';
 import { messages } from 'src/globals/responses/validation';
+import { Transform } from 'class-transformer';
 
 export class CreateAccountDto {
   @ApiProperty()
@@ -52,6 +53,7 @@ export class CreateAccountDto {
   @ApiProperty({ enum: Genders })
   @IsNotEmpty({ message: messages.notEmpty })
   @IsString({ message: messages.string })
+  @Transform((params) => params.value.toLowerCase())
   @IsEnum(Genders, { message: messages.genderPattern })
   readonly childrenGender: Genders;
 }
