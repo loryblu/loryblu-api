@@ -121,8 +121,8 @@ export class AccountService {
         email: hashedEmail,
         password: encryptedPassword,
         policiesAcceptedAt: now,
-        role: 'USER',
-        status: 'ACTIVE',
+        role: 'user',
+        status: 'active',
       },
       parentProfile: {
         fullname: input.parentName,

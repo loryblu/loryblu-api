@@ -15,8 +15,8 @@ model Credential {
   email              String             @unique
   password           String
   policiesAcceptedAt DateTime           @map("policies_accepted_at")
-  status             Status             @default(DISABLED)
-  role               Roles              @default(USER)
+  status             Status             @default(disabled)
+  role               Roles              @default(user)
   parentProfile      ParentProfile?
   resetPasswordInfo  ResetPasswordInfo?
   updatedAt          DateTime           @updatedAt @map("updated_at")
@@ -61,17 +61,17 @@ model ChildrenProfile {
 }
 
 enum Roles {
-  ADMIN
-  USER
+  admin
+  user
 }
 
 enum Status {
-  ACTIVE
-  DISABLED
-  BLOCKED
+  active
+  disabled
+  blocked
 }
 
 enum Genders {
-  MALE
-  FEMALE
+  male
+  female
 }
