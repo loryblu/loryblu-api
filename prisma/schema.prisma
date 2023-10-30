@@ -60,6 +60,19 @@ model ChildrenProfile {
   @@map("children_profiles")
 }
 
+model TaskCategory {
+  id       String    @id @default(uuid())
+  group    TaskGroup
+  category String
+
+  @@map("task_categories")
+}
+
+enum TaskGroup {
+  study
+  routine
+}
+
 enum Roles {
   admin
   user
