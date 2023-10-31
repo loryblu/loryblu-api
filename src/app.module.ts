@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import configModule from './globals/constants';
+import configModule from 'src/globals/constants';
 
 import { AccountModule } from './modules';
 

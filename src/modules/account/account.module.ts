@@ -4,16 +4,10 @@ import { MailModule } from '../mail/mail.module';
 import { AccountController } from './account.controller';
 import { AccountService } from './account.service';
 import { AccountRepository } from './account.repository';
-import { JwtModule } from '@nestjs/jwt';
+import jwtModule from 'src/lib/jwt';
 
 @Module({
-  imports: [
-    PrismaModule,
-    MailModule,
-    JwtModule.register({
-      secret: process.env.SECRET_JWT,
-    }),
-  ],
+  imports: [jwtModule, PrismaModule, MailModule],
   controllers: [AccountController],
   providers: [AccountService, AccountRepository],
 })

@@ -1,5 +1,6 @@
 import { randomBytes } from 'node:crypto';
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { AccountRepository } from './account.repository';
 import {
   CreateAccountDto,
@@ -27,15 +28,22 @@ import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AccountService {
+  private hashSalt: string;
+  private passSalt: number;
+
   constructor(
+    private configService: ConfigService,
+    private jwtService: JwtService,
     private accountRepository: AccountRepository,
-    private readonly jwtService: JwtService,
-  ) {}
+  ) {
+    this.hashSalt = this.configService.get<string>('SALT_DATA_HASH');
+    this.passSalt = Number(this.configService.get<number>('SALT_DATA_PASS'));
+  }
 
   private async hashData(data: string): Promise<string> {
     const hashed = await hashDataAsync({
       unhashedData: data,
-      salt: process.env.SALT_DATA_HASH,
+      salt: this.hashSalt,
     });
 
     if (!hashed) {
@@ -48,7 +56,7 @@ export class AccountService {
   private async encryptPassword(password: string): Promise<string> {
     const encryptedPassword = await encryptDataAsync({
       unencryptedPassword: password,
-      salt: Number(process.env.SALT_DATA_PASS),
+      salt: this.passSalt,
     });
 
     if (!encryptedPassword) {

@@ -9,11 +9,11 @@ export const fullnameRegExp = /^[a-zÀ-ÿ ]+$/i;
 export const recoveryTokenRegExp = /^[a-zA-Z0-9_-]+$/;
 
 export const constants = () => ({
-  PORT: process.env.PORT,
+  PORT: process.env.PORT || 5500,
   NODE_ENV: process.env.NODE_ENV,
 
   SALT_DATA_HASH: process.env.SALT_DATA_HASH,
-  SALT_DATA_PASS: Number(process.env.SALT_DATA_PASS),
+  SALT_DATA_PASS: process.env.SALT_DATA_PASS,
   SECRET_JWT: process.env.SECRET_JWT,
 
   MAIL_API_KEY: process.env.MAIL_API_KEY,
