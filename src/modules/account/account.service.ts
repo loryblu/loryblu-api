@@ -94,7 +94,7 @@ export class AccountService {
   // TODO: criar testes para login
   private async createAuthToken(payload: object, subject: iAuthTokenSubject) {
     const token = this.jwtService.sign(payload, {
-      expiresIn: '1 h',
+      expiresIn: '1h',
       subject: subject,
     });
 
