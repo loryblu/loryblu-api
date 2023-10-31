@@ -9,7 +9,18 @@ export const fullnameRegExp = /^[a-zÀ-ÿ ]+$/i;
 export const recoveryTokenRegExp = /^[a-zA-Z0-9_-]+$/;
 
 export const constants = () => ({
+  PORT: process.env.PORT,
   NODE_ENV: process.env.NODE_ENV,
+
+  SALT_DATA_HASH: process.env.SALT_DATA_HASH,
+  SALT_DATA_PASS: Number(process.env.SALT_DATA_PASS),
+  SECRET_JWT: process.env.SECRET_JWT,
+
+  MAIL_API_KEY: process.env.MAIL_API_KEY,
+  MAIL_FROM: process.env.MAIL_FROM,
+  MAIL_TEST_DELIVERED: process.env.MAIL_TEST_DELIVERED,
+  MAIL_TEST_BOUNCED: process.env.MAIL_TEST_BOUNCED,
+  MAIL_TEST_COMPLAINED: process.env.MAIL_TEST_COMPLAINED,
 });
 
 export default ConfigModule.forRoot({
