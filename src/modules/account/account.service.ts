@@ -1,5 +1,6 @@
 import { randomBytes } from 'node:crypto';
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { AccountRepository } from './account.repository';
 import {
   CreateAccountDto,
@@ -22,20 +23,27 @@ import {
   TryingEncryptException,
   TryingHashException,
 } from 'src/globals/responses/exceptions';
-import { JwtService } from '@nestjs/jwt';
+import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AccountService {
+  private hashSalt: string;
+  private passSalt: number;
+
   constructor(
+    private configService: ConfigService,
+    private jwtService: JwtService,
     private accountRepository: AccountRepository,
-    private readonly jwtService: JwtService,
-  ) {}
+  ) {
+    this.hashSalt = this.configService.get<string>('SALT_DATA_HASH');
+    this.passSalt = Number(this.configService.get<number>('SALT_DATA_PASS'));
+  }
 
   private async hashData(data: string): Promise<string> {
     const hashed = await hashDataAsync({
       unhashedData: data,
-      salt: process.env.SALT_DATA_HASH,
+      salt: this.hashSalt,
     });
 
     if (!hashed) {
@@ -48,7 +56,7 @@ export class AccountService {
   private async encryptPassword(password: string): Promise<string> {
     const encryptedPassword = await encryptDataAsync({
       unencryptedPassword: password,
-      salt: Number(process.env.SALT_DATA_PASS),
+      salt: this.passSalt,
     });
 
     if (!encryptedPassword) {
@@ -93,10 +101,25 @@ export class AccountService {
 
   // TODO: criar testes para login
   private async createAuthToken(payload: object, subject: iAuthTokenSubject) {
-    const token = this.jwtService.sign(payload, {
-      expiresIn: '1h',
+    const config: JwtSignOptions = {
       subject: subject,
-    });
+    };
+
+    if (subject === 'access') {
+      config.expiresIn = '1h';
+    }
+
+    if (subject === 'refresh') {
+      config.notBefore = '1h';
+      config.expiresIn = '2h';
+    }
+
+    if (subject === 'recovery') {
+      config.notBefore = '7s';
+      config.expiresIn = '5m';
+    }
+
+    const token = await this.jwtService.signAsync(payload, config);
 
     return token;
   }
@@ -221,8 +244,14 @@ export class AccountService {
       pid: credential.parentProfile.id,
     };
 
-    const accessToken = this.createAuthToken(tokenPayload, 'access');
+    const [token, refresh] = await Promise.all([
+      this.createAuthToken(tokenPayload, 'access'),
+      this.createAuthToken(tokenPayload, 'refresh'),
+    ]);
 
-    return accessToken;
+    return {
+      token,
+      refresh,
+    };
   }
 }

@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Resend } from 'resend';
 
 import type { SendLinkToResetPassword } from './mail.entity';
@@ -17,9 +18,11 @@ export class MailService {
   private subject: string;
   private html: string;
 
-  constructor() {
-    this.resend = new Resend(process.env.MAIL_API_KEY);
-    this.from = `${appName} <${process.env.MAIL_FROM}>`;
+  constructor(private configService: ConfigService) {
+    const apiKey = this.configService.get<string>('MAIL_API_KEY');
+    const appEmail = this.configService.get<string>('MAIL_FROM');
+    this.resend = new Resend(apiKey);
+    this.from = `${appName} <${appEmail}>`;
   }
 
   async sendLinkToResetPassword(props: SendLinkToResetPassword) {

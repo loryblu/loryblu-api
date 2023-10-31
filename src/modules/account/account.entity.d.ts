@@ -5,7 +5,7 @@ import {
   ResetPasswordInfo,
 } from '@prisma/client';
 
-export type iAuthTokenSubject = 'access' | 'resfresh' | 'recovery';
+export type iAuthTokenSubject = 'access' | 'refresh' | 'recovery';
 
 export type NewAccountRepositoryInput = {
   credential: Omit<Credential, 'id' | 'createdAt' | 'updatedAt'>;
