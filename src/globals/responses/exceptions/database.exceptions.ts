@@ -6,3 +6,9 @@ export class P2002Exception extends UnprocessableEntityException {
     super(formatException(`O ${target} informado já está em uso.`, target));
   }
 }
+
+export class P2025Exception extends UnprocessableEntityException {
+  constructor(target: string) {
+    super(formatException(`Um campo não pode ser acessado.`, target));
+  }
+}

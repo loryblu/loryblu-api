@@ -1,15 +1,23 @@
 import { Prisma } from '@prisma/client';
 import { isProductionEnv } from './constants';
-import { UnknownErrorException, P2002Exception } from './responses/exceptions';
+import {
+  UnknownErrorException,
+  P2002Exception,
+  P2025Exception,
+} from './responses/exceptions';
 
 export function prismaKnownRequestErrors(
   error: Prisma.PrismaClientKnownRequestError,
 ) {
-  const target = (error.meta?.target as Array<string>) || ['unknow_meta'];
+  const target = (error.meta?.target as Array<string>) || ['Unknow meta'];
+
+  console.log(error);
 
   switch (error.code) {
     case 'P2002':
       throw new P2002Exception(target[0]);
+    case 'P2025':
+      throw new P2025Exception(target[0]);
   }
 }
 
