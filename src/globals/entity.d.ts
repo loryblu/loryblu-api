@@ -28,11 +28,13 @@ export type Messages = {
   notEmpty: Validator;
   boolean: Validator;
   string: Validator;
+  number: Validator;
+  integer: Validator;
+  enum: Validator;
   minLength: Validator;
   email: Validator;
   strongPassword: Validator;
   fullnamePattern: Validator;
   birthDatePattern: Validator;
-  genderPattern: Validator;
   recoveryTokenPattern: Validator;
 };

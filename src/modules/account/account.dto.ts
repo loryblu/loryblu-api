@@ -54,7 +54,7 @@ export class CreateAccountDto {
   @IsNotEmpty({ message: messages.notEmpty })
   @IsString({ message: messages.string })
   @Transform((params) => params.value.toLowerCase())
-  @IsEnum(Genders, { message: messages.genderPattern })
+  @IsEnum(Genders, { message: messages.enum })
   readonly childrenGender: Genders;
 }
 
