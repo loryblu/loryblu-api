@@ -12,6 +12,7 @@ import {
   RandomTokenProps,
   RandomTokenOutput,
   FormatLinkProps,
+  iAuthTokenSubject,
 } from './account.entity';
 import {
   EmailNotFoundException,
@@ -91,17 +92,11 @@ export class AccountService {
   }
 
   // TODO: criar testes para login
-  private async createAuthToken(id: number) {
-    const token = {
-      accessToken: this.jwtService.sign(
-        {
-          id,
-        },
-        {
-          expiresIn: '1 h',
-        },
-      ),
-    };
+  private async createAuthToken(payload: object, subject: iAuthTokenSubject) {
+    const token = this.jwtService.sign(payload, {
+      expiresIn: '1h',
+      subject: subject,
+    });
 
     return token;
   }
@@ -174,7 +169,7 @@ export class AccountService {
 
     return {
       url,
-      fullname: account.fullname,
+      fullname: account.parentProfile.fullname,
     };
   }
 
@@ -205,22 +200,29 @@ export class AccountService {
   async login(email: string, password: string) {
     const hashedEmail = await this.hashData(email);
 
-    const user = await this.accountRepository.getCredentialIdByEmail(
+    const credential = await this.accountRepository.getCredentialIdByEmail(
       hashedEmail,
     );
 
-    if (!user) {
+    if (!credential) {
       throw new EmailNotFoundException();
     }
 
-    const comparePassword = await bcrypt.compare(password, user.password);
+    const comparePassword = await bcrypt.compare(password, credential.password);
 
     if (!comparePassword) {
       throw new InvalidCredentialsException();
     }
 
-    delete user.password;
+    delete credential.password;
 
-    return this.createAuthToken(user.id);
+    const tokenPayload = {
+      cid: credential.id,
+      pid: credential.parentProfile.id,
+    };
+
+    const accessToken = this.createAuthToken(tokenPayload, 'access');
+
+    return accessToken;
   }
 }

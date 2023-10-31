@@ -48,7 +48,7 @@ export class AccountRepository {
 
   async getCredentialIdByEmail(
     hashedEmail: string,
-  ): Promise<GetCredentialIdByEmailOutput> {
+  ): Promise<GetCredentialIdByEmailOutput | void> {
     const response = await this.prisma.credential
       .findUnique({
         where: {
@@ -59,21 +59,14 @@ export class AccountRepository {
           password: true,
           parentProfile: {
             select: {
+              id: true,
               fullname: true,
             },
           },
         },
       })
       .then((response) => {
-        if (response) {
-          return {
-            id: response.id,
-            password: response.password,
-            fullname: response.parentProfile.fullname,
-          };
-        }
-
-        return null;
+        return response;
       })
       .catch((error) => handleErrors(error));
 
