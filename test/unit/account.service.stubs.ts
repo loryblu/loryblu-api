@@ -23,5 +23,8 @@ export const resetPasswordInput: ResetPasswordDto = {
 export const getCredentialOutput: GetCredentialIdByEmailOutput = {
   id: faker.helpers.rangeToNumber({ min: 1, max: 3000 }),
   password: faker.internet.password(),
-  fullname: faker.person.fullName(),
+  parentProfile: {
+    id: faker.string.uuid(),
+    fullname: faker.person.fullName(),
+  },
 };
