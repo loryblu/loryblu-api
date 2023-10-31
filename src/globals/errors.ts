@@ -9,15 +9,15 @@ import {
 export function prismaKnownRequestErrors(
   error: Prisma.PrismaClientKnownRequestError,
 ) {
-  const target = (error.meta?.target as Array<string>) || ['Unknow meta'];
-
-  console.log(error);
+  let target: string;
 
   switch (error.code) {
     case 'P2002':
-      throw new P2002Exception(target[0]);
+      [target] = (error.meta?.target as Array<string>) || ['Unknow meta'];
+      throw new P2002Exception(target);
     case 'P2025':
-      throw new P2025Exception(target[0]);
+      target = (error.meta.cause as string).split("'")[1];
+      throw new P2025Exception(target);
   }
 }
 
