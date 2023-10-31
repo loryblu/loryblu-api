@@ -119,7 +119,7 @@ export class AccountService {
       config.expiresIn = '5m';
     }
 
-    const token = this.jwtService.sign(payload, config);
+    const token = await this.jwtService.signAsync(payload, config);
 
     return token;
   }
@@ -244,8 +244,10 @@ export class AccountService {
       pid: credential.parentProfile.id,
     };
 
-    const token = this.createAuthToken(tokenPayload, 'access');
-    const refresh = this.createAuthToken(tokenPayload, 'refresh');
+    const [token, refresh] = await Promise.all([
+      this.createAuthToken(tokenPayload, 'access'),
+      this.createAuthToken(tokenPayload, 'refresh'),
+    ]);
 
     return {
       token,
