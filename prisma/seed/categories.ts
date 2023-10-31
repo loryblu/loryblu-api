@@ -114,6 +114,7 @@ export default async (prisma: PrismaClient) => {
         category,
       },
       create: {
+        id,
         group,
         category,
       },
