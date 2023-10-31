@@ -23,7 +23,7 @@ import {
   TryingEncryptException,
   TryingHashException,
 } from 'src/globals/responses/exceptions';
-import { JwtService } from '@nestjs/jwt';
+import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -101,10 +101,25 @@ export class AccountService {
 
   // TODO: criar testes para login
   private async createAuthToken(payload: object, subject: iAuthTokenSubject) {
-    const token = this.jwtService.sign(payload, {
-      expiresIn: '1h',
+    const config: JwtSignOptions = {
       subject: subject,
-    });
+    };
+
+    if (subject === 'access') {
+      config.expiresIn = '1h';
+    }
+
+    if (subject === 'refresh') {
+      config.notBefore = '1h';
+      config.expiresIn = '2h';
+    }
+
+    if (subject === 'recovery') {
+      config.notBefore = '7s';
+      config.expiresIn = '5m';
+    }
+
+    const token = this.jwtService.sign(payload, config);
 
     return token;
   }
@@ -230,7 +245,11 @@ export class AccountService {
     };
 
     const token = this.createAuthToken(tokenPayload, 'access');
+    const refresh = this.createAuthToken(tokenPayload, 'refresh');
 
-    return token;
+    return {
+      token,
+      refresh,
+    };
   }
 }
