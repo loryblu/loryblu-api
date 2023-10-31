@@ -1,5 +1,6 @@
 import { randomBytes } from 'node:crypto';
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { AccountRepository } from './account.repository';
 import {
   CreateAccountDto,
@@ -12,6 +13,7 @@ import {
   RandomTokenProps,
   RandomTokenOutput,
   FormatLinkProps,
+  iAuthTokenSubject,
 } from './account.entity';
 import {
   EmailNotFoundException,
@@ -21,20 +23,27 @@ import {
   TryingEncryptException,
   TryingHashException,
 } from 'src/globals/responses/exceptions';
-import { JwtService } from '@nestjs/jwt';
+import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AccountService {
+  private hashSalt: string;
+  private passSalt: number;
+
   constructor(
+    private configService: ConfigService,
+    private jwtService: JwtService,
     private accountRepository: AccountRepository,
-    private readonly jwtService: JwtService,
-  ) {}
+  ) {
+    this.hashSalt = this.configService.get<string>('SALT_DATA_HASH');
+    this.passSalt = Number(this.configService.get<number>('SALT_DATA_PASS'));
+  }
 
   private async hashData(data: string): Promise<string> {
     const hashed = await hashDataAsync({
       unhashedData: data,
-      salt: process.env.SALT_DATA_HASH,
+      salt: this.hashSalt,
     });
 
     if (!hashed) {
@@ -47,7 +56,7 @@ export class AccountService {
   private async encryptPassword(password: string): Promise<string> {
     const encryptedPassword = await encryptDataAsync({
       unencryptedPassword: password,
-      salt: Number(process.env.SALT_DATA_PASS),
+      salt: this.passSalt,
     });
 
     if (!encryptedPassword) {
@@ -91,17 +100,26 @@ export class AccountService {
   }
 
   // TODO: criar testes para login
-  private async createAuthToken(id: number) {
-    const token = {
-      accessToken: this.jwtService.sign(
-        {
-          id,
-        },
-        {
-          expiresIn: '1 h',
-        },
-      ),
+  private async createAuthToken(payload: object, subject: iAuthTokenSubject) {
+    const config: JwtSignOptions = {
+      subject: subject,
     };
+
+    if (subject === 'access') {
+      config.expiresIn = '1h';
+    }
+
+    if (subject === 'refresh') {
+      config.notBefore = '1h';
+      config.expiresIn = '2h';
+    }
+
+    if (subject === 'recovery') {
+      config.notBefore = '7s';
+      config.expiresIn = '5m';
+    }
+
+    const token = await this.jwtService.signAsync(payload, config);
 
     return token;
   }
@@ -174,7 +192,7 @@ export class AccountService {
 
     return {
       url,
-      fullname: account.fullname,
+      fullname: account.parentProfile.fullname,
     };
   }
 
@@ -205,22 +223,35 @@ export class AccountService {
   async login(email: string, password: string) {
     const hashedEmail = await this.hashData(email);
 
-    const user = await this.accountRepository.getCredentialIdByEmail(
+    const credential = await this.accountRepository.getCredentialIdByEmail(
       hashedEmail,
     );
 
-    if (!user) {
+    if (!credential) {
       throw new EmailNotFoundException();
     }
 
-    const comparePassword = await bcrypt.compare(password, user.password);
+    const comparePassword = await bcrypt.compare(password, credential.password);
 
     if (!comparePassword) {
       throw new InvalidCredentialsException();
     }
 
-    delete user.password;
+    delete credential.password;
 
-    return this.createAuthToken(user.id);
+    const tokenPayload = {
+      cid: credential.id,
+      pid: credential.parentProfile.id,
+    };
+
+    const [token, refresh] = await Promise.all([
+      this.createAuthToken(tokenPayload, 'access'),
+      this.createAuthToken(tokenPayload, 'refresh'),
+    ]);
+
+    return {
+      token,
+      refresh,
+    };
   }
 }
