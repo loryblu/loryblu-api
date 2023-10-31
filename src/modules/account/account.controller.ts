@@ -1,4 +1,5 @@
 import { Controller, Post, Body, HttpCode, Put } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { MailService } from '../mail/mail.service';
 import {
@@ -9,15 +10,20 @@ import {
 } from './account.dto';
 import { AccountService } from './account.service';
 import { responses } from 'src/globals/responses/docs';
-import { isProductionEnv } from 'src/globals/constants';
 import { RecoveryControllerOutput } from './account.entity';
 
 @Controller('/auth')
 export class AccountController {
+  private isProdEnv: boolean;
+
   constructor(
     private mailService: MailService,
     private accountService: AccountService,
-  ) {}
+    private configService: ConfigService,
+  ) {
+    const env = this.configService.get<string>('NODE_ENV');
+    this.isProdEnv = env === 'production';
+  }
 
   @Post('/register')
   @ApiTags('Authentication')
@@ -72,7 +78,7 @@ export class AccountController {
       userName: created.fullname,
     });
 
-    if (!isProductionEnv) {
+    if (!this.isProdEnv) {
       response.recoverLink = created.url;
     }
 

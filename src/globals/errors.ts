@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client';
-import { isProductionEnv } from './constants';
+import { constants } from './constants';
 import { UnknownErrorException, P2002Exception } from './responses/exceptions';
 
 export function prismaKnownRequestErrors(
@@ -15,7 +15,7 @@ export function prismaKnownRequestErrors(
 
 export function unknownError(error: unknown) {
   // ! remover quando adicionar um logger
-  if (!isProductionEnv) {
+  if (constants().NODE_ENV != 'production') {
     console.info('unknownError', error);
   }
 
