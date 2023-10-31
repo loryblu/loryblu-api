@@ -2,15 +2,15 @@ import { Controller, Post, Body, HttpCode, Put } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { MailService } from '../mail/mail.service';
+import { AccountService } from './account.service';
+import { responses } from 'src/globals/responses/docs';
+import { RecoveryControllerOutput } from './account.entity';
 import {
   CreateAccountDto,
   LoginDto,
   ResetPasswordDto,
   SetPasswordDto,
 } from './account.dto';
-import { AccountService } from './account.service';
-import { responses } from 'src/globals/responses/docs';
-import { RecoveryControllerOutput } from './account.entity';
 
 @Controller('/auth')
 export class AccountController {
