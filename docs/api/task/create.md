@@ -15,6 +15,7 @@
 | frequency  | Array&lt;string&gt; | ["sun"]                                | `minSize 1` `maxSize 7` `required` |
 | order      | number              | 0                                      | `default 0` `is not required`      |
 
+shift: `morning`, `afternoon`, `night`
 frequency: `sun`, `mon`, `tue`, `wed`, `thu`, `fri`, `sat`
 
 ## Response body
