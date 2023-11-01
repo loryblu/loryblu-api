@@ -22,7 +22,7 @@ export type ApiResponses = {
   internalError: ApiResponseOptions;
 };
 
-type Validator = ValidationOptions['message'];
+type Validator = ValidationOptions['message'] | string;
 
 export type Messages = {
   notEmpty: Validator;
