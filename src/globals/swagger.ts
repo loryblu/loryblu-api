@@ -19,7 +19,7 @@ export const swaggerDocumentConfig = new DocumentBuilder()
       bearerFormat: 'JWT',
       description: 'Use `accessToken`, ele é obtido no login.',
     },
-    'Token de Acesso',
+    'access',
   )
   .addBearerAuth(
     {
@@ -30,7 +30,7 @@ export const swaggerDocumentConfig = new DocumentBuilder()
       bearerFormat: 'JWT',
       description: 'Use `refreshToken`, ele é obtido no login.',
     },
-    'Token de atualização de sessão',
+    'refresh',
   )
   .addBearerAuth(
     {
@@ -42,7 +42,7 @@ export const swaggerDocumentConfig = new DocumentBuilder()
       description:
         'Use `recoveryToken`, ele é obtido no e-mail enviado ao pedir a redefinição de senha.',
     },
-    'Token de redefinição de senha',
+    'recovery',
   )
   .build();
 
