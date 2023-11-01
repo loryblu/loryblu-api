@@ -8,7 +8,6 @@ export class TaskService {
 
   async processNewTaskData(task: iTaskRepositoryInput) {
     await this.repository.saveTask(task);
-
     return;
   }
 }
