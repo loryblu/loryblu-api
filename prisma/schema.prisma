@@ -73,7 +73,7 @@ model TaskCategory {
 model Task {
   id         Int             @id @default(autoincrement())
   shift      TaskShift
-  frequency  TaskFrequency
+  frequency  TaskFrequency[]
   order      Int
   categoryId String          @map("category_id")
   category   TaskCategory    @relation(fields: [categoryId], references: [id], onDelete: Cascade)
