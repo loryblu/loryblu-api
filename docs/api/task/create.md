@@ -1,3 +1,10 @@
+## Request header
+
+| header        | value                  |
+| ------------- | ---------------------- |
+| Authorization | "Bearer `accessToken`" |
+| Content-Type  | `application/json`     |
+
 ## Request body
 
 | property   | type          | example                                | validation                         |
