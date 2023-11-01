@@ -1,6 +1,10 @@
 import { Prisma } from '@prisma/client';
 import { constants } from './constants';
-import { UnknownErrorException, P2002Exception } from './responses/exceptions';
+import {
+  UnknownErrorException,
+  P2002Exception,
+  P2025Exception,
+} from './responses/exceptions';
 
 import { UnauthorizedException } from '@nestjs/common';
 import { formatException } from './utils';
@@ -8,11 +12,15 @@ import { formatException } from './utils';
 export function prismaKnownRequestErrors(
   error: Prisma.PrismaClientKnownRequestError,
 ) {
-  const target = (error.meta?.target as Array<string>) || ['unknow_meta'];
+  let target: string;
 
   switch (error.code) {
     case 'P2002':
-      throw new P2002Exception(target[0]);
+      [target] = (error.meta?.target as Array<string>) || ['Unknow meta'];
+      throw new P2002Exception(target);
+    case 'P2025':
+      target = (error.meta.cause as string).split("'")[1];
+      throw new P2025Exception(target);
   }
 }
 
