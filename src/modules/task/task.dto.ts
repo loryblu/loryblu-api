@@ -7,10 +7,12 @@ import {
   IsNumber,
   IsString,
 } from 'class-validator';
-import { TaskFrequency, TaskShift } from '@prisma/client';
 import { Transform, TransformFnParams } from 'class-transformer';
+import { TaskFrequency, TaskShift } from '@prisma/client';
+import { ParseIntPipe } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 import { messages } from 'src/globals/responses/validation';
+import { CustomHttpError } from 'src/globals/responses/exceptions';
 
 function transformFrequencyItems(param: TransformFnParams) {
   const lowerCaseItems = param.value.map((item: string) => {
@@ -52,3 +54,9 @@ export class TaskCreateDto {
   @IsInt({ message: messages.integer })
   order: number = 0;
 }
+
+export const readTasksDto = new ParseIntPipe({
+  exceptionFactory: () => {
+    return new CustomHttpError(messages.integer as string, 400, 'childrenId');
+  },
+});

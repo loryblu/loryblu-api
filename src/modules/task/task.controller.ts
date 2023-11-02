@@ -1,20 +1,24 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { responses } from 'src/globals/responses/docs';
 import { TaskService } from './task.service';
-import { TaskCreateDto } from './task.dto';
+import { TaskCreateDto, readTasksDto } from './task.dto';
 import { AuthorizationGuard, RequestToken } from 'src/guard';
+import { iAuthTokenPayload } from '../account/account.entity';
 
 @UseGuards(AuthorizationGuard)
 @Controller('/task')
 @ApiTags('Tasks')
+@ApiBearerAuth('access')
 export class TaskController {
   constructor(private service: TaskService) {}
 
@@ -28,15 +32,37 @@ export class TaskController {
   @ApiResponse(responses.unprocessable)
   @ApiResponse(responses.internalError)
   async create(@Body() input: TaskCreateDto, @Req() request: Request) {
-    const sessionInfo = request['session.payload'];
+    const sessionInfo = request['session.payload'] as iAuthTokenPayload;
 
     await this.service.processNewTaskData({
-      parentId: sessionInfo.pid as string,
+      parentId: sessionInfo.pid,
       ...input,
     });
 
     return {
       message: 'Nova tarefa criada com sucesso',
+    };
+  }
+
+  @RequestToken({ type: 'access', role: 'user' })
+  @Get()
+  @HttpCode(200)
+  async read(
+    @Query('childrenId', readTasksDto)
+    childrenId: number,
+    @Req() request: Request,
+  ) {
+    const sessionInfo = request['session.payload'] as iAuthTokenPayload;
+    const groupOfTasks = await this.service.readAndProcessTasks({
+      childrenId,
+      parentId: sessionInfo.pid,
+    });
+
+    return {
+      message: 'Tarefas encontradas',
+      data: {
+        ...groupOfTasks,
+      },
     };
   }
 }
