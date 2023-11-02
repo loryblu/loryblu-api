@@ -14,6 +14,7 @@ import { TaskService } from './task.service';
 import { TaskCreateDto, readTasksDto } from './task.dto';
 import { AuthorizationGuard, RequestToken } from 'src/guard';
 import { iAuthTokenPayload } from '../account/account.entity';
+import { sessionPayloadKey } from 'src/globals/constants';
 
 @UseGuards(AuthorizationGuard)
 @Controller('/task')
@@ -32,7 +33,7 @@ export class TaskController {
   @ApiResponse(responses.unprocessable)
   @ApiResponse(responses.internalError)
   async create(@Body() input: TaskCreateDto, @Req() request: Request) {
-    const sessionInfo = request['session.payload'] as iAuthTokenPayload;
+    const sessionInfo = request[sessionPayloadKey] as iAuthTokenPayload;
 
     await this.service.processNewTaskData({
       parentId: sessionInfo.pid,
@@ -52,7 +53,7 @@ export class TaskController {
     childrenId: number,
     @Req() request: Request,
   ) {
-    const sessionInfo = request['session.payload'] as iAuthTokenPayload;
+    const sessionInfo = request[sessionPayloadKey] as iAuthTokenPayload;
     const groupOfTasks = await this.service.readAndProcessTasks({
       childrenId,
       parentId: sessionInfo.pid,

@@ -12,6 +12,7 @@ import { Request } from 'express';
 import { formatException } from 'src/globals/utils';
 import { iAuthMetadata } from './authorization.decorator';
 import { handleJWTErrors } from 'src/globals/errors';
+import { sessionPayloadKey } from 'src/globals/constants';
 
 @Injectable()
 export class AuthorizationGuard implements CanActivate {
@@ -60,7 +61,7 @@ export class AuthorizationGuard implements CanActivate {
       .catch((error) => handleJWTErrors(error));
 
     if (validity) {
-      request['session.payload'] = validity;
+      request[sessionPayloadKey] = validity;
       return true;
     }
 
