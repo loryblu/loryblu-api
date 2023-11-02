@@ -15,8 +15,8 @@
 
 ## Response body
 
-| property | type   | example                  |
-| -------- | ------ | ------------------------ |
+| property | type   | example                    |
+| -------- | ------ | -------------------------- |
 | data     | object | { [group]: `ListOfTasks` } |
 
 ```ts
