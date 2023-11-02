@@ -2,6 +2,8 @@
 
 | header        | value                  |
 | ------------- | ---------------------- |
+| Path          | `/task`                |
+| Method        | `POST`                 |
 | Authorization | "Bearer `accessToken`" |
 | Content-Type  | `application/json`     |
 
