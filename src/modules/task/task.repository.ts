@@ -37,6 +37,14 @@ export class TaskRepository {
             },
           },
         },
+        orderBy: [
+          {
+            order: 'asc',
+          },
+          {
+            updatedAt: 'asc',
+          },
+        ],
       })
       .then((response) => response)
       .catch((error) => handleErrors(error));
