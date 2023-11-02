@@ -17,7 +17,7 @@
 
 | property | type   | example                  |
 | -------- | ------ | ------------------------ |
-| data     | object | { [group]: ListOfTasks } |
+| data     | object | { [group]: `ListOfTasks` } |
 
 ```ts
 type ListOfTasks = Array<{
