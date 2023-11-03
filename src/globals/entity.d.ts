@@ -28,9 +28,12 @@ export type Messages = {
   notEmpty: Validator;
   boolean: Validator;
   string: Validator;
+  arrayOfString: Validator;
   number: Validator;
   integer: Validator;
   enum: Validator;
+  minSize: Validator;
+  maxSize: Validator;
   minLength: Validator;
   email: Validator;
   strongPassword: Validator;

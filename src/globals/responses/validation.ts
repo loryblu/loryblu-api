@@ -10,6 +10,9 @@ export const messages: Messages = {
   string: () => {
     return `Deve ser um texto.`;
   },
+  arrayOfString: () => {
+    return `Deve ser uma lista de textos.`;
+  },
   number: () => {
     return `Deve ser um número.`;
   },
@@ -19,6 +22,14 @@ export const messages: Messages = {
   enum: ({ constraints }) => {
     const enums = constraints[1];
     return `Deve ser um texto entre essas opções: ${enums}`;
+  },
+  minSize: ({ constraints }) => {
+    const minSize = constraints[0];
+    return `Deve ter no mínimo ${minSize} item(ns).`;
+  },
+  maxSize: ({ constraints }) => {
+    const maxSize = constraints[0];
+    return `Deve ter no máximo ${maxSize} item(ns).`;
   },
   minLength: ({ constraints }) => {
     const minLength = constraints[0];

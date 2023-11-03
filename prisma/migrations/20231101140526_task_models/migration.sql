@@ -4,11 +4,23 @@ CREATE TYPE "TaskFrequency" AS ENUM ('sun', 'mon', 'tue', 'wed', 'thu', 'fri', '
 -- CreateEnum
 CREATE TYPE "TaskShift" AS ENUM ('morning', 'afternoon', 'night');
 
+-- CreateEnum
+CREATE TYPE "TaskGroup" AS ENUM ('study', 'routine');
+
+-- CreateTable
+CREATE TABLE "task_categories" (
+    "id" TEXT NOT NULL,
+    "group" "TaskGroup" NOT NULL,
+    "category" TEXT NOT NULL,
+
+    CONSTRAINT "task_categories_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateTable
 CREATE TABLE "tasks" (
     "id" SERIAL NOT NULL,
     "shift" "TaskShift" NOT NULL,
-    "frequency" "TaskFrequency" NOT NULL,
+    "frequency" "TaskFrequency"[],
     "order" INTEGER NOT NULL,
     "category_id" TEXT NOT NULL,
     "children_id" INTEGER NOT NULL,

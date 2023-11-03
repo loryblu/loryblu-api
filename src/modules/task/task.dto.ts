@@ -1,8 +1,23 @@
+import {
+  ArrayMaxSize,
+  ArrayMinSize,
+  IsEnum,
+  IsInt,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+} from 'class-validator';
 import { TaskFrequency, TaskShift } from '@prisma/client';
-import { IsEnum, IsInt, IsNotEmpty, IsNumber, IsString } from 'class-validator';
-import { Transform } from 'class-transformer';
+import { Transform, TransformFnParams } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 import { messages } from 'src/globals/responses/validation';
+
+function transformFrequencyItems(param: TransformFnParams) {
+  const lowerCaseItems = param.value.map((item: string) => {
+    return item.toLowerCase();
+  });
+  return lowerCaseItems;
+}
 
 export class TaskCreateDto {
   @ApiProperty({ example: 1 })
@@ -23,12 +38,14 @@ export class TaskCreateDto {
   @IsEnum(TaskShift, { message: messages.enum })
   shift: TaskShift;
 
-  @ApiProperty({ enum: TaskFrequency })
+  @ApiProperty({ example: [TaskFrequency['mon']] })
   @IsNotEmpty({ message: messages.notEmpty })
-  @IsString({ message: messages.string })
-  @Transform((param) => param.value.toLowerCase())
-  @IsEnum(TaskFrequency, { message: messages.enum })
-  frequency: TaskFrequency;
+  @IsString({ each: true, message: messages.arrayOfString })
+  @ArrayMinSize(1, { message: messages.minSize })
+  @ArrayMaxSize(7, { message: messages.maxSize })
+  @Transform(transformFrequencyItems)
+  @IsEnum(TaskFrequency, { each: true, message: messages.enum })
+  frequency: Array<TaskFrequency>;
 
   @ApiProperty()
   @IsNumber({}, { message: messages.number })
