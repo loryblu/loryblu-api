@@ -13,7 +13,7 @@
 | ---------- | ------ | ------- | ---------------------------------------------------------- |
 | childrenId | number | 1       | `integer` `required`                                       |
 | frequency  | string | sun,sat | `Array<string>` `required`                                 |
-| page       | number | 1       | `integer` `is not required`                                |
+| page       | number | 1       | `integer` `min 1` `is not required`                                |
 | perPage    | number | 1       | `integer` `min 20` `max 70` `default 20` `is not required` |
 
 **Query exemple**
