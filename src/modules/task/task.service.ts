@@ -36,15 +36,21 @@ export class TaskService {
     result: object,
     currentItem: iTaskRepositoryReadManyOutput,
   ) {
-    const group = currentItem.category.group as string;
+    const group = currentItem.category.group;
 
     if (!result[group]) {
       result[group] = [];
     }
 
-    delete currentItem.category;
-
-    result[group].push(currentItem);
+    result[group].push({
+      id: currentItem.id,
+      shift: currentItem.shift,
+      frequency: currentItem.frequency,
+      order: currentItem.order,
+      categoryId: currentItem.categoryId,
+      categoryTitle: currentItem.category.category,
+      updatedAt: currentItem.updatedAt,
+    });
 
     return result;
   }

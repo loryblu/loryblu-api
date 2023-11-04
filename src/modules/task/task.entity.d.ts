@@ -24,7 +24,9 @@ export type iTaskRepositoryReadManyOutput = Omit<
   Task,
   'childrenId' | 'createdAt'
 > & {
+  categoryTitle?: string;
   category: {
     group: string;
+    category: string;
   };
 };

@@ -37,6 +37,7 @@ export class TaskRepository {
           category: {
             select: {
               group: true,
+              category: true,
             },
           },
         },
