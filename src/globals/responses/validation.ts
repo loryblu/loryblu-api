@@ -23,6 +23,10 @@ export const messages: Messages = {
     const minLength = constraints[0];
     return `Deve ter no mínimo ${minLength} caracteres.`;
   },
+  minNumber: ({ constraints }) => {
+    const minNumber = constraints[0];
+    return `Valor mínimo é ${minNumber}.`;
+  },
   email: `Deve conter um formato de e-mail válido.`,
   strongPassword: `Deve conter uma letra maiúscula, minúscula, número, símbolo e no mínimo 8 caracteres.`,
   fullnamePattern: `Deve conter apenas letras e espaço em branco entre palavras.`,
