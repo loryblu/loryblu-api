@@ -1,4 +1,9 @@
-import { ChildrenProfile, ParentProfile, Task } from '@prisma/client';
+import {
+  ChildrenProfile,
+  ParentProfile,
+  Task,
+  TaskFrequency,
+} from '@prisma/client';
 
 export type iTaskRepositoryInput = Omit<
   Task,
@@ -10,6 +15,9 @@ export type iTaskRepositoryInput = Omit<
 export type iTaskRepositoryReadManyInput = {
   childrenId: ChildrenProfile['id'];
   parentId: ParentProfile['id'];
+  frequency?: Array<TaskFrequency>;
+  page?: number;
+  perPage?: number;
 };
 
 export type iTaskRepositoryReadManyOutput = Omit<

@@ -7,11 +7,12 @@ import {
   Query,
   Req,
   UseGuards,
+  ValidationPipe,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { responses } from 'src/globals/responses/docs';
 import { TaskService } from './task.service';
-import { TaskCreateDto, readTasksDto } from './task.dto';
+import { TaskCreateDto, readTaskNewDto } from './task.dto';
 import { AuthorizationGuard, RequestToken } from 'src/guard';
 import { iAuthTokenPayload } from '../account/account.entity';
 import { sessionPayloadKey } from 'src/globals/constants';
@@ -49,20 +50,30 @@ export class TaskController {
   @Get()
   @HttpCode(200)
   async read(
-    @Query('childrenId', readTasksDto)
-    childrenId: number,
+    @Query(
+      new ValidationPipe({
+        transform: true,
+        transformOptions: {
+          enableImplicitConversion: true,
+        },
+        forbidNonWhitelisted: true,
+      }),
+    )
+    queryParams: readTaskNewDto,
     @Req() request: Request,
   ) {
     const sessionInfo = request[sessionPayloadKey] as iAuthTokenPayload;
-    const groupOfTasks = await this.service.readAndProcessTasks({
-      childrenId,
+
+    const { processTask, count } = await this.service.readAndProcessTasks({
+      ...queryParams,
       parentId: sessionInfo.pid,
     });
 
     return {
       message: 'Tarefas encontradas',
       data: {
-        ...groupOfTasks,
+        count,
+        ...processTask,
       },
     };
   }

@@ -16,10 +16,20 @@ export class TaskService {
   }
 
   async readAndProcessTasks(input: iTaskRepositoryReadManyInput) {
-    const tasks = await this.repository.readTasks(input);
+    const skipResults = input.page * input.perPage;
+
+    const tasks = await this.repository.readTasks({
+      ...input,
+      page: skipResults,
+      perPage: input.perPage,
+    });
+    const count = tasks.length;
     const processTask = tasks.reduce(this.processTasks, {});
 
-    return processTask;
+    return {
+      processTask,
+      count,
+    };
   }
 
   private processTasks(

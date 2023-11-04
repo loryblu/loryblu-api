@@ -14,7 +14,7 @@ export class TaskRepository {
   async readTasks(
     props: iTaskRepositoryReadManyInput,
   ): Promise<Array<iTaskRepositoryReadManyOutput>> {
-    const { childrenId, parentId } = props;
+    const { childrenId, parentId, frequency, page, perPage } = props;
 
     const tasks = await this.prisma.task
       .findMany({
@@ -22,6 +22,9 @@ export class TaskRepository {
           childrenId: childrenId,
           children: {
             parentId: parentId,
+          },
+          frequency: {
+            hasSome: frequency,
           },
         },
         select: {
@@ -37,6 +40,8 @@ export class TaskRepository {
             },
           },
         },
+        skip: page,
+        take: perPage,
         orderBy: [
           {
             order: 'asc',
