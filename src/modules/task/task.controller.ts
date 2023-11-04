@@ -27,7 +27,7 @@ export class TaskController {
   @RequestToken({ type: 'access', role: 'user' })
   @Post()
   @HttpCode(201)
-  @ApiResponse(responses.ok)
+  @ApiResponse(responses.created)
   @ApiResponse(responses.badRequest)
   @ApiResponse(responses.unauthorized)
   @ApiResponse(responses.forbidden)
@@ -49,6 +49,12 @@ export class TaskController {
   @RequestToken({ type: 'access', role: 'user' })
   @Get()
   @HttpCode(200)
+  @ApiResponse(responses.ok)
+  @ApiResponse(responses.badRequest)
+  @ApiResponse(responses.unauthorized)
+  @ApiResponse(responses.forbidden)
+  @ApiResponse(responses.unprocessable)
+  @ApiResponse(responses.internalError)
   async read(
     @Query(
       new ValidationPipe({
