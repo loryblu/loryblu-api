@@ -27,6 +27,10 @@ export const messages: Messages = {
     const minNumber = constraints[0];
     return `Valor mínimo é ${minNumber}.`;
   },
+  maxNumber: ({ constraints }) => {
+    const maxNumber = constraints[0];
+    return `Valor máximo é ${maxNumber}.`;
+  },
   email: `Deve conter um formato de e-mail válido.`,
   strongPassword: `Deve conter uma letra maiúscula, minúscula, número, símbolo e no mínimo 8 caracteres.`,
   fullnamePattern: `Deve conter apenas letras e espaço em branco entre palavras.`,

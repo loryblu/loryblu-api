@@ -91,6 +91,6 @@ export class readTaskNewDto {
   @IsNumber({}, { message: messages.number })
   @IsInt({ message: messages.integer })
   @Min(20, { message: messages.minNumber })
-  @Max(70, { message: messages.minNumber })
+  @Max(70, { message: messages.maxNumber })
   perPage: number = 20;
 }

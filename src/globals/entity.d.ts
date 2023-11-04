@@ -35,6 +35,7 @@ export type Messages = {
   minSize: Validator;
   maxSize: Validator;
   minNumber: Validator;
+  maxNumber: Validator;
   minLength: Validator;
   email: Validator;
   strongPassword: Validator;
