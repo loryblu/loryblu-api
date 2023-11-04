@@ -82,8 +82,8 @@ export class readTaskNewDto {
   @Transform((param) => Number(param.value))
   @IsNumber({}, { message: messages.number })
   @IsInt({ message: messages.integer })
-  @Min(0, { message: messages.minNumber })
-  page: number = 0;
+  @Min(1, { message: messages.minNumber })
+  page: number = 1;
 
   @ApiProperty({ required: false })
   @IsOptional()

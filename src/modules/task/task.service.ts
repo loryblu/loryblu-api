@@ -16,7 +16,7 @@ export class TaskService {
   }
 
   async readAndProcessTasks(input: iTaskRepositoryReadManyInput) {
-    const skipResults = input.page * input.perPage;
+    const skipResults = --input.page * input.perPage;
 
     const tasks = await this.repository.readTasks({
       ...input,

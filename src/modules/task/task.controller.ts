@@ -7,7 +7,6 @@ import {
   Query,
   Req,
   UseGuards,
-  ValidationPipe,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { responses } from 'src/globals/responses/docs';
@@ -55,19 +54,7 @@ export class TaskController {
   @ApiResponse(responses.forbidden)
   @ApiResponse(responses.unprocessable)
   @ApiResponse(responses.internalError)
-  async read(
-    @Query(
-      new ValidationPipe({
-        transform: true,
-        transformOptions: {
-          enableImplicitConversion: true,
-        },
-        forbidNonWhitelisted: true,
-      }),
-    )
-    queryParams: readTaskNewDto,
-    @Req() request: Request,
-  ) {
+  async read(@Query() queryParams: readTaskNewDto, @Req() request: Request) {
     const sessionInfo = request[sessionPayloadKey] as iAuthTokenPayload;
 
     const { processTask, count } = await this.service.readAndProcessTasks({
