@@ -12,12 +12,14 @@
 | property   | type   | example | validation                                                 |
 | ---------- | ------ | ------- | ---------------------------------------------------------- |
 | childrenId | number | 1       | `integer` `required`                                       |
-| frequency  | string | sun,sat | `string` `default sun` `is not required`                   |
+| frequency  | string | sun,sat | `Array<string>` `required`                                 |
 | page       | number | 1       | `integer` `is not required`                                |
 | perPage    | number | 1       | `integer` `min 20` `max 70` `default 20` `is not required` |
 
+**Query exemple**
+
 ```md
-/task?`childrenId=1`&`day=sun,mon`
+/task?`childrenId=1`&`frequency=sun,mon`
 ```
 
 ## Response body
