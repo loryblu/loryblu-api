@@ -7,6 +7,11 @@ import {
 
 export type iAuthTokenSubject = 'access' | 'refresh' | 'recovery';
 
+export type iAuthTokenPayload = {
+  cid: string;
+  pid: string;
+};
+
 export type NewAccountRepositoryInput = {
   credential: Omit<Credential, 'id' | 'createdAt' | 'updatedAt'>;
   parentProfile: Pick<ParentProfile, 'fullname'>;

@@ -5,17 +5,25 @@ import {
   IsInt,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsString,
+  Max,
+  Min,
 } from 'class-validator';
-import { TaskFrequency, TaskShift } from '@prisma/client';
 import { Transform, TransformFnParams } from 'class-transformer';
+import { TaskFrequency, TaskShift } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
 import { messages } from 'src/globals/responses/validation';
 
 function transformFrequencyItems(param: TransformFnParams) {
+  if (!Array.isArray(param.value)) {
+    param.value = param.value.split(',');
+  }
+
   const lowerCaseItems = param.value.map((item: string) => {
-    return item.toLowerCase();
+    return item.toLowerCase().trim();
   });
+
   return lowerCaseItems;
 }
 
@@ -51,4 +59,38 @@ export class TaskCreateDto {
   @IsNumber({}, { message: messages.number })
   @IsInt({ message: messages.integer })
   order: number = 0;
+}
+
+export class readTaskNewDto {
+  @ApiProperty({ example: 1 })
+  @Transform((param) => Number(param.value))
+  @IsNumber({}, { message: messages.number })
+  @IsInt({ message: messages.integer })
+  @Min(1, { message: messages.minNumber })
+  childrenId: number;
+
+  @ApiProperty({ example: [TaskFrequency['mon']] })
+  @IsString({ each: true, message: messages.arrayOfString })
+  @Transform(transformFrequencyItems)
+  @ArrayMinSize(1, { message: messages.minSize })
+  @ArrayMaxSize(7, { message: messages.maxSize })
+  @IsEnum(TaskFrequency, { each: true, message: messages.enum })
+  frequency: Array<TaskFrequency>;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @Transform((param) => Number(param.value))
+  @IsNumber({}, { message: messages.number })
+  @IsInt({ message: messages.integer })
+  @Min(1, { message: messages.minNumber })
+  page: number = 1;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @Transform((param) => Number(param.value))
+  @IsNumber({}, { message: messages.number })
+  @IsInt({ message: messages.integer })
+  @Min(20, { message: messages.minNumber })
+  @Max(70, { message: messages.maxNumber })
+  perPage: number = 20;
 }

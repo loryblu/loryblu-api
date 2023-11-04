@@ -1,10 +1,17 @@
 import {
   BadRequestException,
+  HttpException,
   InternalServerErrorException,
   UnauthorizedException,
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { formatException } from 'src/globals/utils';
+
+export class CustomHttpError extends HttpException {
+  constructor(message: string, status: number, property?: string) {
+    super(formatException(message, property), status);
+  }
+}
 
 /*
  * 400 - BadRequestException

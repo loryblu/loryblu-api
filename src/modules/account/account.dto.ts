@@ -16,12 +16,12 @@ import { messages } from 'src/globals/responses/validation';
 import { Transform } from 'class-transformer';
 
 export class CreateAccountDto {
-  @ApiProperty()
+  @ApiProperty({ example: 'email@example.com' })
   @IsNotEmpty({ message: messages.notEmpty })
   @IsEmail({}, { message: messages.email })
   readonly email: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'stringW#3' })
   @IsNotEmpty({ message: messages.notEmpty })
   @IsStrongPassword({}, { message: messages.strongPassword })
   readonly password: string;
@@ -31,14 +31,14 @@ export class CreateAccountDto {
   @IsBoolean({ message: messages.boolean })
   readonly policiesAccepted: boolean;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'John Doe' })
   @IsNotEmpty({ message: messages.notEmpty })
   @IsString({ message: messages.string })
   @MinLength(5, { message: messages.minLength })
   @Matches(fullnameRegExp, { message: messages.fullnamePattern })
   readonly parentName: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: 'John Jr Doe' })
   @IsNotEmpty({ message: messages.notEmpty })
   @IsString({ message: messages.string })
   @MinLength(5, { message: messages.minLength })

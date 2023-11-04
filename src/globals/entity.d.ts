@@ -22,7 +22,7 @@ export type ApiResponses = {
   internalError: ApiResponseOptions;
 };
 
-type Validator = ValidationOptions['message'];
+type Validator = ValidationOptions['message'] | string;
 
 export type Messages = {
   notEmpty: Validator;
@@ -34,6 +34,8 @@ export type Messages = {
   enum: Validator;
   minSize: Validator;
   maxSize: Validator;
+  minNumber: Validator;
+  maxNumber: Validator;
   minLength: Validator;
   email: Validator;
   strongPassword: Validator;
