@@ -40,6 +40,7 @@ export type Messages = {
   email: Validator;
   strongPassword: Validator;
   fullnamePattern: Validator;
+  multipleNameRequired: Validator;
   birthDatePattern: Validator;
   recoveryTokenPattern: Validator;
 };

@@ -18,6 +18,7 @@ import {
 } from 'src/globals/constants';
 import { messages } from 'src/globals/responses/validation';
 import { Transform } from 'class-transformer';
+import { IsFullname } from 'src/decorators/isFullname.decorator';
 
 export class CreateAccountDto {
   @ApiProperty({ example: 'email@example.com' })
@@ -40,6 +41,7 @@ export class CreateAccountDto {
   @IsString({ message: messages.string })
   @MinLength(5, { message: messages.minLength })
   @Matches(fullnameRegExp, { message: messages.fullnamePattern })
+  @IsFullname('parentName', { message: messages.multipleNameRequired })
   readonly parentName: string;
 
   @ApiProperty({ example: 'John Jr Doe' })
@@ -47,6 +49,7 @@ export class CreateAccountDto {
   @IsString({ message: messages.string })
   @MinLength(5, { message: messages.minLength })
   @Matches(fullnameRegExp, { message: messages.fullnamePattern })
+  @IsFullname('parentName', { message: messages.multipleNameRequired })
   readonly childrenName: string;
 
   @ApiProperty({ example: '2009-02-28' })
