@@ -56,7 +56,7 @@ export class CreateAccountDto {
   @IsNotEmpty({ message: messages.notEmpty })
   @Matches(birthDateRegExp, { message: messages.birthDatePattern })
   @IsDateString({ strict: true }, { message: messages.birthDatePattern })
-  @IsDateFormat('childrenBirthDate', { message: messages.birthDatePattern })
+  @IsDateFormat('childrenBirthDate', { message: messages.birthDateRange })
   readonly childrenBirthDate: Date;
 
   @ApiProperty({ enum: Genders })

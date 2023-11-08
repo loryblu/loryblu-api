@@ -42,5 +42,6 @@ export type Messages = {
   fullnamePattern: Validator;
   multipleNameRequired: Validator;
   birthDatePattern: Validator;
+  birthDateRange: Validator;
   recoveryTokenPattern: Validator;
 };
