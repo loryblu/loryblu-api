@@ -11,7 +11,11 @@ import {
 } from 'class-validator';
 import { ApiProperty, PickType } from '@nestjs/swagger';
 import { Genders } from '@prisma/client';
-import { fullnameRegExp, recoveryTokenRegExp } from 'src/globals/constants';
+import {
+  birthDateRegExp,
+  fullnameRegExp,
+  recoveryTokenRegExp,
+} from 'src/globals/constants';
 import { messages } from 'src/globals/responses/validation';
 import { Transform } from 'class-transformer';
 
@@ -47,6 +51,7 @@ export class CreateAccountDto {
 
   @ApiProperty({ example: '2009-02-28' })
   @IsNotEmpty({ message: messages.notEmpty })
+  @Matches(birthDateRegExp, { message: messages.birthDatePattern })
   @IsDateString({ strict: true }, { message: messages.birthDatePattern })
   readonly childrenBirthDate: Date;
 
