@@ -11,9 +11,14 @@ import {
 } from 'class-validator';
 import { ApiProperty, PickType } from '@nestjs/swagger';
 import { Genders } from '@prisma/client';
-import { fullnameRegExp, recoveryTokenRegExp } from 'src/globals/constants';
+import {
+  birthDateRegExp,
+  fullnameRegExp,
+  recoveryTokenRegExp,
+} from 'src/globals/constants';
 import { messages } from 'src/globals/responses/validation';
 import { Transform } from 'class-transformer';
+import { IsDateFormat, IsFullname } from 'src/decorators';
 
 export class CreateAccountDto {
   @ApiProperty({ example: 'email@example.com' })
@@ -36,6 +41,7 @@ export class CreateAccountDto {
   @IsString({ message: messages.string })
   @MinLength(5, { message: messages.minLength })
   @Matches(fullnameRegExp, { message: messages.fullnamePattern })
+  @IsFullname('parentName', { message: messages.multipleNameRequired })
   readonly parentName: string;
 
   @ApiProperty({ example: 'John Jr Doe' })
@@ -43,11 +49,14 @@ export class CreateAccountDto {
   @IsString({ message: messages.string })
   @MinLength(5, { message: messages.minLength })
   @Matches(fullnameRegExp, { message: messages.fullnamePattern })
+  @IsFullname('parentName', { message: messages.multipleNameRequired })
   readonly childrenName: string;
 
   @ApiProperty({ example: '2009-02-28' })
   @IsNotEmpty({ message: messages.notEmpty })
+  @Matches(birthDateRegExp, { message: messages.birthDatePattern })
   @IsDateString({ strict: true }, { message: messages.birthDatePattern })
+  @IsDateFormat('childrenBirthDate', { message: messages.birthDateRange })
   readonly childrenBirthDate: Date;
 
   @ApiProperty({ enum: Genders })

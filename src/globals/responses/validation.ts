@@ -34,6 +34,8 @@ export const messages: Messages = {
   email: `Deve conter um formato de e-mail válido.`,
   strongPassword: `Deve conter uma letra maiúscula, minúscula, número, símbolo e no mínimo 8 caracteres.`,
   fullnamePattern: `Deve conter apenas letras e espaço em branco entre palavras.`,
+  multipleNameRequired: `Digite o nome completo`,
   birthDatePattern: `Deve ser um texto nesse padrão, YYYY-MM-DD.`,
+  birthDateRange: `O mês e o dia devem ser válidos.`,
   recoveryTokenPattern: `Deve ser um texto base64url`,
 };

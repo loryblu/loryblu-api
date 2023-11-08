@@ -9,6 +9,7 @@ export const sessionPayloadKey = 'session.payload';
 
 export const fullnameRegExp = /^[a-zÀ-ÿ ]+$/i;
 export const recoveryTokenRegExp = /^[a-zA-Z0-9_-]+$/;
+export const birthDateRegExp = /^[0-9]{4}(-[0-9]{1,2}){2}$/;
 
 export const constants = () => ({
   PORT: process.env.PORT || 5500,
