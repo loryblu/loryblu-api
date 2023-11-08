@@ -18,7 +18,7 @@ import {
 } from 'src/globals/constants';
 import { messages } from 'src/globals/responses/validation';
 import { Transform } from 'class-transformer';
-import { IsFullname } from 'src/decorators/isFullname.decorator';
+import { IsDateFormat, IsFullname } from 'src/decorators';
 
 export class CreateAccountDto {
   @ApiProperty({ example: 'email@example.com' })
@@ -56,6 +56,7 @@ export class CreateAccountDto {
   @IsNotEmpty({ message: messages.notEmpty })
   @Matches(birthDateRegExp, { message: messages.birthDatePattern })
   @IsDateString({ strict: true }, { message: messages.birthDatePattern })
+  @IsDateFormat('childrenBirthDate', { message: messages.birthDatePattern })
   readonly childrenBirthDate: Date;
 
   @ApiProperty({ enum: Genders })
