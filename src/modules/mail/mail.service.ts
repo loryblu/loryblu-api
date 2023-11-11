@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Resend } from 'resend';
 
 import type { SendLinkToResetPassword } from './mail.entity';
 import { appName } from 'src/globals/constants';
@@ -9,20 +8,20 @@ import {
   EmailLoaderException,
   SendEmailException,
 } from 'src/globals/responses/exceptions';
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class MailService {
-  private resend: Resend;
   private from: string;
   private to: string;
   private subject: string;
   private html: string;
 
-  constructor(private configService: ConfigService) {
-    const apiKey = this.configService.get<string>('MAIL_API_KEY');
-    const appEmail = this.configService.get<string>('MAIL_FROM');
-    this.resend = new Resend(apiKey);
-    this.from = `${appName} <${appEmail}>`;
+  constructor(
+    private configService: ConfigService,
+    private readonly mailer: MailerService,
+  ) {
+    this.from = `${appName} <${this.configService.get<string>('MAIL_FROM')}>`;
   }
 
   async sendLinkToResetPassword(props: SendLinkToResetPassword) {
@@ -45,7 +44,7 @@ export class MailService {
 
   private async sendMail() {
     try {
-      const response = await this.resend.emails.send({
+      const response = await this.mailer.sendMail({
         from: this.from,
         to: this.to,
         subject: this.subject,
