@@ -23,7 +23,7 @@ export class MailService {
     private readonly mailer: MailerService,
   ) {
     this.currentEnv = this.configService.get<string>('NODE_ENV');
-    this.whiteList = this.configService.get<string>('WHITE_LIST');
+    this.whiteList = this.configService.get<string>('MAIL_WHITELIST');
   }
 
   async sendLinkToResetPassword(props: SendLinkToResetPassword) {

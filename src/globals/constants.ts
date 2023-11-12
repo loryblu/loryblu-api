@@ -26,7 +26,7 @@ export const constants = () => ({
   MAIL_NAME: process.env.MAIL_NAME,
   MAIL_PASS: process.env.MAIL_PASS,
   MAIL_FROM: process.env.MAIL_FROM,
-  WHITE_LIST: process.env.WHITE_LIST,
+  MAIL_WHITELIST: process.env.MAIL_WHITELIST,
 
   MAIL_TEST_DELIVERED: process.env.MAIL_TEST_DELIVERED,
   MAIL_TEST_BOUNCED: process.env.MAIL_TEST_BOUNCED,
