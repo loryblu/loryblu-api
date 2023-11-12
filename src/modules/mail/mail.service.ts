@@ -36,7 +36,14 @@ export class MailService {
         userName,
       });
 
-      await this.sendMail();
+      if (this.isEmailWhitelisted(this.to)) {
+        await this.sendMail();
+        console.log(`O e-mail para ${this.to} ESTÁ na whitelist. Enviando.`);
+      } else {
+        console.log(
+          `O e-mail para ${this.to} NÃO está na whitelist. NÃO enviando.`,
+        );
+      }
     } catch (error) {
       throw new EmailLoaderException();
     }
@@ -55,5 +62,9 @@ export class MailService {
     } catch (error) {
       throw new SendEmailException();
     }
+  }
+  private isEmailWhitelisted(email: string): boolean {
+    const whitelist = process.env.WHITE_LIST;
+    return whitelist.includes(email);
   }
 }
