@@ -12,16 +12,18 @@ import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class MailService {
-  private from: string;
   private to: string;
   private subject: string;
   private html: string;
+  private currentEnv: string;
+  private whiteList: string;
 
   constructor(
     private configService: ConfigService,
     private readonly mailer: MailerService,
   ) {
-    this.from = `${appName} <${this.configService.get<string>('MAIL_FROM')}>`;
+    this.currentEnv = this.configService.get<string>('NODE_ENV');
+    this.whiteList = this.configService.get<string>('WHITE_LIST');
   }
 
   async sendLinkToResetPassword(props: SendLinkToResetPassword) {
@@ -36,23 +38,23 @@ export class MailService {
         userName,
       });
 
-      if (this.isEmailWhitelisted(this.to)) {
-        await this.sendMail();
-        console.log(`O e-mail para ${this.to} ESTÁ na whitelist. Enviando.`);
-      } else {
-        console.log(
-          `O e-mail para ${this.to} NÃO está na whitelist. NÃO enviando.`,
-        );
-      }
+      await this.sendMail();
     } catch (error) {
       throw new EmailLoaderException();
     }
   }
 
   private async sendMail() {
+    if (!this.isEmailWhitelisted(this.to) || this.currentEnv === 'production') {
+      //colocar no log
+      console.log(
+        `O e-mail para ${this.to} NÃO está na whitelist ou está em ambiente de produção. NÃO enviando.`,
+      );
+      return;
+    }
+
     try {
       const response = await this.mailer.sendMail({
-        from: this.from,
         to: this.to,
         subject: this.subject,
         html: this.html,
@@ -63,8 +65,9 @@ export class MailService {
       throw new SendEmailException();
     }
   }
+
   private isEmailWhitelisted(email: string): boolean {
-    const whitelist = process.env.WHITE_LIST;
+    const whitelist = this.whiteList;
     return whitelist.includes(email);
   }
 }
