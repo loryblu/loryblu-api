@@ -15,7 +15,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
         },
       },
       defaults: {
-        from: `${process.env.MAIL_NAME} <${process.env.MAIL_FROM}>`,
+        from: `${process.env.MAIL_NAME} <<${process.env.MAIL_FROM}>>`,
       },
     }),
   ],
