@@ -17,10 +17,17 @@ export const constants = () => ({
 
   SALT_DATA_HASH: process.env.SALT_DATA_HASH,
   SALT_DATA_PASS: process.env.SALT_DATA_PASS,
+
   SECRET_JWT: process.env.SECRET_JWT,
 
-  MAIL_API_KEY: process.env.MAIL_API_KEY,
+  MAIL_PORT: process.env.MAIL_PORT,
+  MAIL_HOST: process.env.MAIL_HOST,
+  MAIL_USER: process.env.MAIL_USER,
+  MAIL_NAME: process.env.MAIL_NAME,
+  MAIL_PASS: process.env.MAIL_PASS,
   MAIL_FROM: process.env.MAIL_FROM,
+  MAIL_WHITELIST: process.env.MAIL_WHITELIST,
+
   MAIL_TEST_DELIVERED: process.env.MAIL_TEST_DELIVERED,
   MAIL_TEST_BOUNCED: process.env.MAIL_TEST_BOUNCED,
   MAIL_TEST_COMPLAINED: process.env.MAIL_TEST_COMPLAINED,
