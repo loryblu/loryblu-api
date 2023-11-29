@@ -26,5 +26,12 @@ export const getCredentialOutput: GetCredentialIdByEmailOutput = {
   parentProfile: {
     id: faker.string.uuid(),
     fullname: faker.person.fullName(),
+    childrens: [
+      {
+        id: faker.helpers.rangeToNumber({ min: 1, max: 1000 }),
+        fullname: faker.person.fullName(),
+        tasks: [],
+      },
+    ],
   },
 };
