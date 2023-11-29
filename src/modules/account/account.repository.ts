@@ -97,7 +97,6 @@ export class AccountRepository {
     return response;
   }
 
-
   async getCredentialIdByRecoveryToken(
     input: getCredentialIdByRecoveryTokenInput,
   ): Promise<getCredentialIdByRecoveryTokenOutout> {
