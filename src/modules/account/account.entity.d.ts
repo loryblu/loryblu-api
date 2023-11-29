@@ -32,18 +32,9 @@ export type GetCredentialIdByEmailOutput = Pick<
 > & {
   parentProfile: Pick<ParentProfile, 'id' | 'fullname'> & {
     childrens: Array<
-      Pick<ChildrenProfile, 'id' | 'fullname'> & {
+      Pick<ChildrenProfile, 'id' | 'nameChild' | 'surnameChild'> & {
         tasks: Array<
-          Pick<
-            Task,
-            | 'id'
-            | 'shift'
-            | 'frequency'
-            | 'order'
-            | 'categoryId'
-            | 'updatedAt'
-            | 'createdAt'
-          > & {
+          Pick<Task, 'id' | 'shift' | 'frequency' | 'order' | 'categoryId'> & {
             category: Pick<TaskCategory, 'id' | 'group' | 'category'>;
           }
         >;

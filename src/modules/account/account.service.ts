@@ -249,7 +249,8 @@ export class AccountService {
       parentName: credential.parentProfile.fullname,
       childrens: credential.parentProfile.childrens.map((child) => ({
         id: child.id,
-        fullname: child.fullname,
+        name: child.nameChild,
+        surname: child.surnameChild,
         tasks: child.tasks,
       })),
     };
