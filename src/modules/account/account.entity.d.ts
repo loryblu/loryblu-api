@@ -15,7 +15,10 @@ export type iAuthTokenPayload = {
 export type NewAccountRepositoryInput = {
   credential: Omit<Credential, 'id' | 'createdAt' | 'updatedAt'>;
   parentProfile: Pick<ParentProfile, 'fullname'>;
-  childrenProfile: Pick<ChildrenProfile, 'fullname' | 'birthdate' | 'gender'>;
+  childrenProfile: Pick<
+    ChildrenProfile,
+    'nameChild' | 'surnameChild' | 'birthdate' | 'gender'
+  >;
 };
 
 export type RecoveryControllerOutput = {

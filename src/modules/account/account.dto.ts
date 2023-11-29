@@ -44,13 +44,19 @@ export class CreateAccountDto {
   @IsFullname('parentName', { message: messages.multipleNameRequired })
   readonly parentName: string;
 
-  @ApiProperty({ example: 'John Jr Doe' })
+  @ApiProperty({ example: 'John' })
   @IsNotEmpty({ message: messages.notEmpty })
   @IsString({ message: messages.string })
   @MinLength(5, { message: messages.minLength })
   @Matches(fullnameRegExp, { message: messages.fullnamePattern })
   @IsFullname('parentName', { message: messages.multipleNameRequired })
-  readonly childrenName: string;
+  readonly nameChild: string;
+
+  @ApiProperty({ example: 'Jr Doe' })
+  @IsNotEmpty({ message: messages.notEmpty })
+  @IsString({ message: messages.string })
+  @Matches(fullnameRegExp, { message: messages.fullnamePattern })
+  readonly surnameChild: string;
 
   @ApiProperty({ example: '2009-02-28' })
   @IsNotEmpty({ message: messages.notEmpty })

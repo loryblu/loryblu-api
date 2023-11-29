@@ -146,7 +146,8 @@ export class AccountService {
         fullname: input.parentName,
       },
       childrenProfile: {
-        fullname: input.childrenName,
+        nameChild: input.nameChild,
+        surnameChild: input.surnameChild,
         gender: input.childrenGender,
         birthdate: childrenBirthDate,
       },

@@ -32,7 +32,8 @@ export class AccountRepository {
               fullname: parentProfile.fullname,
               childrens: {
                 create: {
-                  fullname: childrenProfile.fullname,
+                  nameChild: childrenProfile.nameChild,
+                  surnameChild: childrenProfile.surnameChild,
                   birthdate: childrenProfile.birthdate,
                   gender: childrenProfile.gender,
                 },
@@ -64,7 +65,8 @@ export class AccountRepository {
               childrens: {
                 select: {
                   id: true,
-                  fullname: true,
+                  nameChild: true,
+                  surnameChild: true,
                   tasks: {
                     select: {
                       id: true,
