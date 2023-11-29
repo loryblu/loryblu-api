@@ -61,6 +61,30 @@ export class AccountRepository {
             select: {
               id: true,
               fullname: true,
+              childrens: {
+                select: {
+                  id: true,
+                  fullname: true,
+                  tasks: {
+                    select: {
+                      id: true,
+                      shift: true,
+                      frequency: true,
+                      order: true,
+                      categoryId: true,
+                      category: {
+                        select: {
+                          id: true,
+                          group: true,
+                          category: true,
+                        },
+                      },
+                      updatedAt: true,
+                      createdAt: true,
+                    },
+                  },
+                },
+              },
             },
           },
         },
@@ -72,6 +96,7 @@ export class AccountRepository {
 
     return response;
   }
+
 
   async getCredentialIdByRecoveryToken(
     input: getCredentialIdByRecoveryTokenInput,

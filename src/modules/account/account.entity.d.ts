@@ -27,7 +27,26 @@ export type GetCredentialIdByEmailOutput = Pick<
   Credential,
   'id' | 'password'
 > & {
-  parentProfile: Pick<ParentProfile, 'id' | 'fullname'>;
+  parentProfile: Pick<ParentProfile, 'id' | 'fullname'> & {
+    childrens: Array<
+      Pick<ChildrenProfile, 'id' | 'fullname'> & {
+        tasks: Array<
+          Pick<
+            Task,
+            | 'id'
+            | 'shift'
+            | 'frequency'
+            | 'order'
+            | 'categoryId'
+            | 'updatedAt'
+            | 'createdAt'
+          > & {
+            category: Pick<TaskCategory, 'id' | 'group' | 'category'>;
+          }
+        >;
+      }
+    >;
+  };
 };
 
 export type getCredentialIdByRecoveryTokenInput = {

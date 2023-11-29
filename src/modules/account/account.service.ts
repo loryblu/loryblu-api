@@ -240,18 +240,27 @@ export class AccountService {
     delete credential.password;
 
     const tokenPayload = {
-      cid: credential.id,
       pid: credential.parentProfile.id,
+      cid: credential.id,
+    };
+
+    const user = {
+      parentName: credential.parentProfile.fullname,
+      childrens: credential.parentProfile.childrens.map((child) => ({
+        id: child.id,
+        fullname: child.fullname,
+        tasks: child.tasks,
+      })),
     };
 
     const [token, refresh] = await Promise.all([
       this.createAuthToken(tokenPayload, 'access'),
       this.createAuthToken(tokenPayload, 'refresh'),
     ]);
-
     return {
       token,
       refresh,
+      user,
     };
   }
 }
