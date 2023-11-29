@@ -81,8 +81,6 @@ export class AccountRepository {
                           category: true,
                         },
                       },
-                      updatedAt: true,
-                      createdAt: true,
                     },
                   },
                 },
