@@ -11,7 +11,8 @@ export const createAccountInput: CreateAccountDto = {
   password: faker.internet.password(),
   policiesAccepted: faker.datatype.boolean(),
   parentName: faker.person.fullName(),
-  childrenName: faker.person.fullName(),
+  nameChild: faker.person.firstName(),
+  surnameChild: faker.person.lastName(),
   childrenBirthDate: faker.date.birthdate(),
   childrenGender: faker.person.sexType().toUpperCase() as Genders,
 };
@@ -29,7 +30,8 @@ export const getCredentialOutput: GetCredentialIdByEmailOutput = {
     childrens: [
       {
         id: faker.helpers.rangeToNumber({ min: 1, max: 1000 }),
-        fullname: faker.person.fullName(),
+        nameChild: faker.person.firstName(),
+        surnameChild: faker.person.lastName(),
         tasks: [],
       },
     ],
