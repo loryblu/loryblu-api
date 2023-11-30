@@ -243,6 +243,11 @@ export class AccountService {
       cid: credential.id,
       pid: credential.parentProfile.id,
     };
+    const user = {
+      pid: credential.parentProfile.id,
+      parentName: credential.parentProfile.fullname,
+      childrens: credential.parentProfile.childrens,
+    };
 
     const [token, refresh] = await Promise.all([
       this.createAuthToken(tokenPayload, 'access'),
@@ -252,6 +257,7 @@ export class AccountService {
     return {
       token,
       refresh,
+      user,
     };
   }
 }

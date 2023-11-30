@@ -27,7 +27,11 @@ export type GetCredentialIdByEmailOutput = Pick<
   Credential,
   'id' | 'password'
 > & {
-  parentProfile: Pick<ParentProfile, 'id' | 'fullname'>;
+  parentProfile: Pick<ParentProfile, 'id' | 'fullname'> & {
+    childrens: Array<
+      Pick<ChildrenProfile, 'id' | 'fullname' | 'birthdate' | 'gender'>
+    >;
+  };
 };
 
 export type getCredentialIdByRecoveryTokenInput = {

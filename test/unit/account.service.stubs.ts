@@ -26,5 +26,13 @@ export const getCredentialOutput: GetCredentialIdByEmailOutput = {
   parentProfile: {
     id: faker.string.uuid(),
     fullname: faker.person.fullName(),
+    childrens: [
+      {
+        id: faker.number.int(),
+        fullname: faker.person.fullName(),
+        birthdate: faker.date.birthdate(),
+        gender: ('male' || 'female') as Genders,
+      },
+    ],
   },
 };
