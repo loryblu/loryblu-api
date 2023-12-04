@@ -48,13 +48,17 @@ export class AccountController {
   @ApiResponse(responses.unauthorized)
   @ApiResponse(responses.internalError)
   async login(@Body() { email, password }: LoginDto) {
-    const { token, refresh } = await this.accountService.login(email, password);
+    const { token, refresh, user } = await this.accountService.login(
+      email,
+      password,
+    );
 
     return {
       message: 'Acesso permitido',
       data: {
         accessToken: token,
         refreshToken: refresh,
+        user: user,
       },
     };
   }

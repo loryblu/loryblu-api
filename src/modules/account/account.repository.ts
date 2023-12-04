@@ -61,6 +61,14 @@ export class AccountRepository {
             select: {
               id: true,
               fullname: true,
+              childrens: {
+                select: {
+                  id: true,
+                  fullname: true,
+                  gender: true,
+                  birthdate: true,
+                },
+              },
             },
           },
         },
