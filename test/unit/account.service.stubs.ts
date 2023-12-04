@@ -31,7 +31,7 @@ export const getCredentialOutput: GetCredentialIdByEmailOutput = {
         id: faker.number.int(),
         fullname: faker.person.fullName(),
         birthdate: faker.date.birthdate(),
-        gender: ('male' || 'female') as Genders,
+        gender: faker.helpers.enumValue(Genders),
       },
     ],
   },
