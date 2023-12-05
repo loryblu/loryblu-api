@@ -126,3 +126,12 @@ export class UpdateTaskDto extends PickType(TaskCreateDto, ['childrenId']) {
   @IsOptional()
   order?: number = 0;
 }
+
+export class ValidateIdTask {
+  @Transform((param) => Number(param.value))
+  @ApiProperty({ example: 1 })
+  @IsNotEmpty({ message: messages.notEmpty })
+  @IsNumber({}, { message: messages.number })
+  @IsInt({ message: messages.integer })
+  id_task: number;
+}

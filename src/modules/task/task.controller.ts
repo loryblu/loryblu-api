@@ -3,7 +3,6 @@ import {
   Controller,
   Get,
   HttpCode,
-  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -13,7 +12,12 @@ import {
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { responses } from 'src/globals/responses/docs';
 import { TaskService } from './task.service';
-import { TaskCreateDto, readTaskNewDto, UpdateTaskDto } from './task.dto';
+import {
+  TaskCreateDto,
+  readTaskNewDto,
+  UpdateTaskDto,
+  ValidateIdTask,
+} from './task.dto';
 import { AuthorizationGuard, RequestToken } from 'src/guard';
 import { iAuthTokenPayload } from '../account/account.entity';
 import { sessionPayloadKey } from 'src/globals/constants';
@@ -83,7 +87,7 @@ export class TaskController {
   @ApiResponse(responses.unprocessable)
   @ApiResponse(responses.internalError)
   async update(
-    @Query('id_task', ParseIntPipe) id_task: number,
+    @Query() { id_task }: ValidateIdTask,
     @Body() updateTaskDto: UpdateTaskDto,
     @Req() request: Request,
   ) {

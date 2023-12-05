@@ -9,6 +9,8 @@ export class P2002Exception extends UnprocessableEntityException {
 
 export class P2025Exception extends UnprocessableEntityException {
   constructor(target: string) {
-    super(formatException(`O campo ${target} não pode ser acessado.`, target));
+    super(
+      formatException(`O campo ${target || ''} não pode ser acessado.`, target),
+    );
   }
 }

@@ -83,20 +83,22 @@ export class TaskRepository {
   }
 
   async updateTask(task: iTaskRepositoryUpadateInput) {
-    await this.prisma.task.update({
-      where: {
-        id: task.id,
-        children: {
-          parentId: task.parentId,
-          id: task.childrenId,
+    await this.prisma.task
+      .update({
+        where: {
+          id: task.id,
+          children: {
+            parentId: task.parentId,
+            id: task.childrenId,
+          },
         },
-      },
-      data: {
-        shift: task.shift,
-        frequency: task.frequency,
-        order: task.order,
-        categoryId: task.categoryId,
-      },
-    });
+        data: {
+          shift: task.shift,
+          frequency: task.frequency,
+          order: task.order,
+          categoryId: task.categoryId,
+        },
+      })
+      .catch((error) => handleErrors(error));
   }
 }
