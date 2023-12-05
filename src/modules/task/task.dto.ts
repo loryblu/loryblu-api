@@ -35,7 +35,7 @@ export class TaskCreateDto {
   @IsInt({ message: messages.integer })
   childrenId: number;
 
-  @IsUUID()
+  @IsUUID(undefined, { message: messages.UUID })
   @ApiProperty({ example: '44f29121-b7b1-4d1a-bbff-5f1cf2fc5497' })
   @IsNotEmpty({ message: messages.notEmpty })
   @IsString({ message: messages.string })
