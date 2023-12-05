@@ -7,6 +7,7 @@ export const messages: Messages = {
   arrayOfString: `Deve ser uma lista de textos.`,
   number: `Deve ser um número.`,
   integer: `Deve ser um número inteiro.`,
+  UUID: `Deve ser um UUID. ex:'44f29121-b7b1-4d1a-bbff-5f1cf2fc5497'`,
   enum: ({ constraints }) => {
     const enums = constraints[1];
     return `Deve ser um texto entre essas opções: ${enums}`;
