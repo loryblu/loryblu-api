@@ -7,17 +7,18 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  IsUUID,
   Max,
   Min,
 } from 'class-validator';
 import { Transform, TransformFnParams } from 'class-transformer';
 import { TaskFrequency, TaskShift } from '@prisma/client';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, PickType } from '@nestjs/swagger';
 import { messages } from 'src/globals/responses/validation';
 
 function transformFrequencyItems(param: TransformFnParams) {
   if (!Array.isArray(param.value)) {
-    param.value = param.value.split(',');
+    param.value = String(param.value).split(',');
   }
 
   const lowerCaseItems = param.value.map((item: string) => {
@@ -34,6 +35,7 @@ export class TaskCreateDto {
   @IsInt({ message: messages.integer })
   childrenId: number;
 
+  @IsUUID()
   @ApiProperty({ example: '44f29121-b7b1-4d1a-bbff-5f1cf2fc5497' })
   @IsNotEmpty({ message: messages.notEmpty })
   @IsString({ message: messages.string })
@@ -42,7 +44,7 @@ export class TaskCreateDto {
   @ApiProperty({ enum: TaskShift })
   @IsNotEmpty({ message: messages.notEmpty })
   @IsString({ message: messages.string })
-  @Transform((param) => param.value.toLowerCase())
+  @Transform((param) => String(param.value).toLowerCase())
   @IsEnum(TaskShift, { message: messages.enum })
   shift: TaskShift;
 
@@ -93,4 +95,34 @@ export class readTaskNewDto {
   @Min(20, { message: messages.minNumber })
   @Max(70, { message: messages.maxNumber })
   perPage: number = 20;
+}
+
+export class UpdateTaskDto extends PickType(TaskCreateDto, ['childrenId']) {
+  @IsUUID(undefined, { message: messages.UUID })
+  @ApiProperty({ example: '44f29121-b7b1-4d1a-bbff-5f1cf2fc5497' })
+  @IsString({ message: messages.string })
+  @IsOptional()
+  categoryId?: string;
+
+  @ApiProperty({ enum: TaskShift })
+  @IsString({ message: messages.string })
+  @Transform((param) => String(param.value).toLowerCase())
+  @IsEnum(TaskShift, { message: messages.enum })
+  @IsOptional()
+  shift?: TaskShift;
+
+  @ApiProperty({ example: [TaskFrequency['mon']] })
+  @IsString({ each: true, message: messages.arrayOfString })
+  @ArrayMinSize(1, { message: messages.minSize })
+  @ArrayMaxSize(7, { message: messages.maxSize })
+  @Transform(transformFrequencyItems)
+  @IsEnum(TaskFrequency, { each: true, message: messages.enum })
+  @IsOptional()
+  frequency?: Array<TaskFrequency>;
+
+  @ApiProperty()
+  @IsNumber({}, { message: messages.number })
+  @IsInt({ message: messages.integer })
+  @IsOptional()
+  order?: number = 0;
 }

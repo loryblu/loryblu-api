@@ -5,6 +5,7 @@ import {
   iTaskRepositoryInput,
   iTaskRepositoryReadManyInput,
   iTaskRepositoryReadManyOutput,
+  iTaskRepositoryUpadateInput,
 } from './task.entity';
 
 @Injectable()
@@ -79,5 +80,23 @@ export class TaskRepository {
         },
       })
       .catch((error) => handleErrors(error));
+  }
+
+  async updateTask(task: iTaskRepositoryUpadateInput) {
+    await this.prisma.task.update({
+      where: {
+        id: task.id,
+        children: {
+          parentId: task.parentId,
+          id: task.childrenId,
+        },
+      },
+      data: {
+        shift: task.shift,
+        frequency: task.frequency,
+        order: task.order,
+        categoryId: task.categoryId,
+      },
+    });
   }
 }

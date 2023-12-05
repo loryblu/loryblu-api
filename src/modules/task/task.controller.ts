@@ -3,6 +3,8 @@ import {
   Controller,
   Get,
   HttpCode,
+  ParseIntPipe,
+  Patch,
   Post,
   Query,
   Req,
@@ -11,7 +13,7 @@ import {
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { responses } from 'src/globals/responses/docs';
 import { TaskService } from './task.service';
-import { TaskCreateDto, readTaskNewDto } from './task.dto';
+import { TaskCreateDto, readTaskNewDto, UpdateTaskDto } from './task.dto';
 import { AuthorizationGuard, RequestToken } from 'src/guard';
 import { iAuthTokenPayload } from '../account/account.entity';
 import { sessionPayloadKey } from 'src/globals/constants';
@@ -68,6 +70,37 @@ export class TaskController {
         count,
         ...processTask,
       },
+    };
+  }
+
+  @RequestToken({ type: 'access', role: 'user' })
+  @Patch()
+  @HttpCode(200)
+  @ApiResponse(responses.ok)
+  @ApiResponse(responses.badRequest)
+  @ApiResponse(responses.unauthorized)
+  @ApiResponse(responses.forbidden)
+  @ApiResponse(responses.unprocessable)
+  @ApiResponse(responses.internalError)
+  async update(
+    @Query('id_task', ParseIntPipe) id_task: number,
+    @Body() updateTaskDto: UpdateTaskDto,
+    @Req() request: Request,
+  ) {
+    const sessionInfo = request[sessionPayloadKey] as iAuthTokenPayload;
+
+    await this.service.updateTask({
+      childrenId: updateTaskDto.childrenId,
+      parentId: sessionInfo.pid,
+      id: id_task,
+      categoryId: updateTaskDto.categoryId,
+      frequency: updateTaskDto.frequency,
+      order: updateTaskDto.order,
+      shift: updateTaskDto.shift,
+    });
+
+    return {
+      message: 'Tarefas atualizadas',
     };
   }
 }
