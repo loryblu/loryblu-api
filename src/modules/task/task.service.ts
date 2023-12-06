@@ -4,7 +4,9 @@ import {
   iTaskRepositoryInput,
   iTaskRepositoryReadManyInput,
   iTaskRepositoryReadManyOutput,
+  iTaskRepositoryUpadateInput,
 } from './task.entity';
+import { CustomHttpError } from 'src/globals/responses/exceptions';
 
 @Injectable()
 export class TaskService {
@@ -30,6 +32,14 @@ export class TaskService {
       processTask,
       count,
     };
+  }
+
+  async updateTask(input: iTaskRepositoryUpadateInput) {
+    if (!input.categoryId && !input.frequency && !input.order && !input.shift) {
+      throw new CustomHttpError('Ao menos um campo deve ser atualizado', 400);
+    }
+
+    await this.repository.updateTask(input);
   }
 
   private processTasks(

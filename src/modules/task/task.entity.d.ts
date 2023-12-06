@@ -3,6 +3,7 @@ import {
   ParentProfile,
   Task,
   TaskFrequency,
+  TaskShift,
 } from '@prisma/client';
 
 export type iTaskRepositoryInput = Omit<
@@ -29,4 +30,14 @@ export type iTaskRepositoryReadManyOutput = Omit<
     group: string;
     category: string;
   };
+};
+
+export type iTaskRepositoryUpadateInput = {
+  id: number;
+  categoryId?: string;
+  shift?: TaskShift;
+  frequency?: Array<TaskFrequency>;
+  order?: number;
+  childrenId: ChildrenProfile['id'];
+  parentId: ParentProfile['id'];
 };
