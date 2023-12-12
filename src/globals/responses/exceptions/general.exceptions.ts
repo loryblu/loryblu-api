@@ -1,9 +1,17 @@
 import {
   BadRequestException,
+  HttpException,
   InternalServerErrorException,
   UnauthorizedException,
   UnprocessableEntityException,
 } from '@nestjs/common';
+import { formatException } from 'src/globals/utils';
+
+export class CustomHttpError extends HttpException {
+  constructor(message: string, status: number, property?: string) {
+    super(formatException(message, property), status);
+  }
+}
 
 /*
  * 400 - BadRequestException
@@ -11,7 +19,10 @@ import {
 export class PoliciesException extends BadRequestException {
   constructor() {
     super(
-      'Por favor, para ter uma conta você deve aceitar nossos termos de uso e políticas de privacidade.',
+      formatException(
+        'Por favor, para ter uma conta você deve aceitar nossos termos de uso e políticas de privacidade.',
+        'policiesAccepted',
+      ),
     );
   }
 }
@@ -21,13 +32,15 @@ export class PoliciesException extends BadRequestException {
  */
 export class ExpiredRecoveryTokenException extends UnauthorizedException {
   constructor() {
-    super('Token expirado, ou inválido.');
+    super(
+      formatException('Token expirado, ou inválido.', 'Authorization token'),
+    );
   }
 }
 
 export class InvalidCredentialsException extends UnauthorizedException {
   constructor() {
-    super('Credenciais inválidas.');
+    super(formatException('Credenciais inválidas.'));
   }
 }
 
@@ -36,7 +49,7 @@ export class InvalidCredentialsException extends UnauthorizedException {
  */
 export class EmailNotFoundException extends UnprocessableEntityException {
   constructor() {
-    super('O e-mail informado não foi cadastrado.');
+    super(formatException('O e-mail informado não foi cadastrado.', 'email'));
   }
 }
 
@@ -45,30 +58,30 @@ export class EmailNotFoundException extends UnprocessableEntityException {
  */
 export class UnknownErrorException extends InternalServerErrorException {
   constructor() {
-    super('Erro não conhecido ao tentar executar ação.');
+    super(formatException('Erro não conhecido ao tentar executar ação.'));
   }
 }
 
 export class EmailLoaderException extends InternalServerErrorException {
   constructor() {
-    super('Erro durante a configuração do e-mail.');
+    super(formatException('Erro durante a configuração do e-mail.'));
   }
 }
 
 export class SendEmailException extends InternalServerErrorException {
   constructor() {
-    super('Erro ao tentar enviar um e-mail.');
+    super(formatException('Erro ao tentar enviar um e-mail.'));
   }
 }
 
 export class TryingHashException extends InternalServerErrorException {
   constructor() {
-    super('Erro ao tentar criar o hash de uma informação.');
+    super(formatException('Erro ao tentar criar o hash de uma informação.'));
   }
 }
 
 export class TryingEncryptException extends InternalServerErrorException {
   constructor() {
-    super('Erro ao tentar criptografar uma informação.');
+    super(formatException('Erro ao tentar criptografar uma informação.'));
   }
 }

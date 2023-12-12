@@ -5,6 +5,13 @@ import {
   ResetPasswordInfo,
 } from '@prisma/client';
 
+export type iAuthTokenSubject = 'access' | 'refresh' | 'recovery';
+
+export type iAuthTokenPayload = {
+  cid: string;
+  pid: string;
+};
+
 export type NewAccountRepositoryInput = {
   credential: Omit<Credential, 'id' | 'createdAt' | 'updatedAt'>;
   parentProfile: Pick<ParentProfile, 'fullname'>;
@@ -16,11 +23,16 @@ export type RecoveryControllerOutput = {
   message: string;
 };
 
-export type GetCredentialIdByEmailOutput = {
-  id: Credential['id'];
-  fullname: ParentProfile['fullname'];
-  password: string;
-} | void;
+export type GetCredentialIdByEmailOutput = Pick<
+  Credential,
+  'id' | 'password'
+> & {
+  parentProfile: Pick<ParentProfile, 'id' | 'fullname'> & {
+    childrens: Array<
+      Pick<ChildrenProfile, 'id' | 'fullname' | 'birthdate' | 'gender'>
+    >;
+  };
+};
 
 export type getCredentialIdByRecoveryTokenInput = {
   hashedToken: string;

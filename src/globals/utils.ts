@@ -5,6 +5,17 @@ import * as bcrypt from 'bcrypt';
 const algorithm = 'sha256';
 const digest = 'hex';
 
+export function formatException(message: string, property?: string): object {
+  return {
+    details: [
+      {
+        property,
+        message,
+      },
+    ],
+  };
+}
+
 export async function hashDataAsync(
   props: HashDataAsyncProps,
 ): Promise<string> {

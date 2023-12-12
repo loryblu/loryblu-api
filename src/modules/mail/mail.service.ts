@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Resend } from 'resend';
+import { ConfigService } from '@nestjs/config';
 
 import type { SendLinkToResetPassword } from './mail.entity';
 import { appName } from 'src/globals/constants';
@@ -8,18 +8,22 @@ import {
   EmailLoaderException,
   SendEmailException,
 } from 'src/globals/responses/exceptions';
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class MailService {
-  private resend: Resend;
-  private from: string;
   private to: string;
   private subject: string;
   private html: string;
+  private currentEnv: string;
+  private whiteList: string;
 
-  constructor() {
-    this.resend = new Resend(process.env.MAIL_API_KEY);
-    this.from = `${appName} <${process.env.MAIL_FROM}>`;
+  constructor(
+    private configService: ConfigService,
+    private readonly mailer: MailerService,
+  ) {
+    this.currentEnv = this.configService.get<string>('NODE_ENV');
+    this.whiteList = this.configService.get<string>('MAIL_WHITELIST');
   }
 
   async sendLinkToResetPassword(props: SendLinkToResetPassword) {
@@ -41,9 +45,16 @@ export class MailService {
   }
 
   private async sendMail() {
+    if (!this.isEmailWhitelisted(this.to) || this.currentEnv === 'production') {
+      //colocar no log
+      console.log(
+        `O e-mail para ${this.to} NÃO está na whitelist ou está em ambiente de produção. NÃO enviando.`,
+      );
+      return;
+    }
+
     try {
-      const response = await this.resend.emails.send({
-        from: this.from,
+      const response = await this.mailer.sendMail({
         to: this.to,
         subject: this.subject,
         html: this.html,
@@ -53,5 +64,10 @@ export class MailService {
     } catch (error) {
       throw new SendEmailException();
     }
+  }
+
+  private isEmailWhitelisted(email: string): boolean {
+    const whitelist = this.whiteList;
+    return whitelist.includes(email);
   }
 }

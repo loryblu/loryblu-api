@@ -1,23 +1,29 @@
 import { Controller, Post, Body, HttpCode, Put } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { MailService } from '../mail/mail.service';
+import { AccountService } from './account.service';
+import { responses } from 'src/globals/responses/docs';
+import { RecoveryControllerOutput } from './account.entity';
 import {
   CreateAccountDto,
   LoginDto,
   ResetPasswordDto,
   SetPasswordDto,
 } from './account.dto';
-import { AccountService } from './account.service';
-import { responses } from 'src/globals/responses/docs';
-import { isProductionEnv } from 'src/globals/constants';
-import { RecoveryControllerOutput } from './account.entity';
 
 @Controller('/auth')
 export class AccountController {
+  private isProdEnv: boolean;
+
   constructor(
     private mailService: MailService,
     private accountService: AccountService,
-  ) {}
+    private configService: ConfigService,
+  ) {
+    const env = this.configService.get<string>('NODE_ENV');
+    this.isProdEnv = env === 'production';
+  }
 
   @Post('/register')
   @ApiTags('Authentication')
@@ -29,7 +35,9 @@ export class AccountController {
   async register(@Body() registerInput: CreateAccountDto) {
     await this.accountService.newAccountPropsProcessing(registerInput);
 
-    return { message: 'Conta criada com sucesso!' };
+    return {
+      message: 'Conta criada com sucesso',
+    };
   }
 
   @Post('/login')
@@ -40,8 +48,19 @@ export class AccountController {
   @ApiResponse(responses.unauthorized)
   @ApiResponse(responses.internalError)
   async login(@Body() { email, password }: LoginDto) {
-    const token = await this.accountService.login(email, password);
-    return { token, message: 'Login efetuado com sucesso' };
+    const { token, refresh, user } = await this.accountService.login(
+      email,
+      password,
+    );
+
+    return {
+      message: 'Acesso permitido',
+      data: {
+        accessToken: token,
+        refreshToken: refresh,
+        user: user,
+      },
+    };
   }
 
   @Post('/recovery')
@@ -56,7 +75,7 @@ export class AccountController {
     );
 
     const response: RecoveryControllerOutput = {
-      message: 'Te enviamos um e-mail com o link para definir uma nova senha.',
+      message: 'Enviamos um e-mail com o link para definir uma nova senha',
     };
 
     await this.mailService.sendLinkToResetPassword({
@@ -65,7 +84,7 @@ export class AccountController {
       userName: created.fullname,
     });
 
-    if (!isProductionEnv) {
+    if (!this.isProdEnv) {
       response.recoverLink = created.url;
     }
 
@@ -82,6 +101,8 @@ export class AccountController {
   async setPassword(@Body() setPasswordInput: SetPasswordDto) {
     await this.accountService.saveNewPassword(setPasswordInput);
 
-    return { message: 'Senha redefinida com sucesso!' };
+    return {
+      message: 'Senha redefinida com sucesso',
+    };
   }
 }
