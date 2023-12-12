@@ -10,5 +10,20 @@ services:
     ports:
       - 5432:5432
 
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    depends_on:
+      - database
+    container_name: loryblu-node
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    ports:
+      - 5500:5500
+    command: ['yarn', 'dev']
+
 volumes:
   postgres:
