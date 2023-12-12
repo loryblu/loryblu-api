@@ -130,15 +130,11 @@ $ yarn
 <details>
 <summary><b>Está usando docker?</b></summary>
 
-Use o comando abaixo para baixar a imagem do PostgreSQL:14-alpine e configurar as credenciais.
+Use o comando abaixo para executar a aplicação no docker e configurar as credenciais.
 
 ```bash
-docker-compose -f docker-compose.dev.yml up -d
-```
-
-Se preferir, há um script configurado para realizar este comando e todos os outros de desenvolvimento. Ele também inicia a aplicação:
-
-```bash
+# Baixar imagem ` postgres:11.19-alpine ` e configurar base de dados;
+# Baixar imagem ` node:18-alpine ` e configurar aplicação node;
 yarn docker:dev
 ```
 
@@ -304,15 +300,11 @@ $ yarn
 <details>
 <summary><b>Are you using Docker?</b></summary>
 
-Use the command below to download the PostgreSQL:14-alpine image and configure the credentials.
+Use the command below to run the application in Docker and configure the credentials
 
 ```bash
-docker-compose -f docker-compose.dev.yml up -d
-```
-
-If you prefer, there is a script configured to perform this command and all other development commands. It also starts the application:
-
-```bash
+# Download the ` postgres:11.19-alpine ` image and configure the database;
+# Download the ` node:18-alpine ` image and configure the Node application;
 yarn docker:dev
 ```
 
