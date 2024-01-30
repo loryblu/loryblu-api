@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   HttpCode,
+  Param,
   Patch,
   Post,
   Query,
@@ -111,8 +112,7 @@ export class TaskController {
 
   @RequestToken({ type: 'access', role: 'user' })
   @Delete(':id')
-  @HttpCode(204)
-  @ApiResponse(responses.noContent)
+  @HttpCode(200)
   @ApiResponse(responses.badRequest)
   @ApiResponse(responses.unauthorized)
   @ApiResponse(responses.forbidden)
@@ -121,12 +121,13 @@ export class TaskController {
   async delete(@Param('id') id: string, @Req() request: Request) {
     const sessionInfo = request[sessionPayloadKey] as iAuthTokenPayload;
 
-
     await this.service.deleteTask({
       id: id,
       parentId: sessionInfo.pid,
     });
 
-    return;
+    return {
+      message: 'Tarefa excluída',
+    };
   }
 }
