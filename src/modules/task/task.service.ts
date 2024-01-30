@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { TaskRepository } from './task.repository';
 import {
   iTaskRepositoryInput,
@@ -40,6 +40,16 @@ export class TaskService {
     }
 
     await this.repository.updateTask(input);
+  }
+
+  async deleteTask({ id, parentId }: { id: string; parentId: string }) {
+    const existingTask = await this.repository.findTaskById(id, parentId);
+    if (!existingTask) {
+      throw new NotFoundException(`Tarefa com ID ${id} não encontrada.`);
+    }
+
+    // Implemente a lógica de exclusão no seu repositório
+    await this.repository.deleteTask(id, parentId);
   }
 
   private processTasks(

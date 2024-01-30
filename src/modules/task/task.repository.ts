@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { handleErrors } from 'src/globals/errors';
 import {
@@ -25,7 +25,7 @@ export class TaskRepository {
             parentId: parentId,
           },
           frequency: {
-            hasSome: frequency,
+            hasSome: Array.isArray(frequency) ? frequency : [frequency],
           },
         },
         select: {
@@ -97,6 +97,43 @@ export class TaskRepository {
           frequency: task.frequency,
           order: task.order,
           categoryId: task.categoryId,
+        },
+      })
+      .catch((error) => handleErrors(error));
+  }
+
+  async findTaskById(id: string, parentId: string) {
+    // Adicione a lógica para encontrar a tarefa pelo ID e parentId
+    return this.prisma.task.findFirst({
+      where: {
+        id: parseInt(id),
+        children: {
+          parentId: parentId,
+        },
+      },
+    });
+  }
+
+  async deleteTask(id: string, parentId: string) {
+    // Verifique se a tarefa existe antes de tentar excluí-la
+    const existingTask = await this.prisma.task.findFirst({
+      where: {
+        id: parseInt(id),
+        children: {
+          parentId: parentId,
+        },
+      },
+    });
+
+    if (!existingTask) {
+      throw new NotFoundException(`Tarefa com ID ${id} não encontrada.`);
+    }
+
+    // Exclua a tarefa
+    await this.prisma.task
+      .delete({
+        where: {
+          id: parseInt(id),
         },
       })
       .catch((error) => handleErrors(error));
