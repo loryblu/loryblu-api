@@ -46,16 +46,25 @@ export class AccountRepository {
     return;
   }
 
-  async getCredentialIdByEmail(
-    hashedEmail: string,
-  ): Promise<GetCredentialIdByEmailOutput | void> {
+  async getCredentialIdByEmailOrId(idOrEmail: {
+    id?: string;
+    hashedEmail?: string;
+  }): Promise<GetCredentialIdByEmailOutput | void> {
+    let whereCondition = {};
+    if (idOrEmail.hashedEmail) {
+      whereCondition = { email: idOrEmail.hashedEmail };
+    } else if (idOrEmail.id) {
+      whereCondition = { id: idOrEmail.id[0] };
+    } else {
+      throw new Error('Invalid input');
+    }
+
     const response = await this.prisma.credential
-      .findUnique({
-        where: {
-          email: hashedEmail,
-        },
+      .findFirst({
+        where: whereCondition,
         select: {
           id: true,
+          email: true,
           password: true,
           parentProfile: {
             select: {
@@ -74,6 +83,7 @@ export class AccountRepository {
         },
       })
       .then((response) => {
+        console.log('response', response);
         return response;
       })
       .catch((error) => handleErrors(error));
