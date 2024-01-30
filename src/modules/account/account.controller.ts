@@ -6,9 +6,10 @@ import {
   Put,
   Param,
   Get,
+  UseGuards,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { MailService } from '../mail/mail.service';
 import { AccountService } from './account.service';
 import { responses } from 'src/globals/responses/docs';
@@ -19,6 +20,7 @@ import {
   ResetPasswordDto,
   SetPasswordDto,
 } from './account.dto';
+import { AuthorizationGuard, RequestToken } from '../../guard';
 
 @Controller('/auth')
 export class AccountController {
@@ -113,8 +115,11 @@ export class AccountController {
       message: 'Senha redefinida com sucesso',
     };
   }
+  @UseGuards(AuthorizationGuard)
+  @RequestToken({ type: 'access', role: 'user' })
+  @ApiBearerAuth('access')
   @Get('/user/:id')
-  @ApiTags('Authentication')
+  @ApiTags('User')
   @HttpCode(200)
   @ApiResponse(responses.ok)
   @ApiResponse(responses.badRequest)
