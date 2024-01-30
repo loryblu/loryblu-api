@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   Patch,
@@ -106,5 +107,26 @@ export class TaskController {
     return {
       message: 'Tarefas atualizadas',
     };
+  }
+
+  @RequestToken({ type: 'access', role: 'user' })
+  @Delete(':id')
+  @HttpCode(204)
+  @ApiResponse(responses.noContent)
+  @ApiResponse(responses.badRequest)
+  @ApiResponse(responses.unauthorized)
+  @ApiResponse(responses.forbidden)
+  @ApiResponse(responses.unprocessable)
+  @ApiResponse(responses.internalError)
+  async delete(@Param('id') id: string, @Req() request: Request) {
+    const sessionInfo = request[sessionPayloadKey] as iAuthTokenPayload;
+
+
+    await this.service.deleteTask({
+      id: id,
+      parentId: sessionInfo.pid,
+    });
+
+    return;
   }
 }
