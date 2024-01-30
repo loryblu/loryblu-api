@@ -162,6 +162,7 @@ export class AccountService {
 
     // ! verificar responsabilidade única
     const hashedEmail = await this.hashData(email);
+
     const account = await this.accountRepository.getCredentialIdByEmailOrId({
       hashedEmail,
     });
@@ -189,7 +190,6 @@ export class AccountService {
     });
 
     delete account.password;
-
     return {
       url,
       fullname: account.parentProfile.fullname,
@@ -264,7 +264,6 @@ export class AccountService {
     const credential = await this.accountRepository.getCredentialIdByEmailOrId({
       id,
     });
-    console.log('credential', credential);
 
     if (!credential) {
       throw new EmailNotFoundException();

@@ -83,7 +83,6 @@ export class AccountRepository {
         },
       })
       .then((response) => {
-        console.log('response', response);
         return response;
       })
       .catch((error) => handleErrors(error));
