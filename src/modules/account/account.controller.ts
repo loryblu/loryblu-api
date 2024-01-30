@@ -1,4 +1,12 @@
-import { Controller, Post, Body, HttpCode, Put } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  HttpCode,
+  Put,
+  Param,
+  Get,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { MailService } from '../mail/mail.service';
@@ -104,5 +112,16 @@ export class AccountController {
     return {
       message: 'Senha redefinida com sucesso',
     };
+  }
+  @Get('/user/:id')
+  @ApiTags('Authentication')
+  @HttpCode(200)
+  @ApiResponse(responses.ok)
+  @ApiResponse(responses.badRequest)
+  @ApiResponse(responses.unauthorized)
+  @ApiResponse(responses.internalError)
+  async getCredential(@Param() id: string) {
+    const response = await this.accountService.getCredential(id);
+    return response;
   }
 }
