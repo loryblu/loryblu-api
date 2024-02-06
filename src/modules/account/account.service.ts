@@ -260,11 +260,14 @@ export class AccountService {
       user,
     };
   }
-  async getCredential(id: string) {
+  async getCredential(id: string, userId: string) {
+    if (id != userId) {
+      throw new InvalidCredentialsException();
+    }
+
     const credential = await this.accountRepository.getCredentialIdByEmailOrId({
       id,
     });
-
     if (!credential) {
       throw new EmailNotFoundException();
     }
