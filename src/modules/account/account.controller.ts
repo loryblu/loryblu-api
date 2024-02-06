@@ -21,6 +21,7 @@ import {
   SetPasswordDto,
 } from './account.dto';
 import { AuthorizationGuard, RequestToken } from '../../guard';
+import { User } from '../../decorators/account.decorator';
 
 @Controller('/auth')
 export class AccountController {
@@ -125,8 +126,8 @@ export class AccountController {
   @ApiResponse(responses.badRequest)
   @ApiResponse(responses.unauthorized)
   @ApiResponse(responses.internalError)
-  async getCredential(@Param() id: string) {
-    const response = await this.accountService.getCredential(id);
+  async getCredential(@Param('id') id: string, @User() userId: string) {
+    const response = await this.accountService.getCredential(id, userId);
     return response;
   }
 }
