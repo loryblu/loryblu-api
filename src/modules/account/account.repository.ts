@@ -54,7 +54,7 @@ export class AccountRepository {
     if (idOrEmail.hashedEmail) {
       whereCondition = { email: idOrEmail.hashedEmail };
     } else if (idOrEmail.id) {
-      whereCondition = { id: idOrEmail.id[0] };
+      whereCondition = { id: idOrEmail.id };
     } else {
       throw new Error('Invalid input');
     }
