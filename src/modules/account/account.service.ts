@@ -244,8 +244,6 @@ export class AccountService {
       pid: credential.parentProfile.id,
     };
     const user = {
-      cid: credential.id,
-      pid: credential.parentProfile.id,
       parentName: credential.parentProfile.fullname,
       childrens: credential.parentProfile.childrens,
     };
