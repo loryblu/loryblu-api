@@ -7,6 +7,7 @@ import {
   getCredentialIdByRecoveryTokenInput,
   getCredentialIdByRecoveryTokenOutout,
   SavePasswordInput,
+  GetCredential,
 } from './account.entity';
 import { handleErrors } from 'src/globals/errors';
 
@@ -46,26 +47,46 @@ export class AccountRepository {
     return;
   }
 
-  async getCredentialIdByEmailOrId(idOrEmail: {
-    id?: string;
-    hashedEmail?: string;
-  }): Promise<GetCredentialIdByEmailOutput | void> {
-    let whereCondition = {};
-    if (idOrEmail.hashedEmail) {
-      whereCondition = { email: idOrEmail.hashedEmail };
-    } else if (idOrEmail.id) {
-      whereCondition = { id: idOrEmail.id };
-    } else {
-      throw new Error('Invalid input');
-    }
-
+  async getCredentialIdByEmail(
+    hashedemail,
+  ): Promise<GetCredentialIdByEmailOutput | void> {
     const response = await this.prisma.credential
-      .findFirst({
-        where: whereCondition,
+      .findUnique({
+        where: { email: hashedemail },
         select: {
           id: true,
           email: true,
           password: true,
+          parentProfile: {
+            select: {
+              id: true,
+              fullname: true,
+              childrens: {
+                select: {
+                  id: true,
+                  fullname: true,
+                  gender: true,
+                  birthdate: true,
+                },
+              },
+            },
+          },
+        },
+      })
+      .then((response) => {
+        return response;
+      })
+      .catch((error) => handleErrors(error));
+
+    return response;
+  }
+  async getCredentialId(id: string): Promise<GetCredential | void> {
+    const response = await this.prisma.credential
+      .findFirst({
+        where: { id },
+        select: {
+          id: true,
+          email: true,
           parentProfile: {
             select: {
               id: true,

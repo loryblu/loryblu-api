@@ -13,7 +13,7 @@ describe('AccountService unit test', () => {
 
   const accountRepositoryMock = {
     saveCredentialParentAndChildrenProps: jest.fn(),
-    getCredentialIdByEmailOrId: jest
+    getCredentialIdByEmail: jest
       .fn()
       .mockReturnValue(stubs.getCredentialOutput),
     savePasswordResetInformation: jest.fn(),
@@ -84,7 +84,7 @@ describe('AccountService unit test', () => {
 
     it('Unhappy path - should return void', async () => {
       jest
-        .spyOn(accountRepositoryMock, 'getCredentialIdByEmailOrId')
+        .spyOn(accountRepositoryMock, 'getCredentialIdByEmail')
         .mockReturnValueOnce(null);
 
       try {

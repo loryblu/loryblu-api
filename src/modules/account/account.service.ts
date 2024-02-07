@@ -163,7 +163,7 @@ export class AccountService {
     // ! verificar responsabilidade única
     const hashedEmail = await this.hashData(email);
 
-    const account = await this.accountRepository.getCredentialIdByEmailOrId({
+    const account = await this.accountRepository.getCredentialIdByEmail({
       hashedEmail,
     });
 
@@ -223,9 +223,9 @@ export class AccountService {
   async login(email: string, password: string) {
     const hashedEmail = await this.hashData(email);
 
-    const credential = await this.accountRepository.getCredentialIdByEmailOrId({
+    const credential = await this.accountRepository.getCredentialIdByEmail(
       hashedEmail,
-    });
+    );
 
     if (!credential) {
       throw new EmailNotFoundException();
@@ -262,9 +262,7 @@ export class AccountService {
     };
   }
   async getCredential(id: string) {
-    const credential = await this.accountRepository.getCredentialIdByEmailOrId({
-      id,
-    });
+    const credential = await this.accountRepository.getCredentialId(id);
     if (!credential) {
       throw new EmailNotFoundException();
     }

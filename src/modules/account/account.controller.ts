@@ -4,7 +4,6 @@ import {
   Body,
   HttpCode,
   Put,
-  Param,
   Get,
   UseGuards,
 } from '@nestjs/common';
@@ -119,8 +118,8 @@ export class AccountController {
   @UseGuards(AuthorizationGuard)
   @RequestToken({ type: 'access', role: 'user' })
   @ApiBearerAuth('access')
-  @Get('/user')
-  @ApiTags('User')
+  @Get('/account')
+  @ApiTags('Account')
   @HttpCode(200)
   @ApiResponse(responses.ok)
   @ApiResponse(responses.badRequest)
