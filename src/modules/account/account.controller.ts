@@ -126,7 +126,7 @@ export class AccountController {
   @ApiResponse(responses.unauthorized)
   @ApiResponse(responses.internalError)
   async getCredential(@User() id: string) {
-    const response = await this.accountService.getCredential(id);
-    return response;
+    const data = await this.accountService.getCredential(id);
+    return { message: 'Dados recebidos com sucesso', data };
   }
 }
