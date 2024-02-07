@@ -119,15 +119,15 @@ export class AccountController {
   @UseGuards(AuthorizationGuard)
   @RequestToken({ type: 'access', role: 'user' })
   @ApiBearerAuth('access')
-  @Get('/user/:id')
+  @Get('/user')
   @ApiTags('User')
   @HttpCode(200)
   @ApiResponse(responses.ok)
   @ApiResponse(responses.badRequest)
   @ApiResponse(responses.unauthorized)
   @ApiResponse(responses.internalError)
-  async getCredential(@Param('id') id: string, @User() userId: string) {
-    const response = await this.accountService.getCredential(id, userId);
+  async getCredential(@User() id: string) {
+    const response = await this.accountService.getCredential(id);
     return response;
   }
 }

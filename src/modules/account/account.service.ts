@@ -261,11 +261,7 @@ export class AccountService {
       user,
     };
   }
-  async getCredential(id: string, userId: string) {
-    if (id != userId) {
-      throw new InvalidCredentialsException();
-    }
-
+  async getCredential(id: string) {
     const credential = await this.accountRepository.getCredentialIdByEmailOrId({
       id,
     });
