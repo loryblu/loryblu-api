@@ -94,6 +94,9 @@
   "prisma": {
     "seed": "ts-node prisma/seed/index.ts"
   },
+  "engines": {
+    "node": ">=18"
+  },
   "name": "loryblu-api",
   "description": "API para o aplicativo LoryBlu. Um aplicativo pensado para ajudar pais e crianças diagnosticadas com TEA.",
   "author": "LoryBlu"
