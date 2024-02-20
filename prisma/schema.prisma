@@ -29,7 +29,7 @@ model ResetPasswordInfo {
   id            Int        @id @default(autoincrement())
   recoveryToken String     @unique @map("recovery_token")
   expiresIn     DateTime   @updatedAt @map("expires_in")
-  credentialId  String        @unique @map("credential_id")
+  credentialId  String     @unique @map("credential_id")
   credential    Credential @relation(fields: [credentialId], references: [id], onDelete: Cascade)
 
   @@map("reset_password_info")
