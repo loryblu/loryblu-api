@@ -55,7 +55,6 @@ export class AccountRepository {
         where: { email: hashedemail },
         select: {
           id: true,
-          email: true,
           password: true,
           parentProfile: {
             select: {
@@ -80,7 +79,7 @@ export class AccountRepository {
 
     return response;
   }
-  
+
   async getCredentialId(id: string): Promise<GetCredential | void> {
     const response = await this.prisma.credential
       .findFirst({
