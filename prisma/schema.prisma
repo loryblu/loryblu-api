@@ -39,7 +39,7 @@ model ParentProfile {
   id           String            @id @default(uuid())
   fullname     String
   childrens    ChildrenProfile[]
-  credentialId String               @unique @map("credential_id")
+  credentialId String            @unique @map("credential_id")
   credential   Credential        @relation(fields: [credentialId], references: [id], onDelete: Cascade)
   updatedAt    DateTime          @updatedAt @map("updated_at")
   createdAt    DateTime          @default(now()) @map("created_at")
