@@ -80,6 +80,7 @@ export class AccountRepository {
 
     return response;
   }
+  
   async getCredentialId(id: string): Promise<GetCredential | void> {
     const response = await this.prisma.credential
       .findFirst({
