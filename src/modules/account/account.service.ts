@@ -163,9 +163,9 @@ export class AccountService {
     // ! verificar responsabilidade única
     const hashedEmail = await this.hashData(email);
 
-    const account = await this.accountRepository.getCredentialIdByEmail({
+    const account = await this.accountRepository.getCredentialIdByEmail(
       hashedEmail,
-    });
+    );
 
     if (!account) {
       throw new EmailNotFoundException();
