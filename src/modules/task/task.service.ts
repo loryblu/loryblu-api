@@ -43,13 +43,12 @@ export class TaskService {
   }
 
   async deleteTask({ id, parentId }: { id: string; parentId: string }) {
-    const existingTask = await this.repository.findTaskById(id, parentId);
+    const existingTask = await this.repository.findTaskById(parentId);
     if (!existingTask) {
       throw new NotFoundException(`Tarefa com ID ${id} não encontrada.`);
     }
 
-    // Implemente a lógica de exclusão no seu repositório
-    await this.repository.deleteTask(id, parentId);
+    await this.repository.deleteTask(id);
   }
 
   private processTasks(
