@@ -5,10 +5,6 @@ WORKDIR /app
 COPY package.json .
 COPY src/modules/mail/templates/package.json .
 
-RUN yarn install --exact --ignore-scripts
+RUN yarn --exact --ignore-scripts
 
 COPY . .
-
-EXPOSE 5500
-
-CMD ["yarn", "dev"]
