@@ -33,6 +33,13 @@ export type GetCredentialIdByEmailOutput = Pick<
     >;
   };
 };
+export type GetCredential = Pick<Credential, 'id' | 'email'> & {
+  parentProfile: Pick<ParentProfile, 'id' | 'fullname'> & {
+    childrens: Array<
+      Pick<ChildrenProfile, 'id' | 'fullname' | 'birthdate' | 'gender'>
+    >;
+  };
+};
 
 export type getCredentialIdByRecoveryTokenInput = {
   hashedToken: string;

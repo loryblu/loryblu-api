@@ -17,6 +17,7 @@ describe('AccountService unit test', () => {
       .fn()
       .mockReturnValue(stubs.getCredentialOutput),
     savePasswordResetInformation: jest.fn(),
+    getCredentialId: jest.fn().mockReturnValue(stubs.getCredentialOutputById),
   };
 
   beforeEach(async () => {
@@ -93,5 +94,49 @@ describe('AccountService unit test', () => {
         expect(actual).toBeInstanceOf(EmailNotFoundException);
       }
     });
+  });
+  describe('Account', () => {
+    it('Happy path - should return account details', async () => {
+      const actual = await service.getCredential(
+        stubs.getCredentialOutputById.id,
+      );
+
+      expect(actual.credential).toHaveProperty(
+        'message',
+        'Dados recebidos com sucesso',
+      );
+      expect(actual).toHaveProperty('credential');
+      expect(actual.credential).toHaveProperty(
+        'id',
+        stubs.getCredentialOutputById.id,
+      );
+      expect(actual.credential).toHaveProperty(
+        'email',
+        stubs.getCredentialOutputById.email,
+      );
+      expect(actual.credential).toHaveProperty('parentProfile');
+      expect(actual.credential.parentProfile).toHaveProperty(
+        'id',
+        stubs.getCredentialOutputById.parentProfile.id,
+      );
+      expect(actual.credential.parentProfile).toHaveProperty(
+        'fullname',
+        stubs.getCredentialOutputById.parentProfile.fullname,
+      );
+      expect(actual.credential.parentProfile).toHaveProperty('childrens');
+      expect(actual.credential.parentProfile.childrens).toHaveLength(1);
+    });
+  });
+
+  it('Unhappy path - should return void', async () => {
+    jest
+      .spyOn(accountRepositoryMock, 'getCredentialId')
+      .mockReturnValueOnce(null);
+
+    try {
+      await service.getCredential(stubs.getCredentialOutputById.id);
+    } catch (actual) {
+      expect(actual).toBeInstanceOf(EmailNotFoundException);
+    }
   });
 });

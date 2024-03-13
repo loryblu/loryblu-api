@@ -162,6 +162,7 @@ export class AccountService {
 
     // ! verificar responsabilidade única
     const hashedEmail = await this.hashData(email);
+
     const account = await this.accountRepository.getCredentialIdByEmail(
       hashedEmail,
     );
@@ -189,7 +190,6 @@ export class AccountService {
     });
 
     delete account.password;
-
     return {
       url,
       fullname: account.parentProfile.fullname,
@@ -244,7 +244,6 @@ export class AccountService {
       pid: credential.parentProfile.id,
     };
     const user = {
-      pid: credential.parentProfile.id,
       parentName: credential.parentProfile.fullname,
       childrens: credential.parentProfile.childrens,
     };
@@ -258,6 +257,16 @@ export class AccountService {
       token,
       refresh,
       user,
+    };
+  }
+  async getCredential(id: string) {
+    const credential = await this.accountRepository.getCredentialId(id);
+    if (!credential) {
+      throw new EmailNotFoundException();
+    }
+
+    return {
+      credential,
     };
   }
 }
