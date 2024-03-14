@@ -1,28 +1,29 @@
 version: '3'
 services:
-  database:
+  main_database:
+    container_name: main-db
     image: postgres:11.19-alpine
-    container_name: loryblu-postgres
     env_file:
       - .env
     volumes:
       - postgres:/var/lib/postgresql/data
     ports:
-      - 5432:5432
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
 
   app:
+    container_name: main-app
     build:
       context: .
       dockerfile: Dockerfile.dev
     depends_on:
-      - database
-    container_name: loryblu-node
+      - main_database
     env_file:
+      - .env.docker-dev
       - .env
     volumes:
       - .:/app
     ports:
-      - 5500:5500
+      - ${PORT}:${PORT}
     command: ['yarn', 'dev']
 
 volumes:
