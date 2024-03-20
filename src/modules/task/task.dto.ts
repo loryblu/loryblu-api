@@ -5,6 +5,7 @@ import {
   IsInt,
   IsNotEmpty,
   IsNumber,
+  IsNumberString,
   IsOptional,
   IsString,
   IsUUID,
@@ -134,4 +135,11 @@ export class ValidateIdTask {
   @IsNumber({}, { message: messages.number })
   @IsInt({ message: messages.integer })
   id_task: number;
+}
+
+export class DeleteTask {
+  @ApiProperty({ example: 1 })
+  @IsNotEmpty({ message: messages.notEmpty })
+  @IsNumberString({ no_symbols: true }, { message: messages.integer })
+  id: string;
 }

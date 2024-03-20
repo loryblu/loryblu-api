@@ -43,12 +43,20 @@ export class TaskService {
   }
 
   async deleteTask({ id, parentId }: { id: string; parentId: string }) {
-    const existingTask = await this.repository.findTaskById(parentId);
+    const idNumber = parseInt(id);
+
+    const existingTask = await this.repository.findTaskById(idNumber);
+    const parent = await this.repository.validateParent(parentId);
+
     if (!existingTask) {
       throw new NotFoundException(`Tarefa com ID ${id} não encontrada.`);
     }
 
-    await this.repository.deleteTask(id);
+    if (!parent) {
+      throw new NotFoundException('Id do responsável inválida');
+    }
+
+    await this.repository.deleteTask(idNumber, parentId);
   }
 
   private processTasks(

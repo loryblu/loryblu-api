@@ -19,6 +19,7 @@ import {
   readTaskNewDto,
   UpdateTaskDto,
   ValidateIdTask,
+  DeleteTask,
 } from './task.dto';
 import { AuthorizationGuard, RequestToken } from 'src/guard';
 import { iAuthTokenPayload } from '../account/account.entity';
@@ -118,7 +119,7 @@ export class TaskController {
   @ApiResponse(responses.forbidden)
   @ApiResponse(responses.unprocessable)
   @ApiResponse(responses.internalError)
-  async delete(@Param('id') id: string, @Req() request: Request) {
+  async delete(@Param() { id }: DeleteTask, @Req() request: Request) {
     const sessionInfo = request[sessionPayloadKey] as iAuthTokenPayload;
 
     await this.service.deleteTask({

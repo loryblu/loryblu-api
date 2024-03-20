@@ -102,21 +102,35 @@ export class TaskRepository {
       .catch((error) => handleErrors(error));
   }
 
-  async findTaskById(parentId: string) {
+  async findTaskById(id: number) {
     return this.prisma.task.findFirst({
+      where: {
+        id,
+      },
+    });
+  }
+
+  async validateParent(parentId: string) {
+    return this.prisma.parentProfile.findFirst({
+      where: {
+        id: parentId,
+      },
+    });
+  }
+
+  async deleteTask(id: number, parentId: string) {
+    await this.prisma.task.findFirst({
       where: {
         children: {
           parentId: parentId,
         },
       },
     });
-  }
 
-  async deleteTask(id: string) {
     await this.prisma.task
       .delete({
         where: {
-          id: parseInt(id),
+          id: id,
         },
       })
       .catch((error) => handleErrors(error));
