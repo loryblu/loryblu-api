@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { handleErrors } from 'src/globals/errors';
+import { PrismaService } from 'src/prisma/prisma.service';
 import {
   iTaskRepositoryInput,
   iTaskRepositoryReadManyInput,
@@ -25,7 +25,7 @@ export class TaskRepository {
             parentId: parentId,
           },
           frequency: {
-            hasSome: frequency,
+            hasSome: Array.isArray(frequency) ? frequency : [frequency],
           },
         },
         select: {
@@ -97,6 +97,40 @@ export class TaskRepository {
           frequency: task.frequency,
           order: task.order,
           categoryId: task.categoryId,
+        },
+      })
+      .catch((error) => handleErrors(error));
+  }
+
+  async findTaskById(id: number) {
+    return this.prisma.task.findFirst({
+      where: {
+        id,
+      },
+    });
+  }
+
+  async validateParent(parentId: string) {
+    return this.prisma.parentProfile.findFirst({
+      where: {
+        id: parentId,
+      },
+    });
+  }
+
+  async deleteTask(id: number, parentId: string) {
+    await this.prisma.task.findFirst({
+      where: {
+        children: {
+          parentId: parentId,
+        },
+      },
+    });
+
+    await this.prisma.task
+      .delete({
+        where: {
+          id: id,
         },
       })
       .catch((error) => handleErrors(error));

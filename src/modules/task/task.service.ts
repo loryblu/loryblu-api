@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { TaskRepository } from './task.repository';
 import {
   iTaskRepositoryInput,
@@ -40,6 +40,23 @@ export class TaskService {
     }
 
     await this.repository.updateTask(input);
+  }
+
+  async deleteTask({ id, parentId }: { id: string; parentId: string }) {
+    const idNumber = parseInt(id);
+
+    const existingTask = await this.repository.findTaskById(idNumber);
+    const parent = await this.repository.validateParent(parentId);
+
+    if (!existingTask) {
+      throw new NotFoundException(`Tarefa com ID ${id} não encontrada.`);
+    }
+
+    if (!parent) {
+      throw new NotFoundException('Id do responsável inválida');
+    }
+
+    await this.repository.deleteTask(idNumber, parentId);
   }
 
   private processTasks(

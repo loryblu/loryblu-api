@@ -1,8 +1,10 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
+  Param,
   Patch,
   Post,
   Query,
@@ -17,6 +19,7 @@ import {
   readTaskNewDto,
   UpdateTaskDto,
   ValidateIdTask,
+  DeleteTask,
 } from './task.dto';
 import { AuthorizationGuard, RequestToken } from 'src/guard';
 import { iAuthTokenPayload } from '../account/account.entity';
@@ -105,6 +108,27 @@ export class TaskController {
 
     return {
       message: 'Tarefas atualizadas',
+    };
+  }
+
+  @RequestToken({ type: 'access', role: 'user' })
+  @Delete(':id')
+  @HttpCode(200)
+  @ApiResponse(responses.badRequest)
+  @ApiResponse(responses.unauthorized)
+  @ApiResponse(responses.forbidden)
+  @ApiResponse(responses.unprocessable)
+  @ApiResponse(responses.internalError)
+  async delete(@Param() { id }: DeleteTask, @Req() request: Request) {
+    const sessionInfo = request[sessionPayloadKey] as iAuthTokenPayload;
+
+    await this.service.deleteTask({
+      id: id,
+      parentId: sessionInfo.pid,
+    });
+
+    return {
+      message: 'Tarefa excluída',
     };
   }
 }
