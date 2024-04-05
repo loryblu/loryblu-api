@@ -118,20 +118,10 @@ export class TaskRepository {
     });
   }
 
-  async deleteTask(id: number, parentId: string) {
-    await this.prisma.task.findFirst({
-      where: {
-        children: {
-          parentId: parentId,
-        },
-      },
-    });
-
+  async deleteTask(id: number) {
     await this.prisma.task
       .delete({
-        where: {
-          id: id,
-        },
+        where: { id },
       })
       .catch((error) => handleErrors(error));
   }
