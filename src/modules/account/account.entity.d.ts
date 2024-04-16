@@ -33,10 +33,10 @@ export type GetCredentialIdByEmailOutput = Pick<
     >;
   };
 };
-export type GetCredential = Pick<Credential, 'id' | 'email'> & {
-  parentProfile: Pick<ParentProfile, 'id' | 'fullname'> & {
+export type GetCredential = Pick<Credential, 'email'> & {
+  parentProfile: Pick<ParentProfile, 'fullname'> & {
     childrens: Array<
-      Pick<ChildrenProfile, 'id' | 'fullname' | 'birthdate' | 'gender'>
+      Pick<ChildrenProfile, 'fullname' | 'birthdate' | 'gender'>
     >;
   };
 };
