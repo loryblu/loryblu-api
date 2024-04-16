@@ -82,7 +82,7 @@ export class AccountRepository {
 
   async getCredentialId(id: string): Promise<GetCredential | void> {
     const response = await this.prisma.credential
-      .findFirst({
+      .findUnique({
         where: { id },
         select: {
           id: true,
