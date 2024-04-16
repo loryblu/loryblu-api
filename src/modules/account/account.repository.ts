@@ -85,11 +85,9 @@ export class AccountRepository {
       .findUnique({
         where: { id },
         select: {
-          id: true,
           email: true,
           parentProfile: {
             select: {
-              id: true,
               fullname: true,
               childrens: {
                 select: {
