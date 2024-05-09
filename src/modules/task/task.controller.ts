@@ -131,7 +131,7 @@ export class TaskController {
     });
 
     return {
-      message: 'Tarefa excluída',
+      message: 'Atividade excluída com sucesso',
     };
   }
 }
