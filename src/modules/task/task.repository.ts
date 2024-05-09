@@ -25,7 +25,7 @@ export class TaskRepository {
             parentId: parentId,
           },
           frequency: {
-            hasSome: Array.isArray(frequency) ? frequency : [frequency],
+            hasSome: frequency,
           },
         },
         select: {
