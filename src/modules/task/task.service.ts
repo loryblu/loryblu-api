@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CustomHttpError } from 'src/globals/responses/exceptions';
 import {
+  iTaskRepositoryDeleteTaskInput,
   iTaskRepositoryInput,
   iTaskRepositoryReadManyInput,
   iTaskRepositoryReadManyOutput,
@@ -42,11 +43,11 @@ export class TaskService {
     await this.repository.updateTask(input);
   }
 
-  async deleteTask({ id, parentId }: { id: string; parentId: string }) {
-    const idNumber = parseInt(id);
+  async deleteTask(input: iTaskRepositoryDeleteTaskInput) {
+    const idNumber = parseInt(input.id);
 
     const existingTask = await this.repository.findTaskById(idNumber);
-    const parent = await this.repository.validateParent(parentId);
+    const parent = await this.repository.validateParent(input.parentId);
 
     if (!existingTask) {
       throw new CustomHttpError('Tarefa não encontrada', 404);

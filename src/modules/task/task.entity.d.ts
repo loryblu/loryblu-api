@@ -41,3 +41,8 @@ export type iTaskRepositoryUpadateInput = {
   childrenId: ChildrenProfile['id'];
   parentId: ParentProfile['id'];
 };
+
+export type iTaskRepositoryDeleteTaskInput = {
+  id: string;
+  parentId: string;
+};
