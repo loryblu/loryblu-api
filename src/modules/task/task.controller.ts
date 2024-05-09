@@ -70,9 +70,11 @@ export class TaskController {
       ...queryParams,
       parentId: sessionInfo.pid,
     });
+    const childrenId = sessionInfo.cid;
 
     return {
       message: 'Tarefas encontradas',
+      childrenId,
       data: {
         count,
         ...processTask,
