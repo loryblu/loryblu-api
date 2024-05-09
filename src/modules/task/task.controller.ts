@@ -74,8 +74,8 @@ export class TaskController {
 
     return {
       message: 'Tarefas encontradas',
-      childrenId,
       data: {
+        childrenId,
         count,
         ...processTask,
       },
