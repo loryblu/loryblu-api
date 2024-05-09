@@ -44,9 +44,13 @@ export class TaskService {
   }
 
   async deleteTask(input: iTaskRepositoryDeleteTaskInput) {
-    const idNumber = parseInt(input.id);
+    const taskId = parseInt(input.id);
+    const childrenId = parseInt(input.childrenId);
 
-    const existingTask = await this.repository.findTaskById(idNumber);
+    const existingTask = await this.repository.findTaskByIdAndChildren(
+      taskId,
+      childrenId,
+    );
     const parent = await this.repository.validateParent(input.parentId);
 
     if (!existingTask) {
@@ -60,7 +64,7 @@ export class TaskService {
       );
     }
 
-    await this.repository.deleteTask(idNumber);
+    await this.repository.deleteTask(taskId);
   }
 
   private processTasks(

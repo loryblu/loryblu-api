@@ -102,10 +102,11 @@ export class TaskRepository {
       .catch((error) => handleErrors(error));
   }
 
-  async findTaskById(id: number) {
+  async findTaskByIdAndChildren(id: number, childrenId: number) {
     return await this.prisma.task.findFirst({
       where: {
         id,
+        childrenId,
       },
     });
   }

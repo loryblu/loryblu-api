@@ -127,6 +127,7 @@ export class TaskController {
     await this.service.deleteTask({
       id: id,
       parentId: sessionInfo.pid,
+      childrenId: sessionInfo.cid,
     });
 
     return {
