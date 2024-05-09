@@ -11,8 +11,6 @@ export type EncryptDataAsyncProps = {
   salt: number;
 };
 
-type DeleteHandler = (id: string, request: Request) => Promise<void>;
-
 export type ApiResponses = {
   ok: ApiResponseOptions;
   created: ApiResponseOptions;
