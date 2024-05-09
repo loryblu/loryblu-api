@@ -103,7 +103,7 @@ export class TaskRepository {
   }
 
   async findTaskById(id: number) {
-    return this.prisma.task.findFirst({
+    return await this.prisma.task.findFirst({
       where: {
         id,
       },
@@ -111,7 +111,7 @@ export class TaskRepository {
   }
 
   async validateParent(parentId: string) {
-    return this.prisma.parentProfile.findFirst({
+    return await this.prisma.parentProfile.findFirst({
       where: {
         id: parentId,
       },
