@@ -5,7 +5,6 @@ import {
   IsInt,
   IsNotEmpty,
   IsNumber,
-  IsNumberString,
   IsOptional,
   IsString,
   IsUUID,
@@ -138,8 +137,23 @@ export class ValidateIdTask {
 }
 
 export class DeleteTask {
+  @Transform((param) => Number(param.value))
   @ApiProperty({ example: 1 })
   @IsNotEmpty({ message: messages.notEmpty })
-  @IsNumberString({ no_symbols: true }, { message: messages.integer })
-  id: string;
+  @IsNumber(
+    { allowNaN: false, allowInfinity: false },
+    { message: messages.integer },
+  )
+  @IsInt({ message: messages.integer })
+  taskId: number;
+
+  @Transform((param) => Number(param.value))
+  @ApiProperty({ example: 1 })
+  @IsNotEmpty({ message: messages.notEmpty })
+  @IsNumber(
+    { allowInfinity: false, allowNaN: false },
+    { message: messages.integer },
+  )
+  @IsInt({ message: messages.integer })
+  childrenId: number;
 }
