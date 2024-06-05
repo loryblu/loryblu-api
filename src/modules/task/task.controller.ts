@@ -4,7 +4,6 @@ import {
   Delete,
   Get,
   HttpCode,
-  Param,
   Patch,
   Post,
   Query,
@@ -70,7 +69,7 @@ export class TaskController {
       ...queryParams,
       parentId: sessionInfo.pid,
     });
-    const childrenId = sessionInfo.cid;
+    const childrenId = queryParams.childrenId;
 
     return {
       message: 'Tarefas encontradas',
@@ -114,20 +113,23 @@ export class TaskController {
   }
 
   @RequestToken({ type: 'access', role: 'user' })
-  @Delete(':id')
+  @Delete()
   @HttpCode(200)
   @ApiResponse(responses.badRequest)
   @ApiResponse(responses.unauthorized)
   @ApiResponse(responses.forbidden)
   @ApiResponse(responses.unprocessable)
   @ApiResponse(responses.internalError)
-  async delete(@Param() { id }: DeleteTask, @Req() request: Request) {
+  async delete(
+    @Query() { childrenId, taskId }: DeleteTask,
+    @Req() request: Request,
+  ) {
     const sessionInfo = request[sessionPayloadKey] as iAuthTokenPayload;
 
     await this.service.deleteTask({
-      id: id,
+      taskId,
       parentId: sessionInfo.pid,
-      childrenId: sessionInfo.cid,
+      childrenId: childrenId,
     });
 
     return {
