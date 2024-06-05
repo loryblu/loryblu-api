@@ -112,17 +112,17 @@ export class TaskRepository {
   }
 
   async validateParent(parentId: string) {
-    return await this.prisma.parentProfile.findUnique({
+    return this.prisma.parentProfile.findFirst({
       where: {
         id: parentId,
       },
     });
   }
 
-  async deleteTask(id: number) {
+  async deleteTask(taskId: number) {
     await this.prisma.task
       .delete({
-        where: { id },
+        where: { id: taskId },
       })
       .catch((error) => handleErrors(error));
   }
