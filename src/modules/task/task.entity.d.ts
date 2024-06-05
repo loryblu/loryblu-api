@@ -43,7 +43,7 @@ export type iTaskRepositoryUpadateInput = {
 };
 
 export type iTaskRepositoryDeleteTaskInput = {
-  id: string;
+  taskId: number;
   parentId: string;
-  childrenId: string;
+  childrenId: number;
 };
