@@ -44,11 +44,12 @@ export class TaskService {
   }
 
   async deleteTask(input: iTaskRepositoryDeleteTaskInput) {
-    const { taskId, childrenId } = input;
+    const { taskId, childrenId, parentId } = input;
 
     const existingTask = await this.repository.findTaskByIdAndChildren(
       taskId,
       childrenId,
+      parentId,
     );
 
     if (!existingTask) {

@@ -102,11 +102,18 @@ export class TaskRepository {
       .catch((error) => handleErrors(error));
   }
 
-  async findTaskByIdAndChildren(id: number, childrenId: number) {
+  async findTaskByIdAndChildren(
+    id: number,
+    childrenId: number,
+    parentId: string,
+  ) {
     return await this.prisma.task.findUnique({
       where: {
         id,
         childrenId,
+        children: {
+          parentId,
+        },
       },
     });
   }
