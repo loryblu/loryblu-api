@@ -44,13 +44,12 @@ export class TaskService {
   }
 
   async deleteTask(input: iTaskRepositoryDeleteTaskInput) {
-    const { taskId, childrenId, parentId } = input;
+    const { taskId, childrenId } = input;
 
     const existingTask = await this.repository.findTaskByIdAndChildren(
       taskId,
       childrenId,
     );
-    const parent = await this.repository.validateParent(parentId);
 
     if (!existingTask) {
       throw new CustomHttpError('Tarefa não encontrada', 404);
