@@ -118,6 +118,14 @@ export class TaskRepository {
     });
   }
 
+  async findParentById(parentId: string) {
+    return await this.prisma.parentProfile.findFirst({
+      where: {
+        id: parentId,
+      },
+    });
+  }
+
   async deleteTask(taskId: number) {
     await this.prisma.task
       .delete({
