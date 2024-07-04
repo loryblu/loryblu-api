@@ -52,17 +52,8 @@ export class TaskService {
       parentId,
     );
 
-    const existParent = await this.repository.findParentById(parentId);
-
     if (!existingTask) {
       throw new CustomHttpError('Tarefa não encontrada', 404);
-    }
-
-    if (!existParent) {
-      throw new CustomHttpError(
-        'Id do responsável responsável não encontrado',
-        404,
-      );
     }
 
     await this.repository.deleteTask(taskId);
