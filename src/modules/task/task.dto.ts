@@ -133,7 +133,7 @@ export class ValidateIdTask {
   @IsNotEmpty({ message: messages.notEmpty })
   @IsNumber({}, { message: messages.number })
   @IsInt({ message: messages.integer })
-  id_task: number;
+  taskId: number;
 }
 
 export class DeleteTask {

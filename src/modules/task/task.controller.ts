@@ -91,7 +91,7 @@ export class TaskController {
   @ApiResponse(responses.unprocessable)
   @ApiResponse(responses.internalError)
   async update(
-    @Query() { id_task }: ValidateIdTask,
+    @Query() { taskId }: ValidateIdTask,
     @Body() updateTaskDto: UpdateTaskDto,
     @Req() request: Request,
   ) {
@@ -100,7 +100,7 @@ export class TaskController {
     await this.service.updateTask({
       childrenId: updateTaskDto.childrenId,
       parentId: sessionInfo.pid,
-      id: id_task,
+      id: taskId,
       categoryId: updateTaskDto.categoryId,
       frequency: updateTaskDto.frequency,
       order: updateTaskDto.order,
