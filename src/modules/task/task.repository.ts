@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { handleErrors } from 'src/globals/errors';
+import { PrismaService } from 'src/prisma/prisma.service';
 import {
   iTaskRepositoryInput,
   iTaskRepositoryReadManyInput,
@@ -98,6 +98,30 @@ export class TaskRepository {
           order: task.order,
           categoryId: task.categoryId,
         },
+      })
+      .catch((error) => handleErrors(error));
+  }
+
+  async findTaskByIdAndChildren(
+    id: number,
+    childrenId: number,
+    parentId: string,
+  ) {
+    return await this.prisma.task.findUnique({
+      where: {
+        id,
+        childrenId,
+        children: {
+          parentId,
+        },
+      },
+    });
+  }
+
+  async deleteTask(taskId: number) {
+    await this.prisma.task
+      .delete({
+        where: { id: taskId },
       })
       .catch((error) => handleErrors(error));
   }

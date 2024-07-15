@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   Patch,
@@ -17,6 +18,7 @@ import {
   readTaskNewDto,
   UpdateTaskDto,
   ValidateIdTask,
+  DeleteTask,
 } from './task.dto';
 import { AuthorizationGuard, RequestToken } from 'src/guard';
 import { iAuthTokenPayload } from '../account/account.entity';
@@ -67,10 +69,12 @@ export class TaskController {
       ...queryParams,
       parentId: sessionInfo.pid,
     });
+    const childrenId = queryParams.childrenId;
 
     return {
       message: 'Tarefas encontradas',
       data: {
+        childrenId,
         count,
         ...processTask,
       },
@@ -105,6 +109,31 @@ export class TaskController {
 
     return {
       message: 'Tarefas atualizadas',
+    };
+  }
+
+  @RequestToken({ type: 'access', role: 'user' })
+  @Delete()
+  @HttpCode(200)
+  @ApiResponse(responses.badRequest)
+  @ApiResponse(responses.unauthorized)
+  @ApiResponse(responses.forbidden)
+  @ApiResponse(responses.unprocessable)
+  @ApiResponse(responses.internalError)
+  async delete(
+    @Query() { childrenId, taskId }: DeleteTask,
+    @Req() request: Request,
+  ) {
+    const sessionInfo = request[sessionPayloadKey] as iAuthTokenPayload;
+
+    await this.service.deleteTask({
+      taskId,
+      parentId: sessionInfo.pid,
+      childrenId: childrenId,
+    });
+
+    return {
+      message: 'Atividade excluída com sucesso',
     };
   }
 }
