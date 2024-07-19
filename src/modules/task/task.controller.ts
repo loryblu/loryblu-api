@@ -111,7 +111,6 @@ export class TaskController {
       message: 'Tarefas atualizadas',
       data: {
         childrenId: updateTaskDto.childrenId,
-        parentId: sessionInfo.pid,
         id: taskId,
         categoryId: updateTaskDto.categoryId,
         frequency: updateTaskDto.frequency,
