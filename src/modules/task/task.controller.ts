@@ -91,14 +91,14 @@ export class TaskController {
   @ApiResponse(responses.unprocessable)
   @ApiResponse(responses.internalError)
   async update(
-    @Query() { taskId }: ValidateIdTask,
+    @Query() { childrenId, taskId }: ValidateIdTask,
     @Body() updateTaskDto: UpdateTaskDto,
     @Req() request: Request,
   ) {
     const sessionInfo = request[sessionPayloadKey] as iAuthTokenPayload;
 
     const updateResult = await this.service.updateTask({
-      childrenId: updateTaskDto.childrenId,
+      childrenId: childrenId,
       parentId: sessionInfo.pid,
       id: taskId,
       categoryId: updateTaskDto.categoryId,
