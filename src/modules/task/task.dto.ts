@@ -135,3 +135,25 @@ export class ValidateIdTask {
   @IsInt({ message: messages.integer })
   id_task: number;
 }
+
+export class DeleteTask {
+  @Transform((param) => Number(param.value))
+  @ApiProperty({ example: 1 })
+  @IsNotEmpty({ message: messages.notEmpty })
+  @IsNumber(
+    { allowNaN: false, allowInfinity: false },
+    { message: messages.integer },
+  )
+  @IsInt({ message: messages.integer })
+  taskId: number;
+
+  @Transform((param) => Number(param.value))
+  @ApiProperty({ example: 1 })
+  @IsNotEmpty({ message: messages.notEmpty })
+  @IsNumber(
+    { allowInfinity: false, allowNaN: false },
+    { message: messages.integer },
+  )
+  @IsInt({ message: messages.integer })
+  childrenId: number;
+}
