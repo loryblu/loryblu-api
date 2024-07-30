@@ -1,0 +1,93 @@
+### Variables 
+@apiurl = http://localhost:5500
+# @apiurl = https://loryblu-homologation.onrender.com
+@authToken = {{login.response.body.data.accessToken}}
+
+### POST /auth/register
+POST {{apiurl}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "kauane4@email.com",
+  "password": "stringW#3",
+  "policiesAccepted": true,
+  "parentName": "Kauane Santos",
+  "childrenName": "John Santos",
+  "childrenBirthDate": "2009-02-28",
+  "childrenGender": "male"
+}
+
+
+### POST auth/login
+# @name login
+POST {{apiurl}}/auth/login 
+Content-Type: application/json
+
+{
+  "email": "kauane4@email.com",
+  "password": "stringW#3"
+}
+
+###Get auth/account
+GET {{apiurl}}/auth/account
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+
+### POST /task
+POST {{apiurl}}/task 
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "childrenId": 1,
+  "categoryId": "44f29121-b7b1-4d1a-bbff-5f1cf2fc5497",
+  "shift": "morning",
+  "frequency": [
+    "mon"
+  ],
+  "order": 0
+}
+
+### GET /task?childrenId=2&frequency=mon
+GET {{apiurl}}/task?childrenId=1&frequency=mon
+Authorization: Bearer {{authToken}}
+
+### Delete /task/id
+DELETE {{apiurl}}/task?childrenId=2&taskId=2
+Authorization: Bearer {{authToken}}
+
+
+### PATCH /task
+PATCH {{apiurl}}/task?childrenId=1&taskId=4
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "childrenId": 1,
+  "categoryId": "44f29121-b7b1-4d1a-bbff-5f1cf2fc5497",
+  "shift": "afternoon",
+  "frequency": [
+    "tue"
+  ],
+  "order": 0
+}
+
+
+### POST /auth/recovery
+POST {{apiurl}}/login/register HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "email@example.com"
+}
+
+### PUT /auth/recovery
+PUT {{apiurl}}/auth/set-password HTTP/1.1
+Content-Type: application/json
+
+{
+  "password": "stringW#3",
+  "recoveryToken": "string"
+}
+

@@ -40,7 +40,7 @@ export class TaskService {
       throw new CustomHttpError('Ao menos um campo deve ser atualizado', 400);
     }
 
-    await this.repository.updateTask(input);
+    return await this.repository.updateTask(input);
   }
 
   async deleteTask(input: iTaskRepositoryDeleteTaskInput) {
