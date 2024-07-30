@@ -3,6 +3,24 @@
 # @apiurl = https://loryblu-homologation.onrender.com
 @authToken = {{login.response.body.data.accessToken}}
 
+
+### POST /auth/recovery
+POST {{apiurl}}/login/register HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "email@example.com"
+}
+
+### PUT /auth/recovery
+PUT {{apiurl}}/auth/set-password HTTP/1.1
+Content-Type: application/json
+
+{
+  "password": "stringW#3",
+  "recoveryToken": "string"
+}
+
 ### POST /auth/register
 POST {{apiurl}}/auth/register
 Content-Type: application/json
@@ -17,6 +35,9 @@ Content-Type: application/json
   "childrenGender": "male"
 }
 
+### Get /auth/account
+GET {{apiurl}}/auth/account
+Authorization: Bearer {{authToken}}
 
 ### POST auth/login
 # @name login
@@ -74,20 +95,4 @@ Content-Type: application/json
 }
 
 
-### POST /auth/recovery
-POST {{apiurl}}/login/register HTTP/1.1
-Content-Type: application/json
-
-{
-  "email": "email@example.com"
-}
-
-### PUT /auth/recovery
-PUT {{apiurl}}/auth/set-password HTTP/1.1
-Content-Type: application/json
-
-{
-  "password": "stringW#3",
-  "recoveryToken": "string"
-}
 
