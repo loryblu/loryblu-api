@@ -1,3 +1,6 @@
+import { ApiProperty } from '@nestjs/swagger';
+import { TaskFrequency, TaskShift } from '@prisma/client';
+import { Transform, TransformFnParams } from 'class-transformer';
 import {
   ArrayMaxSize,
   ArrayMinSize,
@@ -11,9 +14,6 @@ import {
   Max,
   Min,
 } from 'class-validator';
-import { Transform, TransformFnParams } from 'class-transformer';
-import { TaskFrequency, TaskShift } from '@prisma/client';
-import { ApiProperty, PickType } from '@nestjs/swagger';
 import { messages } from 'src/globals/responses/validation';
 
 function transformFrequencyItems(param: TransformFnParams) {
@@ -97,7 +97,7 @@ export class readTaskNewDto {
   perPage: number = 20;
 }
 
-export class UpdateTaskDto extends PickType(TaskCreateDto, ['childrenId']) {
+export class UpdateTaskDto {
   @IsUUID(undefined, { message: messages.UUID })
   @ApiProperty({ example: '44f29121-b7b1-4d1a-bbff-5f1cf2fc5497' })
   @IsString({ message: messages.string })
