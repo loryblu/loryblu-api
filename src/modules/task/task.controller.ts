@@ -97,7 +97,7 @@ export class TaskController {
   ) {
     const sessionInfo = request[sessionPayloadKey] as iAuthTokenPayload;
 
-    const updateResult = await this.service.updateTask({
+    await this.service.updateTask({
       childrenId: childrenId,
       parentId: sessionInfo.pid,
       id: taskId,
@@ -108,15 +108,7 @@ export class TaskController {
     });
 
     return {
-      message: 'Tarefas atualizadas',
-      data: {
-        childrenId: updateResult.childrenId,
-        id: taskId,
-        categoryId: updateResult.categoryId,
-        frequency: updateResult.frequency,
-        order: updateResult.order,
-        shift: updateResult.shift,
-      },
+      message: 'Atividade atualizada com sucesso',
     };
   }
 
