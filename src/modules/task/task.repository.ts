@@ -84,7 +84,7 @@ export class TaskRepository {
 
   async updateTask(task: iTaskRepositoryUpadateInput) {
     try {
-      const updateReturn = await this.prisma.task.update({
+      await this.prisma.task.update({
         where: {
           id: task.id,
           children: {
@@ -99,8 +99,6 @@ export class TaskRepository {
           categoryId: task.categoryId,
         },
       });
-
-      return updateReturn;
     } catch (error) {
       handleErrors(error);
     }
