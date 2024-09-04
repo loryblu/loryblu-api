@@ -65,13 +65,13 @@ Content-Type: application/json
   "categoryId": "44f29121-b7b1-4d1a-bbff-5f1cf2fc5497",
   "shift": "morning",
   "frequency": [
-    "mon"
+   "sat"
   ],
   "order": 0
 }
 
 ### GET /task?childrenId=2&frequency=mon
-GET {{apiurl}}/task?childrenId=1&frequency=mon
+GET {{apiurl}}/task?childrenId=1&frequency=sat
 Authorization: Bearer {{authToken}}
 
 ### Delete /task/id
@@ -80,7 +80,7 @@ Authorization: Bearer {{authToken}}
 
 
 ### PATCH /task
-PATCH {{apiurl}}/task?childrenId=1&taskId=4
+PATCH {{apiurl}}/task?childrenId=1&taskId=91
 Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
