@@ -14,8 +14,7 @@ export class TaskService {
   constructor(private repository: TaskRepository) {}
 
   async processNewTaskData(task: iTaskRepositoryInput) {
-    await this.repository.saveTask(task);
-    return;
+    return await this.repository.saveTask(task);
   }
 
   async readAndProcessTasks(input: iTaskRepositoryReadManyInput) {
