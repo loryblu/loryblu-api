@@ -60,7 +60,7 @@ export class TaskRepository {
   }
 
   async saveTask(task: iTaskRepositoryInput) {
-    await this.prisma.task
+    const newTask = await this.prisma.task
       .create({
         data: {
           shift: task.shift,
@@ -80,6 +80,7 @@ export class TaskRepository {
         },
       })
       .catch((error) => handleErrors(error));
+    return newTask;
   }
 
   async updateTask(task: iTaskRepositoryUpadateInput) {

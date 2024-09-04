@@ -43,13 +43,16 @@ export class TaskController {
   async create(@Body() input: TaskCreateDto, @Req() request: Request) {
     const sessionInfo = request[sessionPayloadKey] as iAuthTokenPayload;
 
-    await this.service.processNewTaskData({
+    const task = await this.service.processNewTaskData({
       parentId: sessionInfo.pid,
       ...input,
     });
 
     return {
       message: 'Nova tarefa criada com sucesso',
+      data: {
+        task,
+      },
     };
   }
 
