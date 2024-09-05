@@ -7,6 +7,7 @@ import {
   getCredentialIdByRecoveryTokenInput,
   getCredentialIdByRecoveryTokenOutout,
   SavePasswordInput,
+  GetCredential,
 } from './account.entity';
 import { handleErrors } from 'src/globals/errors';
 
@@ -47,19 +48,46 @@ export class AccountRepository {
   }
 
   async getCredentialIdByEmail(
-    hashedEmail: string,
+    hashedemail: string,
   ): Promise<GetCredentialIdByEmailOutput | void> {
     const response = await this.prisma.credential
       .findUnique({
-        where: {
-          email: hashedEmail,
-        },
+        where: { email: hashedemail },
         select: {
           id: true,
           password: true,
           parentProfile: {
             select: {
               id: true,
+              fullname: true,
+              childrens: {
+                select: {
+                  id: true,
+                  fullname: true,
+                  gender: true,
+                  birthdate: true,
+                },
+              },
+            },
+          },
+        },
+      })
+      .then((response) => {
+        return response;
+      })
+      .catch((error) => handleErrors(error));
+
+    return response;
+  }
+
+  async getCredentialId(id: string): Promise<GetCredential | void> {
+    const response = await this.prisma.credential
+      .findUnique({
+        where: { id },
+        select: {
+          email: true,
+          parentProfile: {
+            select: {
               fullname: true,
               childrens: {
                 select: {
