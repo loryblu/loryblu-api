@@ -20,9 +20,20 @@ model Credential {
   parentProfile      ParentProfile?
   resetPasswordInfo  ResetPasswordInfo?
   updatedAt          DateTime           @updatedAt @map("updated_at")
+  accessToken        AccessToken?
   createdAt          DateTime           @default(now()) @map("created_at")
 
   @@map("credentials")
+}
+
+model AccessToken {
+  id           Int        @id @default(autoincrement())
+  accessToken  String     @unique
+  expiresIn    DateTime   @map("expires_in")
+  credentialId String     @unique @map("credential_id")
+  credential   Credential @relation(fields: [credentialId], references: [id], onDelete: Cascade)
+
+  @@map("access_tokens")
 }
 
 model ResetPasswordInfo {

@@ -55,6 +55,11 @@ export type SavePasswordInput = {
   encryptedPassword: Credential['password'];
 };
 
+export type SaveAccessTokenInput = {
+  credentialId: Credential['id'];
+  accessToken: string;
+};
+
 export type PasswordResetInput = Omit<ResetPasswordInfo, 'id'>;
 
 export type PasswordResetOutput = {

@@ -13,6 +13,7 @@ import { formatException } from 'src/globals/utils';
 import { iAuthMetadata } from './authorization.decorator';
 import { handleJWTErrors } from 'src/globals/errors';
 import { sessionPayloadKey } from 'src/globals/constants';
+import { AccountRepository } from '../modules/account/account.repository';
 
 @Injectable()
 export class AuthorizationGuard implements CanActivate {
@@ -22,6 +23,7 @@ export class AuthorizationGuard implements CanActivate {
     private reflector: Reflector,
     private configService: ConfigService,
     private jwtService: JwtService,
+    private readonly accountRepository: AccountRepository,
   ) {
     this.secret = this.configService.get<string>('SECRET_JWT');
   }
@@ -45,12 +47,13 @@ export class AuthorizationGuard implements CanActivate {
 
     const request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
-
     if (!token) {
       throw new UnauthorizedException(
         formatException('Uma chave de acesso precisa ser informada.'),
       );
     }
+
+    const tokenExists = await this.accountRepository.getToken(token);
 
     const validity = await this.jwtService
       .verifyAsync(token, {
@@ -60,7 +63,7 @@ export class AuthorizationGuard implements CanActivate {
       .then((response) => response)
       .catch((error) => handleJWTErrors(error));
 
-    if (validity) {
+    if (validity && tokenExists) {
       request[sessionPayloadKey] = validity;
       return true;
     }
