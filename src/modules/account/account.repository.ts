@@ -217,4 +217,21 @@ export class AccountRepository {
       return true;
     }
   }
+
+  async getToken(accessToken: string) {
+    const token = await this.prisma.accessToken.findUnique({
+      where: { accessToken },
+    });
+    return token;
+  }
+
+  async invalidateToken(accessToken: string): Promise<void> {
+    await this.prisma.accessToken
+      .delete({
+        where: {
+          accessToken,
+        },
+      })
+      .catch((error) => handleErrors(error));
+  }
 }
