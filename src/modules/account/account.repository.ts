@@ -183,39 +183,26 @@ export class AccountRepository {
 
   async saveToken(input: SaveAccessTokenInput) {
     const { credentialId, accessToken } = input;
-
-    const existingToken = await this.prisma.accessToken.findUnique({
-      where: { credentialId },
-    });
     const expiresIn = new Date(Date.now() + 2 * 60 * 60 * 1000);
 
-    if (existingToken) {
-      await this.prisma.accessToken.update({
-        where: {
-          credentialId,
-        },
-        data: {
-          accessToken,
-          expiresIn,
-        },
-      });
-
-      return true;
-    } else {
-      await this.prisma.accessToken.create({
-        data: {
-          accessToken,
-          expiresIn,
-          credential: {
-            connect: {
-              id: credentialId,
-            },
+    await this.prisma.accessToken.upsert({
+      where: {
+        credentialId,
+      },
+      update: {
+        accessToken,
+      },
+      create: {
+        accessToken,
+        expiresIn,
+        credential: {
+          connect: {
+            id: credentialId,
           },
         },
-      });
-
-      return true;
-    }
+      },
+    });
+    return true;
   }
 
   async getToken(accessToken: string) {
@@ -228,9 +215,7 @@ export class AccountRepository {
   async invalidateToken(accessToken: string): Promise<void> {
     await this.prisma.accessToken
       .delete({
-        where: {
-          accessToken,
-        },
+        where: { accessToken },
       })
       .catch((error) => handleErrors(error));
   }
