@@ -16,6 +16,7 @@ import { RecoveryControllerOutput } from './account.entity';
 import {
   CreateAccountDto,
   LoginDto,
+  AccessTokenDto,
   ResetPasswordDto,
   SetPasswordDto,
 } from './account.dto';
@@ -70,6 +71,20 @@ export class AccountController {
         refreshToken: refresh,
         user: user,
       },
+    };
+  }
+
+  @Post('/logout')
+  @HttpCode(200)
+  @ApiTags('Authentication')
+  @ApiResponse(responses.ok)
+  @ApiResponse(responses.unauthorized)
+  @ApiResponse(responses.internalError)
+  async logout(@Body() accessToken: AccessTokenDto) {
+    await this.accountService.logout(accessToken);
+
+    return {
+      message: 'Logout realizado com sucesso',
     };
   }
 

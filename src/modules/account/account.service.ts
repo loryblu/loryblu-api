@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { AccountRepository } from './account.repository';
 import {
   CreateAccountDto,
+  AccessTokenDto,
   ResetPasswordDto,
   SetPasswordDto,
 } from './account.dto';
@@ -253,12 +254,28 @@ export class AccountService {
       this.createAuthToken(tokenPayload, 'refresh'),
     ]);
 
+    await this.accountRepository.saveToken({
+      credentialId: credential.id,
+      accessToken: token,
+    });
+
     return {
       token,
       refresh,
       user,
     };
   }
+
+  async logout(input: AccessTokenDto): Promise<void> {
+    const existingToken = await this.accountRepository.getToken(
+      input.accessToken,
+    );
+    if (!existingToken) {
+      throw new InvalidCredentialsException();
+    }
+    await this.accountRepository.invalidateToken(existingToken.accessToken);
+  }
+
   async getCredential(id: string) {
     const credential = await this.accountRepository.getCredentialId(id);
     if (!credential) {

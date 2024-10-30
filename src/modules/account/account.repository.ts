@@ -8,9 +8,9 @@ import {
   getCredentialIdByRecoveryTokenOutout,
   SavePasswordInput,
   GetCredential,
+  SaveAccessTokenInput,
 } from './account.entity';
 import { handleErrors } from 'src/globals/errors';
-
 @Injectable()
 export class AccountRepository {
   constructor(private prisma: PrismaService) {}
@@ -177,6 +177,45 @@ export class AccountRepository {
             },
           },
         },
+      })
+      .catch((error) => handleErrors(error));
+  }
+
+  async saveToken(input: SaveAccessTokenInput) {
+    const { credentialId, accessToken } = input;
+    const expiresIn = new Date(Date.now() + 2 * 60 * 60 * 1000);
+
+    await this.prisma.accessToken.upsert({
+      where: {
+        credentialId,
+      },
+      update: {
+        accessToken,
+      },
+      create: {
+        accessToken,
+        expiresIn,
+        credential: {
+          connect: {
+            id: credentialId,
+          },
+        },
+      },
+    });
+    return true;
+  }
+
+  async getToken(accessToken: string) {
+    const token = await this.prisma.accessToken.findUnique({
+      where: { accessToken },
+    });
+    return token;
+  }
+
+  async invalidateToken(accessToken: string): Promise<void> {
+    await this.prisma.accessToken
+      .delete({
+        where: { accessToken },
       })
       .catch((error) => handleErrors(error));
   }
