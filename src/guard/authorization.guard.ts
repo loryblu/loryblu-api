@@ -66,8 +66,11 @@ export class AuthorizationGuard implements CanActivate {
     if (validity && tokenExists) {
       request[sessionPayloadKey] = validity;
       return true;
+    } else {
+      throw new UnauthorizedException(
+        formatException('Usuário não autenticado.'),
+      );
     }
-
     throw new InternalServerErrorException(
       formatException('O método CanActivate precisa ser verificado.'),
     );
