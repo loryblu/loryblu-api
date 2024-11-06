@@ -28,6 +28,9 @@ export class TaskService {
     const count = tasks.length;
     const processTask = tasks.reduce(this.processTasks, {});
 
+    if (count === 0)
+      throw new CustomHttpError('Nenhuma tarefa encontrada', 404);
+
     return {
       processTask,
       count,
