@@ -11,18 +11,18 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { sessionPayloadKey } from 'src/globals/constants';
 import { responses } from 'src/globals/responses/docs';
-import { TaskService } from './task.service';
-import {
-  TaskCreateDto,
-  readTaskNewDto,
-  UpdateTaskDto,
-  ValidateIdTask,
-  DeleteTask,
-} from './task.dto';
 import { AuthorizationGuard, RequestToken } from 'src/guard';
 import { iAuthTokenPayload } from '../account/account.entity';
-import { sessionPayloadKey } from 'src/globals/constants';
+import {
+  DeleteTask,
+  readTaskNewDto,
+  TaskCreateDto,
+  UpdateTaskDto,
+  ValidateIdTask,
+} from './task.dto';
+import { TaskService } from './task.service';
 
 @UseGuards(AuthorizationGuard)
 @Controller('/task')
@@ -43,13 +43,16 @@ export class TaskController {
   async create(@Body() input: TaskCreateDto, @Req() request: Request) {
     const sessionInfo = request[sessionPayloadKey] as iAuthTokenPayload;
 
-    await this.service.processNewTaskData({
+    const task = await this.service.processNewTaskData({
       parentId: sessionInfo.pid,
       ...input,
     });
 
     return {
       message: 'Nova tarefa criada com sucesso',
+      data: {
+        task,
+      },
     };
   }
 
@@ -91,16 +94,16 @@ export class TaskController {
   @ApiResponse(responses.unprocessable)
   @ApiResponse(responses.internalError)
   async update(
-    @Query() { id_task }: ValidateIdTask,
+    @Query() { childrenId, taskId }: ValidateIdTask,
     @Body() updateTaskDto: UpdateTaskDto,
     @Req() request: Request,
   ) {
     const sessionInfo = request[sessionPayloadKey] as iAuthTokenPayload;
 
     await this.service.updateTask({
-      childrenId: updateTaskDto.childrenId,
+      childrenId: childrenId,
       parentId: sessionInfo.pid,
-      id: id_task,
+      id: taskId,
       categoryId: updateTaskDto.categoryId,
       frequency: updateTaskDto.frequency,
       order: updateTaskDto.order,
@@ -108,7 +111,7 @@ export class TaskController {
     });
 
     return {
-      message: 'Tarefas atualizadas',
+      message: 'Atividade atualizada com sucesso',
     };
   }
 

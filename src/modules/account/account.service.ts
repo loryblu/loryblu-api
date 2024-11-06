@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { AccountRepository } from './account.repository';
 import {
   CreateAccountDto,
+  AccessTokenDto,
   ResetPasswordDto,
   SetPasswordDto,
 } from './account.dto';
@@ -162,6 +163,7 @@ export class AccountService {
 
     // ! verificar responsabilidade única
     const hashedEmail = await this.hashData(email);
+
     const account = await this.accountRepository.getCredentialIdByEmail(
       hashedEmail,
     );
@@ -189,7 +191,6 @@ export class AccountService {
     });
 
     delete account.password;
-
     return {
       url,
       fullname: account.parentProfile.fullname,
@@ -244,7 +245,6 @@ export class AccountService {
       pid: credential.parentProfile.id,
     };
     const user = {
-      pid: credential.parentProfile.id,
       parentName: credential.parentProfile.fullname,
       childrens: credential.parentProfile.childrens,
     };
@@ -254,10 +254,36 @@ export class AccountService {
       this.createAuthToken(tokenPayload, 'refresh'),
     ]);
 
+    await this.accountRepository.saveToken({
+      credentialId: credential.id,
+      accessToken: token,
+    });
+
     return {
       token,
       refresh,
       user,
+    };
+  }
+
+  async logout(input: AccessTokenDto): Promise<void> {
+    const existingToken = await this.accountRepository.getToken(
+      input.accessToken,
+    );
+    if (!existingToken) {
+      throw new InvalidCredentialsException();
+    }
+    await this.accountRepository.invalidateToken(existingToken.accessToken);
+  }
+
+  async getCredential(id: string) {
+    const credential = await this.accountRepository.getCredentialId(id);
+    if (!credential) {
+      throw new EmailNotFoundException();
+    }
+
+    return {
+      credential,
     };
   }
 }

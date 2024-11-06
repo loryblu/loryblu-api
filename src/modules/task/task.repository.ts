@@ -60,7 +60,7 @@ export class TaskRepository {
   }
 
   async saveTask(task: iTaskRepositoryInput) {
-    await this.prisma.task
+    const newTask = await this.prisma.task
       .create({
         data: {
           shift: task.shift,
@@ -80,11 +80,12 @@ export class TaskRepository {
         },
       })
       .catch((error) => handleErrors(error));
+    return newTask;
   }
 
   async updateTask(task: iTaskRepositoryUpadateInput) {
-    await this.prisma.task
-      .update({
+    try {
+      await this.prisma.task.update({
         where: {
           id: task.id,
           children: {
@@ -98,8 +99,10 @@ export class TaskRepository {
           order: task.order,
           categoryId: task.categoryId,
         },
-      })
-      .catch((error) => handleErrors(error));
+      });
+    } catch (error) {
+      handleErrors(error);
+    }
   }
 
   async findTaskByIdAndChildren(

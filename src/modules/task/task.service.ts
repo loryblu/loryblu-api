@@ -14,8 +14,7 @@ export class TaskService {
   constructor(private repository: TaskRepository) {}
 
   async processNewTaskData(task: iTaskRepositoryInput) {
-    await this.repository.saveTask(task);
-    return;
+    return await this.repository.saveTask(task);
   }
 
   async readAndProcessTasks(input: iTaskRepositoryReadManyInput) {
@@ -40,7 +39,7 @@ export class TaskService {
       throw new CustomHttpError('Ao menos um campo deve ser atualizado', 400);
     }
 
-    await this.repository.updateTask(input);
+    return await this.repository.updateTask(input);
   }
 
   async deleteTask(input: iTaskRepositoryDeleteTaskInput) {

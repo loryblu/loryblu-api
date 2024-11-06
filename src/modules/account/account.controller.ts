@@ -1,6 +1,14 @@
-import { Controller, Post, Body, HttpCode, Put } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  HttpCode,
+  Put,
+  Get,
+  UseGuards,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { MailService } from '../mail/mail.service';
 import { AccountService } from './account.service';
 import { responses } from 'src/globals/responses/docs';
@@ -8,9 +16,12 @@ import { RecoveryControllerOutput } from './account.entity';
 import {
   CreateAccountDto,
   LoginDto,
+  AccessTokenDto,
   ResetPasswordDto,
   SetPasswordDto,
 } from './account.dto';
+import { AuthorizationGuard, RequestToken } from '../../guard';
+import { User } from '../../decorators/account.decorator';
 
 @Controller('/auth')
 export class AccountController {
@@ -63,6 +74,20 @@ export class AccountController {
     };
   }
 
+  @Post('/logout')
+  @HttpCode(200)
+  @ApiTags('Authentication')
+  @ApiResponse(responses.ok)
+  @ApiResponse(responses.unauthorized)
+  @ApiResponse(responses.internalError)
+  async logout(@Body() accessToken: AccessTokenDto) {
+    await this.accountService.logout(accessToken);
+
+    return {
+      message: 'Logout realizado com sucesso',
+    };
+  }
+
   @Post('/recovery')
   @HttpCode(200)
   @ApiTags('Reset Password')
@@ -104,5 +129,19 @@ export class AccountController {
     return {
       message: 'Senha redefinida com sucesso',
     };
+  }
+  @UseGuards(AuthorizationGuard)
+  @RequestToken({ type: 'access', role: 'user' })
+  @ApiBearerAuth('access')
+  @Get('/account')
+  @ApiTags('Account')
+  @HttpCode(200)
+  @ApiResponse(responses.ok)
+  @ApiResponse(responses.badRequest)
+  @ApiResponse(responses.unauthorized)
+  @ApiResponse(responses.internalError)
+  async getCredential(@User() id: string) {
+    const data = await this.accountService.getCredential(id);
+    return { message: 'Dados recebidos com sucesso', data };
   }
 }

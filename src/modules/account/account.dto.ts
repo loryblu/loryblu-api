@@ -69,6 +69,13 @@ export class CreateAccountDto {
 
 export class ResetPasswordDto extends PickType(CreateAccountDto, ['email']) {}
 
+export class AccessTokenDto {
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString({ message: messages.string })
+  readonly accessToken: string;
+}
+
 export class SetPasswordDto extends PickType(CreateAccountDto, ['password']) {
   @ApiProperty()
   @IsNotEmpty()

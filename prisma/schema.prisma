@@ -11,7 +11,7 @@ datasource db {
 }
 
 model Credential {
-  id                 Int                @id @default(autoincrement())
+  id                 String             @id @default(uuid())
   email              String             @unique
   password           String
   policiesAcceptedAt DateTime           @map("policies_accepted_at")
@@ -20,16 +20,27 @@ model Credential {
   parentProfile      ParentProfile?
   resetPasswordInfo  ResetPasswordInfo?
   updatedAt          DateTime           @updatedAt @map("updated_at")
+  accessToken        AccessToken?
   createdAt          DateTime           @default(now()) @map("created_at")
 
   @@map("credentials")
+}
+
+model AccessToken {
+  id           Int        @id @default(autoincrement())
+  accessToken  String     @unique
+  expiresIn    DateTime   @map("expires_in")
+  credentialId String     @unique @map("credential_id")
+  credential   Credential @relation(fields: [credentialId], references: [id], onDelete: Cascade)
+
+  @@map("access_tokens")
 }
 
 model ResetPasswordInfo {
   id            Int        @id @default(autoincrement())
   recoveryToken String     @unique @map("recovery_token")
   expiresIn     DateTime   @updatedAt @map("expires_in")
-  credentialId  Int        @unique @map("credential_id")
+  credentialId  String     @unique @map("credential_id")
   credential    Credential @relation(fields: [credentialId], references: [id], onDelete: Cascade)
 
   @@map("reset_password_info")
@@ -39,7 +50,7 @@ model ParentProfile {
   id           String            @id @default(uuid())
   fullname     String
   childrens    ChildrenProfile[]
-  credentialId Int               @unique @map("credential_id")
+  credentialId String            @unique @map("credential_id")
   credential   Credential        @relation(fields: [credentialId], references: [id], onDelete: Cascade)
   updatedAt    DateTime          @updatedAt @map("updated_at")
   createdAt    DateTime          @default(now()) @map("created_at")
