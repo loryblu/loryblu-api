@@ -13,13 +13,19 @@ export function IsDateFormat(
       options: validationOptions,
       validator: {
         validate(value: any) {
-          const [year, month, day] = value.split('-');
+          try {
+            if (typeof value !== 'string') return false;
 
-          const isValidYear = Number(year) > 1900;
-          const isValidMonth = Number(month) > 0 && Number(month) < 13;
-          const isValidDay = Number(day) > 0 && Number(month) < 32;
+            const [year, month, day] = value.split('-');
 
-          return isValidDay && isValidMonth && isValidYear;
+            const isValidYear = Number(year) > 1900;
+            const isValidMonth = Number(month) > 0 && Number(month) < 13;
+            const isValidDay = Number(day) > 0 && Number(month) < 32;
+
+            return isValidDay && isValidMonth && isValidYear;
+          } catch (_) {
+            return false;
+          }
         },
       },
     });
