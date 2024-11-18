@@ -1,22 +1,10 @@
-import { randomBytes } from 'node:crypto';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { AccountRepository } from './account.repository';
+import { JwtService, JwtSignOptions } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
+import { randomBytes } from 'node:crypto';
 import {
-  CreateAccountDto,
-  AccessTokenDto,
-  ResetPasswordDto,
-  SetPasswordDto,
-} from './account.dto';
-import { encryptDataAsync, hashDataAsync } from 'src/globals/utils';
-import {
-  PasswordResetOutput,
-  RandomTokenProps,
-  RandomTokenOutput,
-  FormatLinkProps,
-  iAuthTokenSubject,
-} from './account.entity';
-import {
+  CustomHttpError,
   EmailNotFoundException,
   ExpiredRecoveryTokenException,
   InvalidCredentialsException,
@@ -24,8 +12,22 @@ import {
   TryingEncryptException,
   TryingHashException,
 } from 'src/globals/responses/exceptions';
-import { JwtService, JwtSignOptions } from '@nestjs/jwt';
-import * as bcrypt from 'bcrypt';
+import { encryptDataAsync, hashDataAsync } from 'src/globals/utils';
+import {
+  AccessTokenDto,
+  CreateAccountDto,
+  ResetPasswordDto,
+  SetPasswordDto,
+  UploadFileDto,
+} from './account.dto';
+import {
+  FormatLinkProps,
+  iAuthTokenSubject,
+  PasswordResetOutput,
+  RandomTokenOutput,
+  RandomTokenProps,
+} from './account.entity';
+import { AccountRepository } from './account.repository';
 
 @Injectable()
 export class AccountService {
@@ -276,12 +278,35 @@ export class AccountService {
     await this.accountRepository.invalidateToken(existingToken.accessToken);
   }
 
+  async uploadFile(
+    file: UploadFileDto,
+    profile: string,
+    childrenId: any,
+    parentCredential: string,
+  ) {
+    try {
+      const pathFile = `${parentCredential}/${profile}/${file.originalname}`;
+      const data = await this.accountRepository.uploadFile(file, pathFile);
+      await this.accountRepository.saveProfileImage(
+        childrenId,
+        parentCredential,
+        data.fullPath,
+      );
+
+      return data;
+    } catch (error) {
+      throw new CustomHttpError(
+        'Erro ao fazer upload do arquivo',
+        error.status || 500,
+      );
+    }
+  }
+
   async getCredential(id: string) {
     const credential = await this.accountRepository.getCredentialId(id);
     if (!credential) {
       throw new EmailNotFoundException();
     }
-
     return {
       credential,
     };
