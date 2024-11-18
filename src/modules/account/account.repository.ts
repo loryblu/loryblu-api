@@ -1,16 +1,18 @@
 import { Injectable } from '@nestjs/common';
+import { createClient } from '@supabase/supabase-js';
+import { handleErrors } from 'src/globals/errors';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { UploadFileDto } from './account.dto';
 import {
-  NewAccountRepositoryInput,
+  GetCredential,
   GetCredentialIdByEmailOutput,
-  PasswordResetInput,
   getCredentialIdByRecoveryTokenInput,
   getCredentialIdByRecoveryTokenOutout,
-  SavePasswordInput,
-  GetCredential,
+  NewAccountRepositoryInput,
+  PasswordResetInput,
   SaveAccessTokenInput,
+  SavePasswordInput,
 } from './account.entity';
-import { handleErrors } from 'src/globals/errors';
 @Injectable()
 export class AccountRepository {
   constructor(private prisma: PrismaService) {}
@@ -219,5 +221,54 @@ export class AccountRepository {
         where: { accessToken },
       })
       .catch((error) => handleErrors(error));
+  }
+
+  supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
+  bucket = process.env.SUPABASE_BUCKET;
+
+  async uploadFile(file: UploadFileDto, pathFile: string) {
+    try {
+      const data = await this.supabase.storage
+        .from(this.bucket)
+        .upload(pathFile, file.buffer, {
+          contentType: file.mimetype,
+          upsert: true,
+        });
+
+      return data.data;
+    } catch (error) {}
+  }
+
+  async saveProfileImage(
+    childrenId: number,
+    parentCredential: string,
+    path: string,
+  ) {
+    try {
+      if (childrenId) {
+        const idNum = Number(childrenId);
+        await this.prisma.childrenProfile.update({
+          where: { id: idNum },
+          data: { profileImageUrl: path },
+        });
+      } else {
+        const parentId = await this.prisma.credential.findUnique({
+          where: { email: parentCredential },
+          select: {
+            parentProfile: { select: { id: true } },
+          },
+        });
+        await this.prisma.parentProfile.update({
+          where: {
+            id: parentId.parentProfile.id,
+          },
+          data: {
+            profileImageUrl: path,
+          },
+        });
+      }
+    } catch (error) {
+      throw new Error('Erro ao salvar imagem ' + error);
+    }
   }
 }
