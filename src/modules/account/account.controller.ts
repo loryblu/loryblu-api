@@ -1,27 +1,34 @@
 import {
-  Controller,
-  Post,
   Body,
-  HttpCode,
-  Put,
+  Controller,
   Get,
+  HttpCode,
+  Post,
+  Put,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { MailService } from '../mail/mail.service';
-import { AccountService } from './account.service';
 import { responses } from 'src/globals/responses/docs';
-import { RecoveryControllerOutput } from './account.entity';
+import { User } from '../../decorators/account.decorator';
+import { CustomHttpError } from '../../globals/responses/exceptions';
+import { CustomUploadFilePipe } from '../../globals/uploadFiles.pipe';
+import { AuthorizationGuard, RequestToken } from '../../guard';
+import { MailService } from '../mail/mail.service';
 import {
+  AccessTokenDto,
   CreateAccountDto,
   LoginDto,
-  AccessTokenDto,
   ResetPasswordDto,
   SetPasswordDto,
+  UploadFileDto,
+  UploadFileIdDto,
 } from './account.dto';
-import { AuthorizationGuard, RequestToken } from '../../guard';
-import { User } from '../../decorators/account.decorator';
+import { RecoveryControllerOutput } from './account.entity';
+import { AccountService } from './account.service';
 
 @Controller('/auth')
 export class AccountController {
@@ -85,6 +92,40 @@ export class AccountController {
 
     return {
       message: 'Logout realizado com sucesso',
+    };
+  }
+
+  @Post('/upload-file')
+  @HttpCode(200)
+  @ApiTags('Upload Children Profile Image')
+  @ApiResponse(responses.ok)
+  @ApiResponse(responses.badRequest)
+  @ApiResponse(responses.internalError)
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadFileChildren(
+    @UploadedFile(CustomUploadFilePipe) file: UploadFileDto,
+    @Body() { childrenId, parentId }: UploadFileIdDto,
+  ) {
+    if (!file) throw new CustomHttpError('Nenhum arquivo foi enviado', 400);
+
+    let profile = 'parent';
+    if (childrenId) profile = 'children';
+
+    const upload = await this.accountService.uploadFile(
+      file,
+      profile,
+      childrenId,
+      parentId,
+    );
+
+    if (!upload)
+      throw new CustomHttpError('Erro ao carregar foto de perfil', 400);
+
+    return {
+      message: `Foto de perfil carregada com sucesso`,
+      data: {
+        upload,
+      },
     };
   }
 
