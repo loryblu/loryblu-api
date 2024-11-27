@@ -285,7 +285,9 @@ export class AccountService {
     parentCredential: string,
   ) {
     try {
-      const pathFile = `${parentCredential}/${profile}/${file.originalname}`;
+      let pathFile = `${parentCredential}/${profile}/${file.originalname}`;
+      if (childrenId)
+        pathFile = `${parentCredential}/${profile}/${childrenId}/${file.originalname}`;
       const data = await this.accountRepository.uploadFile(file, pathFile);
       await this.accountRepository.saveProfileImage(
         childrenId,
