@@ -114,7 +114,7 @@ export class UploadFileDto {
 
 export class UploadFileIdDto {
   @ApiProperty()
-  parentId: string;
+  parentCredential: string;
 
   @ApiProperty({ example: 1 })
   childrenId: number;

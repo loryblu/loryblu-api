@@ -104,7 +104,7 @@ export class AccountController {
   @UseInterceptors(FileInterceptor('file'))
   async uploadFileChildren(
     @UploadedFile(CustomUploadFilePipe) file: UploadFileDto,
-    @Body() { childrenId, parentId }: UploadFileIdDto,
+    @Body() { childrenId, parentCredential }: UploadFileIdDto,
   ) {
     if (!file) throw new CustomHttpError('Nenhum arquivo foi enviado', 400);
 
@@ -115,7 +115,7 @@ export class AccountController {
       file,
       profile,
       childrenId,
-      parentId,
+      parentCredential,
     );
 
     if (!upload)
