@@ -10,8 +10,6 @@ import { CustomHttpError } from '../globals/responses/exceptions';
 @Injectable()
 export class CustomUploadFilePipe implements PipeTransform {
   transform(file: any) {
-    console.log('file pipe: ');
-    console.log(file);
     if (!file) {
       throw new CustomHttpError('Nenhum arquivo foi enviado', 400);
     }
