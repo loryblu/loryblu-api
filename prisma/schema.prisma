@@ -48,7 +48,6 @@ model ResetPasswordInfo {
 
 model ParentProfile {
   id              String            @id @default(uuid())
-  profile         Profile           @default(parent)
   fullname        String
   childrens       ChildrenProfile[]
   credentialId    String            @unique @map("credential_id")
@@ -62,7 +61,6 @@ model ParentProfile {
 
 model ChildrenProfile {
   id              Int           @id @default(autoincrement())
-  profile         Profile       @default(child)
   fullname        String
   birthdate       DateTime
   gender          Genders
@@ -135,9 +133,4 @@ enum Status {
 enum Genders {
   male
   female
-}
-
-enum Profile {
-  parent
-  child
 }
