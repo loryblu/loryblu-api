@@ -97,7 +97,7 @@ export class AccountController {
 
   @Post('/upload-file')
   @HttpCode(200)
-  @ApiTags('Upload Children Profile Image')
+  @ApiTags('Upload Profile Image')
   @ApiResponse(responses.ok)
   @ApiResponse(responses.badRequest)
   @ApiResponse(responses.internalError)
@@ -106,8 +106,6 @@ export class AccountController {
     @UploadedFile(CustomUploadFilePipe) file: UploadFileDto,
     @Body() { childrenId, parentCredential }: UploadFileIdDto,
   ) {
-    if (!file) throw new CustomHttpError('Nenhum arquivo foi enviado', 400);
-
     let profile = 'parent';
     if (childrenId) profile = 'children';
 
