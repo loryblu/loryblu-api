@@ -114,6 +114,8 @@ export class UploadFileDto {
 
 export class UploadFileIdDto {
   @ApiProperty()
+  @IsNotEmpty()
+  @IsString({ message: messages.string })
   parentCredential: string;
 
   @ApiProperty({ example: 1 })
