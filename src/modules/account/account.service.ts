@@ -12,7 +12,11 @@ import {
   TryingEncryptException,
   TryingHashException,
 } from 'src/globals/responses/exceptions';
-import { encryptDataAsync, hashDataAsync } from 'src/globals/utils';
+import {
+  createFilePath,
+  encryptDataAsync,
+  hashDataAsync,
+} from 'src/globals/utils';
 import {
   AccessTokenDto,
   CreateAccountDto,
@@ -285,9 +289,12 @@ export class AccountService {
     parentCredential: string,
   ) {
     try {
-      let pathFile = `${parentCredential}/${profile}/${file.originalname}`;
-      if (childrenId)
-        pathFile = `${parentCredential}/${profile}/${childrenId}/${file.originalname}`;
+      const pathFile = createFilePath(
+        file,
+        profile,
+        childrenId,
+        parentCredential,
+      );
       const data = await this.accountRepository.uploadFile(file, pathFile);
       await this.accountRepository.saveProfileImage(
         childrenId,
