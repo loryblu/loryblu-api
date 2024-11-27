@@ -281,7 +281,7 @@ export class AccountService {
   async uploadFile(
     file: UploadFileDto,
     profile: string,
-    childrenId: any,
+    childrenId: number,
     parentCredential: string,
   ) {
     try {
