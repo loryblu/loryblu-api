@@ -228,14 +228,18 @@ export class AccountRepository {
 
   async uploadFile(file: UploadFileDto, pathFile: string) {
     try {
-      const data = await this.supabase.storage
+      await this.supabase.storage
         .from(this.bucket)
         .upload(pathFile, file.buffer, {
           contentType: file.mimetype,
           upsert: true,
         });
 
-      return data.data;
+      const url = this.supabase.storage
+        .from(this.bucket)
+        .getPublicUrl(pathFile);
+
+      return url.data;
     } catch (error) {}
   }
 

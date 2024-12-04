@@ -299,7 +299,7 @@ export class AccountService {
       await this.accountRepository.saveProfileImage(
         childrenId,
         parentCredential,
-        data.fullPath,
+        data.publicUrl,
       );
 
       return data;
