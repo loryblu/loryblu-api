@@ -106,13 +106,14 @@ export class AccountController {
     @UploadedFile(CustomUploadFilePipe) file: UploadFileDto,
     @Body() { childrenId, parentCredential }: UploadFileIdDto,
   ) {
+    const childrenIdNum = Number(childrenId);
     let profile = 'parent';
-    if (childrenId) profile = 'children';
+    if (childrenIdNum) profile = 'children';
 
     const upload = await this.accountService.uploadFile(
       file,
       profile,
-      childrenId,
+      childrenIdNum,
       parentCredential,
     );
 

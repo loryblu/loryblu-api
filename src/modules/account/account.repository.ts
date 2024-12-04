@@ -250,9 +250,8 @@ export class AccountRepository {
   ) {
     try {
       if (childrenId) {
-        const idNum = Number(childrenId);
         await this.prisma.childrenProfile.update({
-          where: { id: idNum },
+          where: { id: childrenId },
           data: { profileImageUrl: path },
         });
       } else {
