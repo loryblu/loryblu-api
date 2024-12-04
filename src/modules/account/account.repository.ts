@@ -256,15 +256,10 @@ export class AccountRepository {
           data: { profileImageUrl: path },
         });
       } else {
-        const parentId = await this.prisma.credential.findUnique({
-          where: { email: parentCredential },
-          select: {
-            parentProfile: { select: { id: true } },
-          },
-        });
+        const parentId = await this.getParentId(parentCredential);
         await this.prisma.parentProfile.update({
           where: {
-            id: parentId.parentProfile.id,
+            id: parentId,
           },
           data: {
             profileImageUrl: path,
@@ -274,5 +269,25 @@ export class AccountRepository {
     } catch (error) {
       throw new Error('Erro ao salvar imagem ' + error);
     }
+  }
+
+  async getChildrenId(parentCredential: string) {
+    const parentId = await this.getParentId(parentCredential);
+    const childrenId = await this.prisma.childrenProfile.findMany({
+      where: { parentId },
+    });
+
+    return childrenId;
+  }
+
+  async getParentId(email: string) {
+    const parentId = await this.prisma.credential.findUnique({
+      where: { email },
+      select: {
+        parentProfile: { select: { id: true } },
+      },
+    });
+
+    return parentId.parentProfile.id;
   }
 }
