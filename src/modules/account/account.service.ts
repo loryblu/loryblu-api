@@ -288,6 +288,19 @@ export class AccountService {
     childrenId: number,
     parentCredential: string,
   ) {
+    if (childrenId) {
+      const getChildrenId = await this.accountRepository.getChildrenId(
+        parentCredential,
+      );
+      const childrenIds = getChildrenId.map((child) => {
+        return child.id;
+      });
+
+      if (!childrenIds.includes(childrenId)) {
+        throw new CustomHttpError('Id de criança inválido', 400);
+      }
+    }
+
     try {
       const pathFile = createFilePath(
         file,
