@@ -1,24 +1,24 @@
+import { ApiProperty, PickType } from '@nestjs/swagger';
+import { Genders } from '@prisma/client';
+import { Transform } from 'class-transformer';
 import {
-  IsNotEmpty,
-  IsEmail,
-  IsStrongPassword,
   IsBoolean,
-  IsString,
-  IsEnum,
   IsDateString,
+  IsEmail,
+  IsEnum,
+  IsNotEmpty,
+  IsString,
+  IsStrongPassword,
   Matches,
   MinLength,
 } from 'class-validator';
-import { ApiProperty, PickType } from '@nestjs/swagger';
-import { Genders } from '@prisma/client';
+import { IsDateFormat, IsFullname } from 'src/decorators';
 import {
   birthDateRegExp,
   fullnameRegExp,
   recoveryTokenRegExp,
 } from 'src/globals/constants';
 import { messages } from 'src/globals/responses/validation';
-import { Transform } from 'class-transformer';
-import { IsDateFormat, IsFullname } from 'src/decorators';
 
 export class CreateAccountDto {
   @ApiProperty({ example: 'email@example.com' })
@@ -88,3 +88,36 @@ export class LoginDto extends PickType(CreateAccountDto, [
   'email',
   'password',
 ]) {}
+
+export class UploadFileDto {
+  @ApiProperty({ description: 'Nome do campo do arquivo', example: 'file' })
+  readonly fieldname: string;
+
+  @ApiProperty({
+    description: 'Nome original do arquivo',
+    example: 'image.png',
+  })
+  readonly originalname: string;
+
+  @ApiProperty({
+    description: 'Tipo MIME do arquivo',
+    example: 'image/png',
+  })
+  readonly mimetype: string;
+
+  @ApiProperty({ description: 'Conteúdo do arquivo em buffer' })
+  readonly buffer: Buffer;
+
+  @ApiProperty({ description: 'Tamanho do arquivo em bytes', example: 1024 })
+  size: number;
+}
+
+export class UploadFileIdDto {
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString({ message: messages.string })
+  parentCredential: string;
+
+  @ApiProperty({ example: 1 })
+  childrenId: number;
+}
