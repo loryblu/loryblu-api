@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import type { HashDataAsyncProps, EncryptDataAsyncProps } from './entity';
 import * as bcrypt from 'bcrypt';
+import { UploadFileDto } from '../modules/account/account.dto';
 
 const algorithm = 'sha256';
 const digest = 'hex';
@@ -48,4 +49,17 @@ export function encryptDataAsync(
       return resolve(encrypted);
     });
   });
+}
+
+export function createFilePath(
+  file: UploadFileDto,
+  profile: string,
+  childrenId: number,
+  parentCredential: string,
+) {
+  let pathFile = `${parentCredential}/${profile}/${file.originalname}`;
+  if (childrenId)
+    pathFile = `${parentCredential}/${profile}/${childrenId}/${file.originalname}`;
+
+  return pathFile;
 }

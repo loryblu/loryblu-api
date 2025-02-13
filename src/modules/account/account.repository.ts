@@ -1,16 +1,18 @@
 import { Injectable } from '@nestjs/common';
+import { createClient } from '@supabase/supabase-js';
+import { handleErrors } from 'src/globals/errors';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { UploadFileDto } from './account.dto';
 import {
-  NewAccountRepositoryInput,
+  GetCredential,
   GetCredentialIdByEmailOutput,
-  PasswordResetInput,
   getCredentialIdByRecoveryTokenInput,
   getCredentialIdByRecoveryTokenOutout,
+  NewAccountRepositoryInput,
+  PasswordResetInput,
+  SaveAccessTokenInput,
   SavePasswordInput,
-  GetCredential,
 } from './account.entity';
-import { handleErrors } from 'src/globals/errors';
-
 @Injectable()
 export class AccountRepository {
   constructor(private prisma: PrismaService) {}
@@ -48,11 +50,11 @@ export class AccountRepository {
   }
 
   async getCredentialIdByEmail(
-    hashedemail: string,
+    email: string,
   ): Promise<GetCredentialIdByEmailOutput | void> {
     const response = await this.prisma.credential
       .findUnique({
-        where: { email: hashedemail },
+        where: { email: email },
         select: {
           id: true,
           password: true,
@@ -179,5 +181,112 @@ export class AccountRepository {
         },
       })
       .catch((error) => handleErrors(error));
+  }
+
+  async saveToken(input: SaveAccessTokenInput) {
+    const { credentialId, accessToken } = input;
+    const expiresIn = new Date(Date.now() + 2 * 60 * 60 * 1000);
+
+    await this.prisma.accessToken.upsert({
+      where: {
+        credentialId,
+      },
+      update: {
+        accessToken,
+        expiresIn,
+      },
+      create: {
+        accessToken,
+        expiresIn,
+        credential: {
+          connect: {
+            id: credentialId,
+          },
+        },
+      },
+    });
+    return true;
+  }
+
+  async getToken(accessToken: string) {
+    const token = await this.prisma.accessToken.findUnique({
+      where: { accessToken },
+    });
+    return token;
+  }
+
+  async invalidateToken(accessToken: string): Promise<void> {
+    await this.prisma.accessToken
+      .delete({
+        where: { accessToken },
+      })
+      .catch((error) => handleErrors(error));
+  }
+
+  supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
+  bucket = process.env.SUPABASE_BUCKET;
+
+  async uploadFile(file: UploadFileDto, pathFile: string) {
+    try {
+      await this.supabase.storage
+        .from(this.bucket)
+        .upload(pathFile, file.buffer, {
+          contentType: file.mimetype,
+          upsert: true,
+        });
+
+      const url = this.supabase.storage
+        .from(this.bucket)
+        .getPublicUrl(pathFile);
+
+      return url.data;
+    } catch (error) {}
+  }
+
+  async saveProfileImage(
+    childrenId: number,
+    parentCredential: string,
+    path: string,
+  ) {
+    try {
+      if (childrenId) {
+        await this.prisma.childrenProfile.update({
+          where: { id: childrenId },
+          data: { profileImageUrl: path },
+        });
+      } else {
+        const parentId = await this.getParentId(parentCredential);
+        await this.prisma.parentProfile.update({
+          where: {
+            id: parentId,
+          },
+          data: {
+            profileImageUrl: path,
+          },
+        });
+      }
+    } catch (error) {
+      throw new Error('Erro ao salvar imagem ' + error);
+    }
+  }
+
+  async getChildrenId(parentCredential: string) {
+    const parentId = await this.getParentId(parentCredential);
+    const childrenId = await this.prisma.childrenProfile.findMany({
+      where: { parentId },
+    });
+
+    return childrenId;
+  }
+
+  async getParentId(email: string) {
+    const parentId = await this.prisma.credential.findUnique({
+      where: { email },
+      select: {
+        parentProfile: { select: { id: true } },
+      },
+    });
+
+    return parentId.parentProfile.id;
   }
 }

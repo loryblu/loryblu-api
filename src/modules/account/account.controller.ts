@@ -1,26 +1,34 @@
 import {
-  Controller,
-  Post,
   Body,
-  HttpCode,
-  Put,
+  Controller,
   Get,
+  HttpCode,
+  Post,
+  Put,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { MailService } from '../mail/mail.service';
-import { AccountService } from './account.service';
 import { responses } from 'src/globals/responses/docs';
-import { RecoveryControllerOutput } from './account.entity';
+import { User } from '../../decorators/account.decorator';
+import { CustomHttpError } from '../../globals/responses/exceptions';
+import { CustomUploadFilePipe } from '../../globals/uploadFiles.pipe';
+import { AuthorizationGuard, RequestToken } from '../../guard';
+import { MailService } from '../mail/mail.service';
 import {
+  AccessTokenDto,
   CreateAccountDto,
   LoginDto,
   ResetPasswordDto,
   SetPasswordDto,
+  UploadFileDto,
+  UploadFileIdDto,
 } from './account.dto';
-import { AuthorizationGuard, RequestToken } from '../../guard';
-import { User } from '../../decorators/account.decorator';
+import { RecoveryControllerOutput } from './account.entity';
+import { AccountService } from './account.service';
 
 @Controller('/auth')
 export class AccountController {
@@ -69,6 +77,53 @@ export class AccountController {
         accessToken: token,
         refreshToken: refresh,
         user: user,
+      },
+    };
+  }
+
+  @Post('/logout')
+  @HttpCode(200)
+  @ApiTags('Authentication')
+  @ApiResponse(responses.ok)
+  @ApiResponse(responses.unauthorized)
+  @ApiResponse(responses.internalError)
+  async logout(@Body() accessToken: AccessTokenDto) {
+    await this.accountService.logout(accessToken);
+
+    return {
+      message: 'Logout realizado com sucesso',
+    };
+  }
+
+  @Post('/upload-file')
+  @HttpCode(200)
+  @ApiTags('Upload Profile Image')
+  @ApiResponse(responses.ok)
+  @ApiResponse(responses.badRequest)
+  @ApiResponse(responses.internalError)
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadFileChildren(
+    @UploadedFile(CustomUploadFilePipe) file: UploadFileDto,
+    @Body() { childrenId, parentCredential }: UploadFileIdDto,
+  ) {
+    const childrenIdNum = Number(childrenId);
+    let profile = 'parent';
+    if (childrenIdNum) profile = 'children';
+
+    const upload = await this.accountService.uploadFile(
+      file,
+      profile,
+      childrenIdNum,
+      parentCredential,
+    );
+
+    if (!upload)
+      throw new CustomHttpError('Erro ao carregar foto de perfil', 400);
+
+    return {
+      message: `Foto de perfil carregada com sucesso`,
+      data: {
+        upload,
       },
     };
   }

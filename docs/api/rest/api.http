@@ -26,7 +26,7 @@ POST {{apiurl}}/auth/register
 Content-Type: application/json
 
 {
-  "email": "kauane4@email.com",
+  "email": "kauane7@email.com",
   "password": "stringW#3",
   "policiesAccepted": true,
   "parentName": "Kauane Santos",
@@ -45,16 +45,20 @@ POST {{apiurl}}/auth/login
 Content-Type: application/json
 
 {
-  "email": "kauane4@email.com",
+  "email": "kauane7@email.com",
   "password": "stringW#3"
 }
 
-###Get auth/account
-GET {{apiurl}}/auth/account
+### POST /auth/logout
+# @name logout
+POST {{apiurl}}/auth/logout
 Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
+{
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjaWQiOiI2NTgyMDFiNy1lZWEyLTQzNjktYjQyOC1kM2EzZTVmZTlkYTkiLCJwaWQiOiI3NjczZTdkYi1jNjNkLTQ0MGUtYmI0YS0zNjhjMWI0MGRiYTUiLCJpYXQiOjE3Mjk2MTI3ODgsImV4cCI6MTcyOTYxNjM4OCwic3ViIjoiYWNjZXNzIn0.9lo7Hmhh6GKO4U4QWuF4S_Tu0NaiHO8t0_QTScWcpQ8"
 
+}
 ### POST /task
 POST {{apiurl}}/task 
 Authorization: Bearer {{authToken}}
@@ -71,11 +75,11 @@ Content-Type: application/json
 }
 
 ### GET /task?childrenId=2&frequency=mon
-GET {{apiurl}}/task?childrenId=1&frequency=sat
+GET {{apiurl}}/task?childrenId=4&frequency=sat
 Authorization: Bearer {{authToken}}
 
 ### Delete /task/id
-DELETE {{apiurl}}/task?childrenId=2&taskId=2
+DELETE {{apiurl}}/task?childrenId=3&taskId=10
 Authorization: Bearer {{authToken}}
 
 

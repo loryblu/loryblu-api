@@ -1,21 +1,10 @@
-import { randomBytes } from 'node:crypto';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { AccountRepository } from './account.repository';
+import { JwtService, JwtSignOptions } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
+import { randomBytes } from 'node:crypto';
 import {
-  CreateAccountDto,
-  ResetPasswordDto,
-  SetPasswordDto,
-} from './account.dto';
-import { encryptDataAsync, hashDataAsync } from 'src/globals/utils';
-import {
-  PasswordResetOutput,
-  RandomTokenProps,
-  RandomTokenOutput,
-  FormatLinkProps,
-  iAuthTokenSubject,
-} from './account.entity';
-import {
+  CustomHttpError,
   EmailNotFoundException,
   ExpiredRecoveryTokenException,
   InvalidCredentialsException,
@@ -23,8 +12,26 @@ import {
   TryingEncryptException,
   TryingHashException,
 } from 'src/globals/responses/exceptions';
-import { JwtService, JwtSignOptions } from '@nestjs/jwt';
-import * as bcrypt from 'bcrypt';
+import {
+  createFilePath,
+  encryptDataAsync,
+  hashDataAsync,
+} from 'src/globals/utils';
+import {
+  AccessTokenDto,
+  CreateAccountDto,
+  ResetPasswordDto,
+  SetPasswordDto,
+  UploadFileDto,
+} from './account.dto';
+import {
+  FormatLinkProps,
+  iAuthTokenSubject,
+  PasswordResetOutput,
+  RandomTokenOutput,
+  RandomTokenProps,
+} from './account.entity';
+import { AccountRepository } from './account.repository';
 
 @Injectable()
 export class AccountService {
@@ -129,14 +136,13 @@ export class AccountService {
       throw new PoliciesException();
     }
 
-    const hashedEmail = await this.hashData(input.email);
     const encryptedPassword = await this.encryptPassword(input.password);
     const now = new Date();
     const childrenBirthDate = new Date(input.childrenBirthDate);
 
     await this.accountRepository.saveCredentialParentAndChildrenProps({
       credential: {
-        email: hashedEmail,
+        email: input.email,
         password: encryptedPassword,
         policiesAcceptedAt: now,
         role: 'user',
@@ -160,12 +166,7 @@ export class AccountService {
   ): Promise<PasswordResetOutput> {
     const { email } = input;
 
-    // ! verificar responsabilidade única
-    const hashedEmail = await this.hashData(email);
-
-    const account = await this.accountRepository.getCredentialIdByEmail(
-      hashedEmail,
-    );
+    const account = await this.accountRepository.getCredentialIdByEmail(email);
 
     if (!account) {
       throw new EmailNotFoundException();
@@ -221,10 +222,8 @@ export class AccountService {
   }
 
   async login(email: string, password: string) {
-    const hashedEmail = await this.hashData(email);
-
     const credential = await this.accountRepository.getCredentialIdByEmail(
-      hashedEmail,
+      email,
     );
 
     if (!credential) {
@@ -253,18 +252,75 @@ export class AccountService {
       this.createAuthToken(tokenPayload, 'refresh'),
     ]);
 
+    await this.accountRepository.saveToken({
+      credentialId: credential.id,
+      accessToken: token,
+    });
+
     return {
       token,
       refresh,
       user,
     };
   }
+
+  async logout(input: AccessTokenDto): Promise<void> {
+    const existingToken = await this.accountRepository.getToken(
+      input.accessToken,
+    );
+    if (!existingToken) {
+      throw new InvalidCredentialsException();
+    }
+    await this.accountRepository.invalidateToken(existingToken.accessToken);
+  }
+
+  async uploadFile(
+    file: UploadFileDto,
+    profile: string,
+    childrenId: number,
+    parentCredential: string,
+  ) {
+    if (childrenId) {
+      const getChildrenId = await this.accountRepository.getChildrenId(
+        parentCredential,
+      );
+      const childrenIds = getChildrenId.map((child) => {
+        return child.id;
+      });
+
+      if (!childrenIds.includes(childrenId)) {
+        throw new CustomHttpError('Id de criança inválido', 400);
+      }
+    }
+
+    try {
+      const pathFile = createFilePath(
+        file,
+        profile,
+        childrenId,
+        parentCredential,
+      );
+      const data = await this.accountRepository.uploadFile(file, pathFile);
+      await this.accountRepository.saveProfileImage(
+        childrenId,
+        parentCredential,
+        data.publicUrl,
+      );
+
+      return data;
+    } catch (error) {
+      throw new CustomHttpError(
+        'Erro ao fazer upload do arquivo',
+        error.status || 500,
+      );
+    }
+  }
+
   async getCredential(id: string) {
     const credential = await this.accountRepository.getCredentialId(id);
     if (!credential) {
       throw new EmailNotFoundException();
     }
-
     return {
       credential,
     };
