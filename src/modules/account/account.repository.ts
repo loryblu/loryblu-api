@@ -91,12 +91,14 @@ export class AccountRepository {
           parentProfile: {
             select: {
               fullname: true,
+              profileImageUrl: true,
               childrens: {
                 select: {
                   id: true,
                   fullname: true,
                   gender: true,
                   birthdate: true,
+                  profileImageUrl: true,
                 },
               },
             },
