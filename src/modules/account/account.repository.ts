@@ -50,11 +50,11 @@ export class AccountRepository {
   }
 
   async getCredentialIdByEmail(
-    hashedemail: string,
+    email: string,
   ): Promise<GetCredentialIdByEmailOutput | void> {
     const response = await this.prisma.credential
       .findUnique({
-        where: { email: hashedemail },
+        where: { email: email },
         select: {
           id: true,
           password: true,

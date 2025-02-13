@@ -136,14 +136,13 @@ export class AccountService {
       throw new PoliciesException();
     }
 
-    const hashedEmail = await this.hashData(input.email);
     const encryptedPassword = await this.encryptPassword(input.password);
     const now = new Date();
     const childrenBirthDate = new Date(input.childrenBirthDate);
 
     await this.accountRepository.saveCredentialParentAndChildrenProps({
       credential: {
-        email: hashedEmail,
+        email: input.email,
         password: encryptedPassword,
         policiesAcceptedAt: now,
         role: 'user',
@@ -167,12 +166,7 @@ export class AccountService {
   ): Promise<PasswordResetOutput> {
     const { email } = input;
 
-    // ! verificar responsabilidade única
-    const hashedEmail = await this.hashData(email);
-
-    const account = await this.accountRepository.getCredentialIdByEmail(
-      hashedEmail,
-    );
+    const account = await this.accountRepository.getCredentialIdByEmail(email);
 
     if (!account) {
       throw new EmailNotFoundException();
@@ -228,10 +222,8 @@ export class AccountService {
   }
 
   async login(email: string, password: string) {
-    const hashedEmail = await this.hashData(email);
-
     const credential = await this.accountRepository.getCredentialIdByEmail(
-      hashedEmail,
+      email,
     );
 
     if (!credential) {
