@@ -18,6 +18,12 @@ export type NewAccountRepositoryInput = {
   childrenProfile: Pick<ChildrenProfile, 'fullname' | 'birthdate' | 'gender'>;
 };
 
+export type UpdateAccountRepositoryInput = {
+  credential: Omit<Credential, 'id' | 'createdAt' | 'updatedAt'>;
+  parentProfile: Pick<ParentProfile, 'fullname'>;
+  childrenProfile: Array<ChildrenProfile, 'fullname' | 'birthdate' | 'gender'>;
+};
+
 export type RecoveryControllerOutput = {
   recoverLink?: string;
   message: string;

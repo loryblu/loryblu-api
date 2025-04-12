@@ -1,16 +1,20 @@
 import { ApiProperty, PickType } from '@nestjs/swagger';
 import { Genders } from '@prisma/client';
-import { Transform } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
+  IsArray,
   IsBoolean,
   IsDateString,
   IsEmail,
   IsEnum,
   IsNotEmpty,
+  IsNumber,
   IsString,
   IsStrongPassword,
   Matches,
   MinLength,
+  ValidateNested,
+  IsOptional,
 } from 'class-validator';
 import { IsDateFormat, IsFullname } from 'src/decorators';
 import {
@@ -67,7 +71,7 @@ export class CreateAccountDto {
   readonly childrenGender: Genders;
 }
 
-export class ResetPasswordDto extends PickType(CreateAccountDto, ['email']) {}
+export class ResetPasswordDto extends PickType(CreateAccountDto, ['email']) { }
 
 export class AccessTokenDto {
   @ApiProperty()
@@ -87,7 +91,7 @@ export class SetPasswordDto extends PickType(CreateAccountDto, ['password']) {
 export class LoginDto extends PickType(CreateAccountDto, [
   'email',
   'password',
-]) {}
+]) { }
 
 export class UploadFileDto {
   @ApiProperty({ description: 'Nome do campo do arquivo', example: 'file' })
@@ -120,4 +124,57 @@ export class UploadFileIdDto {
 
   @ApiProperty({ example: 1 })
   childrenId: number;
+}
+
+export class UpdateAccountDto extends PickType(CreateAccountDto, [
+  'email',
+  'password',
+  'parentName',
+]) {
+  @ApiProperty({
+    description: 'Lista de crianças associadas ao responsável',
+    type: Array,
+    example: [
+      {
+        id: 1,
+        fullname: 'Jane Doe',
+        birthdate: '2015-05-15',
+        gender: 'female',
+      },
+    ],
+  })
+  @IsNotEmpty({ message: messages.notEmpty })
+  @IsArray({ message: messages.array })
+  @ValidateNested({ each: true })
+  @Type(() => UpdateChildrenDto)
+  readonly children: UpdateChildrenDto[];
+}
+
+export class UpdateChildrenDto {
+  @ApiProperty({ example: 1 })
+  @IsNotEmpty({ message: messages.notEmpty })
+  @IsNumber({}, { message: messages.number })
+  readonly id: number;
+
+  @ApiProperty({ example: 'Jane Doe' })
+  @IsNotEmpty({ message: messages.notEmpty })
+  @IsString({ message: messages.string })
+  readonly fullname: string;
+
+  @ApiProperty({ example: '2009-02-28' })
+  @IsNotEmpty({ message: messages.notEmpty })
+  @Matches(birthDateRegExp, { message: messages.birthDatePattern })
+  @IsDateString({ strict: true }, { message: messages.birthDatePattern })
+  @IsDateFormat('birthdate', { message: messages.birthDateRange })
+  readonly birthdate: Date;
+
+  @ApiProperty({ enum: Genders })
+  @IsNotEmpty({ message: messages.notEmpty })
+  @IsEnum(Genders, { message: messages.enum })
+  readonly gender: Genders;
+
+  @ApiProperty({ example: null, required: false })
+  @IsOptional()
+  @IsString({ message: 'O campo "profileImageUrl" deve ser uma string' })
+  readonly profileImageUrl?: string;
 }

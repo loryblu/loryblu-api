@@ -40,4 +40,5 @@ export const messages: Messages = {
   birthDatePattern: 'Use o padrão ano, mês e dia (YYYY-MM-DD).',
   birthDateRange: 'Data inválida.',
   recoveryTokenPattern: 'Deve ser um texto base64url',
+  array: 'Deve ser uma lista.'
 };
