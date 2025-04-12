@@ -159,9 +159,9 @@ export class AccountController {
     return response;
   }
 
-  // @UseGuards(AuthorizationGuard)
-  // @RequestToken({ type: 'access', role: 'user' })
-  // @ApiBearerAuth('access')
+  @UseGuards(AuthorizationGuard)
+  @RequestToken({ type: 'access', role: 'user' })
+  @ApiBearerAuth('access')
   @Patch('/update-account/:email')
   @ApiTags('Authentication')
   @ApiResponse(responses.ok)
@@ -194,6 +194,7 @@ export class AccountController {
       message: 'Senha redefinida com sucesso',
     };
   }
+
   @UseGuards(AuthorizationGuard)
   @RequestToken({ type: 'access', role: 'user' })
   @ApiBearerAuth('access')
