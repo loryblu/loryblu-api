@@ -162,7 +162,7 @@ export class AccountController {
   @UseGuards(AuthorizationGuard)
   @RequestToken({ type: 'access', role: 'user' })
   @ApiBearerAuth('access')
-  @Patch('/update-account/:email')
+  @Patch('/update-account')
   @ApiTags('Authentication')
   @ApiResponse(responses.ok)
   @ApiResponse(responses.badRequest)
