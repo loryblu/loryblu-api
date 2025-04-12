@@ -22,6 +22,7 @@ import {
   CreateAccountDto,
   ResetPasswordDto,
   SetPasswordDto,
+  UpdateAccountDto,
   UploadFileDto,
 } from './account.dto';
 import {
@@ -32,11 +33,13 @@ import {
   RandomTokenProps,
 } from './account.entity';
 import { AccountRepository } from './account.repository';
+import { Roles, Status } from '@prisma/client';
 
 @Injectable()
 export class AccountService {
   private hashSalt: string;
   private passSalt: number;
+  private now: Date;
 
   constructor(
     private configService: ConfigService,
@@ -45,6 +48,7 @@ export class AccountService {
   ) {
     this.hashSalt = this.configService.get<string>('SALT_DATA_HASH');
     this.passSalt = Number(this.configService.get<number>('SALT_DATA_PASS'));
+    this.now = new Date();
   }
 
   private async hashData(data: string): Promise<string> {
@@ -137,14 +141,13 @@ export class AccountService {
     }
 
     const encryptedPassword = await this.encryptPassword(input.password);
-    const now = new Date();
     const childrenBirthDate = new Date(input.childrenBirthDate);
 
     await this.accountRepository.saveCredentialParentAndChildrenProps({
       credential: {
         email: input.email,
         password: encryptedPassword,
-        policiesAcceptedAt: now,
+        policiesAcceptedAt: this.now,
         role: 'user',
         status: 'active',
       },
@@ -324,5 +327,37 @@ export class AccountService {
     return {
       credential,
     };
+  }
+
+  async updateAccountPropsProcessing(input: UpdateAccountDto, parentCredential: string) {
+
+    const existingParentcredential = await this.accountRepository.getCredentialIdByEmail(parentCredential);
+    if (!existingParentcredential)  throw new EmailNotFoundException();
+
+    const encryptedPassword = await this.encryptPassword(input.password);
+
+    const repositoryInput = {
+      credential: {
+        email: input.email,
+        password: encryptedPassword,
+        policiesAcceptedAt: this.now,
+        role: Roles.user,
+        status: Status.active,
+      },
+      parentProfile: {
+        fullname: input.parentName,
+      },
+      childrenProfile: input.children.map((child) => ({
+        id: child.id,
+        fullname: child.fullname,
+        birthdate: new Date(child.birthdate),
+        gender: child.gender,
+      })),
+    };
+
+    const updatedAccount = await this.accountRepository.updateCredentialProps(repositoryInput, parentCredential);
+    const { id, ...accountWithoutId } = updatedAccount;
+
+    return accountWithoutId
   }
 }

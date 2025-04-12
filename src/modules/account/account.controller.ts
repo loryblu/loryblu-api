@@ -3,11 +3,13 @@ import {
   Controller,
   Get,
   HttpCode,
+  Patch,
   Post,
   Put,
+  Query,
   UploadedFile,
   UseGuards,
-  UseInterceptors,
+  UseInterceptors
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -24,6 +26,7 @@ import {
   LoginDto,
   ResetPasswordDto,
   SetPasswordDto,
+  UpdateAccountDto,
   UploadFileDto,
   UploadFileIdDto,
 } from './account.dto';
@@ -154,6 +157,27 @@ export class AccountController {
     }
 
     return response;
+  }
+
+  // @UseGuards(AuthorizationGuard)
+  // @RequestToken({ type: 'access', role: 'user' })
+  // @ApiBearerAuth('access')
+  @Patch('/update-account/:email')
+  @ApiTags('Authentication')
+  @ApiResponse(responses.ok)
+  @ApiResponse(responses.badRequest)
+  @ApiResponse(responses.unauthorized)
+  @ApiResponse(responses.internalError)
+  async updateAccount(
+    @Body() updateInput: UpdateAccountDto,
+    @Query('email') parentCredential: string,
+  )
+{
+    await this.accountService.updateAccountPropsProcessing(updateInput,parentCredential);
+
+    return {
+      message: 'Dados atualizados com sucesso',
+    };
   }
 
   @Put('/set-password')
