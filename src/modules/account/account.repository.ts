@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { createClient } from '@supabase/supabase-js';
 import { handleErrors } from 'src/globals/errors';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -12,10 +12,12 @@ import {
   PasswordResetInput,
   SaveAccessTokenInput,
   SavePasswordInput,
+  UpdateAccountRepositoryInput,
 } from './account.entity';
+import { error } from 'console';
 @Injectable()
 export class AccountRepository {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async saveCredentialParentAndChildrenProps(
     data: NewAccountRepositoryInput,
@@ -47,6 +49,81 @@ export class AccountRepository {
       .catch((error) => handleErrors(error));
 
     return;
+  }
+
+  async existingParentProfileByEmail(email: string) {
+    const existingParentProfile = await this.prisma.credential.findUnique({
+      where: { email },
+    });
+
+    if (existingParentProfile) {
+      return existingParentProfile;
+    }
+
+    return null;
+  }
+
+  async updateCredentialProps(input: UpdateAccountRepositoryInput, parentCredential: string) {
+    const parentProfile = await this.prisma.credential.findUnique({
+      where: { email: parentCredential },
+    });
+    if (!parentProfile) {
+      throw new NotFoundException('Perfil do responsável não encontrado');
+    }
+
+    const existingParentProfile = await this.existingParentProfileByEmail(input.credential.email);
+    if (existingParentProfile && existingParentProfile.email !== parentCredential) {
+      throw new BadRequestException('E-mail inválido para atualização');
+    }
+
+    const childrenProfiles = await this.getChildrenId(parentCredential);
+    const validChildrenIds = childrenProfiles.map((child) => child.id);
+
+    for (const child of input.childrenProfile) {
+      if (!validChildrenIds.includes(child.id)) {
+        throw new NotFoundException(
+          `Criança com I ${child.id} não está associada ao responsável`,
+        );
+      }
+    }
+
+    const updateChildren = await Promise.all(
+      input.childrenProfile.map(async (child) => {
+        await this.prisma.childrenProfile.update({
+          where: { id: child.id },
+          data: {
+            fullname: child.fullname,
+            birthdate: child.birthdate,
+            gender: child.gender,
+          },
+
+        });
+      }),
+    );
+
+    if (!updateChildren) {
+      throw new BadRequestException('Erro ao atualizar crianças');
+    }
+
+    const updatedAccount = await this.prisma.credential.update({
+      where: {
+        id: parentProfile.id,
+      },
+      data: {
+        email: input.credential.email,
+        password: input.credential.password,
+        policiesAcceptedAt: input.credential.policiesAcceptedAt,
+        role: 'user',
+        status: 'active',
+        parentProfile: {
+          update: {
+            fullname: input.parentProfile.fullname,
+          },
+        },
+      },
+    });
+
+    return updatedAccount;
   }
 
   async getCredentialIdByEmail(
@@ -91,12 +168,14 @@ export class AccountRepository {
           parentProfile: {
             select: {
               fullname: true,
+              profileImageUrl: true,
               childrens: {
                 select: {
                   id: true,
                   fullname: true,
                   gender: true,
                   birthdate: true,
+                  profileImageUrl: true,
                 },
               },
             },
@@ -240,7 +319,7 @@ export class AccountRepository {
         .getPublicUrl(pathFile);
 
       return url.data;
-    } catch (error) {}
+    } catch (error) { }
   }
 
   async saveProfileImage(

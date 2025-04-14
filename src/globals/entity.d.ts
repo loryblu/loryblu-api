@@ -45,4 +45,5 @@ export type Messages = {
   birthDateRange: Validator;
   recoveryTokenPattern: Validator;
   UUID: Validator;
+  array: Validator;
 };
