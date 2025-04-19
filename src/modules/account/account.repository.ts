@@ -82,7 +82,7 @@ export class AccountRepository {
     for (const child of input.childrenProfile) {
       if (!validChildrenIds.includes(child.id)) {
         throw new NotFoundException(
-          `Criança com I ${child.id} não está associada ao responsável`,
+          `Criança com Id ${child.id} não está associada ao responsável`,
         );
       }
     }
