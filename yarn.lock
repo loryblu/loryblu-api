@@ -3266,7 +3266,7 @@ electron-to-chromium@^1.4.535:
   resolved "https://registry.npmjs.org/electron-to-chromium/-/electron-to-chromium-1.4.540.tgz"
   integrity sha512-aoCqgU6r9+o9/S7wkcSbmPRFi7OWZWiXS9rtjEd+Ouyu/Xyw5RSq2XN8s5Qp8IaFOLiRrhQCphCIjAxgG3eCAg==
 
-"email-templates@file:src/modules/mail/templates/":
+"templates@file:src/modules/mail/templates/":
   version "0.0.1"
   resolved "file:src/modules/mail/templates"
   dependencies:
