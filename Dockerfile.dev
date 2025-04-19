@@ -2,6 +2,11 @@ FROM node:18-alpine
 
 WORKDIR /app
 
+COPY .gitmodules .gitmodules
+COPY .git .git
+
+RUN git submodule update --init --recursive
+
 COPY package.json .
 COPY src/modules/mail/templates/package.json .
 

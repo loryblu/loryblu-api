@@ -22,6 +22,7 @@ services:
       - .env
     volumes:
       - .:/app
+      - /app/src/modules/mail/templates
     ports:
       - ${PORT}:${PORT}
     command: ['yarn', 'dev']
